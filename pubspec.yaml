@@ -66,10 +66,8 @@ flutter:
     - i18n/
     - assets/animation/
     - assets/icon/
-    - assets/illustration/
     - assets/image/
     - assets/dummy/
-    - assets/sound/
     - assets/flag/
 
   # To add assets to your application, add an assets section, like this:

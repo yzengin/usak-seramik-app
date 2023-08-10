@@ -1,4 +1,4 @@
-package com.example.usak_seramik_app
+package com.usakseramik.app
 
 import io.flutter.embedding.android.FlutterActivity
 

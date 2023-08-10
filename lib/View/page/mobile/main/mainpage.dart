@@ -29,7 +29,7 @@ class MainPageViewState extends State<MainPageView> {
     return Scaffold(
       key: _scaffoldKey,
       bottomNavigationBar: SizedBox(
-        height: kBottomNavigationBarHeight * 2,
+        height: kBottomNavigationBarHeight * 1.3,
         child: BottomNavigationBar(
           items: mainNavBarItemList(context),
           currentIndex: PageViewIndexer.instance.currentIndex,

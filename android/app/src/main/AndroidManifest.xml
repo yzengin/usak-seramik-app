@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.usak_seramik_app">
+    package="com.usakseramik.app">
    <application
-        android:label="usak_seramik_app"
+        android:label="Uşak Seramik"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
