@@ -57,7 +57,7 @@ class _AppDrawerState extends State<AppDrawer> {
               children: [
                 ThemeChangerButton(),
                 CopyOnTap(
-                  languageList().where((element) => element.locale.languageCode == localeNotifier.value!.languageCode).first.title,
+                  languageList().where((element) => element.locale.languageCode != localeNotifier.value!.languageCode).first.title,
                   callback: () => Provider.of<LocalizationController>(context, listen: false).set(localeNotifier.value!.languageCode == 'tr' ? languageList()[1].locale : languageList().first.locale),
                 ).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.background))
               ],

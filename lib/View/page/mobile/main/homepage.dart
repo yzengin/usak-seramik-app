@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
@@ -36,7 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget body(BuildContext context) {
     return PageView.builder(
       controller: pageViewController,
-      physics: ClampingScrollPhysics(),
+      physics: NeverScrollableScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemCount: 2,
       itemBuilder: (context, index) => pageItems[index],
@@ -223,7 +224,14 @@ class Showreel extends StatelessWidget {
 }
 
 class FindProductView extends StatelessWidget {
-  const FindProductView({super.key});
+  FindProductView({super.key});
+  final ScrollController scrollController = ScrollController();
+  final FocusNode usageAreaFocusNode = FocusNode();
+  final FocusNode prodTypeFocusNode = FocusNode();
+  final FocusNode prodTextureFocusNode = FocusNode();
+  final FocusNode prodColorFocusNode = FocusNode();
+  final FocusNode rawFocusNode = FocusNode();
+  final ValueNotifier<int> showIndex = ValueNotifier<int>(-1);
 
   @override
   Widget build(BuildContext context) {
@@ -246,216 +254,247 @@ class FindProductView extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-                    child: Card(
-                        margin: EdgeInsets.zero,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Expanded(child: Text(context.translete('findProductTitle'), style: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 19))),
-                              Icon(CupertinoIcons.question).wrapPaddingLeft(20),
-                            ],
-                          ),
-                        )).wrapPaddingLeft(20),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(context.translete('findProductTitle'), style: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 16)),
+                          Text(context.translete('findProductDescription'), style: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 13, color: context.theme.textTheme.bodyMedium!.color!.withOpacity(.5))),
+                        ],
+                      ),
+                    ).wrapPaddingLeft(20),
                   ),
                 ],
               ),
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: context.width,
-                        height: kToolbarHeight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Image.asset(
-                              AppIcon.usageArea,
-                              color: context.theme.textTheme.bodyMedium!.color,
-                              width: 40,
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.only(top: 40),
+                  controller: scrollController,
+                  physics: AlwaysScrollableScrollPhysics(),
+                  children: [
+                    (showIndex.value == -1 || showIndex.value == 0)
+                        ? SizedBox(
+                            width: context.width,
+                            height: kToolbarHeight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  AppIcon.usageArea,
+                                  color: context.theme.textTheme.bodyMedium!.color,
+                                  width: 40,
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Focus(
+                                    focusNode: usageAreaFocusNode,
+                                    onFocusChange: (value) {
+                                      if (value) {
+                                        showIndex.value = 0;
+                                      } else {
+                                        showIndex.value = -1;
+                                      }
+                                    },
+                                    child: DropdownMenu(
+                                      width: context.width - 100,
+                                      menuHeight: 200,
+                                      enableFilter: true,
+                                      enableSearch: true,
+                                      hintText: context.translete('kullanimAlani'),
+                                      onSelected: (value) => FocusScope.of(context).unfocus(),
+                                      dropdownMenuEntries: [
+                                        context.translete('yasamAlani'),
+                                        context.translete('mutfak'),
+                                        context.translete('banyo'),
+                                        context.translete('disMekan'),
+                                      ].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e);
+                                      }).toList(),
+                                      // DropdownMenuEntry(
+                                      //   value: 0,
+                                      //   label: 'label',
+                                      //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
+                                      // ),
+                                    ),
+                                  ),
+                                ))
+                              ],
                             ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: DropdownMenu(
-                                width: context.width - 100,
-                                enableFilter: true,
-                                enableSearch: true,
-                                hintText: context.translete('kullanimAlani'),
-                                textStyle: context.theme.textTheme.bodyMedium!,
-                                menuStyle: MenuStyle(backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                dropdownMenuEntries: [
-                                  context.translete('yasamAlani'),
-                                  context.translete('mutfak'),
-                                  context.translete('banyo'),
-                                  context.translete('disMekan'),
-                                ].map((e) {
-                                  return DropdownMenuEntry(
-                                    value: e,
-                                    label: e,
-                                    style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                  );
-                                }).toList(),
-                                // DropdownMenuEntry(
-                                //   value: 0,
-                                //   label: 'label',
-                                //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                // ),
-                              ),
-                            ))
-                          ],
-                        ),
-                      ).wrapPaddingBottom(20),
-                      SizedBox(
-                        width: context.width,
-                        height: kToolbarHeight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Image.asset(
-                              AppIcon.prodType,
-                              color: context.theme.textTheme.bodyMedium!.color,
-                              width: 40,
+                          ).wrapPaddingBottom(20)
+                        : const SizedBox(),
+                    (showIndex.value == -1 || showIndex.value == 1)
+                        ? SizedBox(
+                            width: context.width,
+                            height: kToolbarHeight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  AppIcon.prodType,
+                                  color: context.theme.textTheme.bodyMedium!.color,
+                                  width: 40,
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Focus(
+                                    focusNode: prodTypeFocusNode,
+                                    onFocusChange: (value) {
+                                      if (value) {
+                                        showIndex.value = 1;
+                                      } else {
+                                        showIndex.value = -1;
+                                      }
+                                    },
+                                    child: DropdownMenu(
+                                      width: context.width - 100,
+                                      menuHeight: 200,
+                                      enableFilter: true,
+                                      enableSearch: true,
+                                      onSelected: (value) => FocusScope.of(context).unfocus(),
+                                      hintText: context.translete('urunTuru'),
+                                      dropdownMenuEntries: [
+                                        context.translete('tezgahArasi'),
+                                        context.translete('takimUrunler'),
+                                        context.translete('yerUrunler'),
+                                        context.translete('granitler'),
+                                        context.translete('disMekanSerileri'),
+                                        context.translete('parkeUrunleri'),
+                                        context.translete('havuzUrunleri'),
+                                      ].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e);
+                                      }).toList(),
+                                      // DropdownMenuEntry(
+                                      //   value: 0,
+                                      //   label: 'label',
+                                      //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
+                                      // ),
+                                    ),
+                                  ),
+                                ))
+                              ],
                             ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: DropdownMenu(
-                                width: context.width - 100,
-                                enableFilter: true,
-                                enableSearch: true,
-                                hintText: context.translete('urunTuru'),
-                                textStyle: context.theme.textTheme.bodyMedium!,
-                                menuStyle: MenuStyle(backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                dropdownMenuEntries: [
-                                  context.translete('tezgahArasi'),
-                                  context.translete('takimUrunler'),
-                                  context.translete('yerUrunler'),
-                                  context.translete('granitler'),
-                                  context.translete('disMekanSerileri'),
-                                  context.translete('parkeUrunleri'),
-                                  context.translete('havuzUrunleri'),
-                                ].map((e) {
-                                  return DropdownMenuEntry(
-                                    value: e,
-                                    label: e,
-                                    style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                  );
-                                }).toList(),
-                                // DropdownMenuEntry(
-                                //   value: 0,
-                                //   label: 'label',
-                                //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                // ),
-                              ),
-                            ))
-                          ],
-                        ),
-                      ).wrapPaddingBottom(20),
-                      SizedBox(
-                        width: context.width,
-                        height: kToolbarHeight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Image.asset(
-                              AppIcon.prodTexture,
-                              color: context.theme.textTheme.bodyMedium!.color,
-                              width: 40,
+                          ).wrapPaddingBottom(20)
+                        : const SizedBox(),
+                    (showIndex.value == -1 || showIndex.value == 2)
+                        ? SizedBox(
+                            width: context.width,
+                            height: kToolbarHeight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  AppIcon.prodTexture,
+                                  color: context.theme.textTheme.bodyMedium!.color,
+                                  width: 40,
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Focus(
+                                    focusNode: prodTextureFocusNode,
+                                    onFocusChange: (value) {
+                                      if (value) {
+                                        showIndex.value = 2;
+                                      } else {
+                                        showIndex.value = -1;
+                                      }
+                                    },
+                                    child: DropdownMenu(
+                                      width: context.width - 100,
+                                      menuHeight: 200,
+                                      enableFilter: true,
+                                      enableSearch: true,
+                                      onSelected: (value) => FocusScope.of(context).unfocus(),
+                                      hintText: context.translete('urunDokusu'),
+                                      dropdownMenuEntries: [
+                                        context.translete('kombin'),
+                                        context.translete('beton'),
+                                        context.translete('mermer'),
+                                        context.translete('tas'),
+                                        context.translete('ahsapMermer'),
+                                        context.translete('ahsap'),
+                                      ].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e);
+                                      }).toList(),
+                                      // DropdownMenuEntry(
+                                      //   value: 0,
+                                      //   label: 'label',
+                                      //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
+                                      // ),
+                                    ),
+                                  ),
+                                ))
+                              ],
                             ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: DropdownMenu(
-                                width: context.width - 100,
-                                enableFilter: true,
-                                enableSearch: true,
-                                hintText: context.translete('urunDokusu'),
-                                textStyle: context.theme.textTheme.bodyMedium!,
-                                menuStyle: MenuStyle(backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                dropdownMenuEntries: [
-                                  context.translete('kombin'),
-                                  context.translete('beton'),
-                                  context.translete('mermer'),
-                                  context.translete('tas'),
-                                  context.translete('ahsapMermer'),
-                                  context.translete('ahsap'),
-                                ].map((e) {
-                                  return DropdownMenuEntry(
-                                    value: e,
-                                    label: e,
-                                    style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                  );
-                                }).toList(),
-                                // DropdownMenuEntry(
-                                //   value: 0,
-                                //   label: 'label',
-                                //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                // ),
-                              ),
-                            ))
-                          ],
-                        ),
-                      ).wrapPaddingBottom(20),
-                      SizedBox(
-                        width: context.width,
-                        height: kToolbarHeight,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Image.asset(
-                              AppIcon.prodColor,
-                              color: context.theme.textTheme.bodyMedium!.color,
-                              width: 40,
+                          ).wrapPaddingBottom(20)
+                        : const SizedBox(),
+                    (showIndex.value == -1 || showIndex.value == 3)
+                        ? SizedBox(
+                            width: context.width,
+                            height: kToolbarHeight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Image.asset(
+                                  AppIcon.prodColor,
+                                  color: context.theme.textTheme.bodyMedium!.color,
+                                  width: 40,
+                                ),
+                                Expanded(
+                                    child: Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Focus(
+                                    focusNode: prodColorFocusNode,
+                                    onFocusChange: (value) {
+                                      if (value) {
+                                        showIndex.value = 3;
+                                      } else {
+                                        showIndex.value = -1;
+                                      }
+                                    },
+                                    child: DropdownMenu(
+                                      width: context.width - 100,
+                                      menuHeight: 200,
+                                      enableFilter: true,
+                                      enableSearch: true,
+                                      onSelected: (value) => FocusScope.of(context).unfocus(),
+                                      hintText: context.translete('urunRengi'),
+                                      dropdownMenuEntries: [
+                                        context.translete('antrasit'),
+                                        context.translete('bej'),
+                                        context.translete('siyah'),
+                                        context.translete('mavi'),
+                                        context.translete('bone'),
+                                        context.translete('kahve'),
+                                        context.translete('dekor'),
+                                        context.translete('ekru'),
+                                        context.translete('gri'),
+                                        context.translete('kirmizi'),
+                                        context.translete('beyaz'),
+                                      ].map((e) {
+                                        return DropdownMenuEntry(value: e, label: e);
+                                      }).toList(),
+                                      // DropdownMenuEntry(
+                                      //   value: 0,
+                                      //   label: 'label',
+                                      //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
+                                      // ),
+                                    ),
+                                  ),
+                                ))
+                              ],
                             ),
-                            Expanded(
-                                child: Padding(
-                              padding: const EdgeInsets.only(left: 20),
-                              child: DropdownMenu(
-                                width: context.width - 100,
-                                enableFilter: true,
-                                enableSearch: true,
-                                hintText: context.translete('kullanimAlani'),
-                                textStyle: context.theme.textTheme.bodyMedium!,
-                                menuStyle: MenuStyle(backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                dropdownMenuEntries: [
-                                  context.translete('antrasit'),
-                                  context.translete('bej'),
-                                  context.translete('siyah'),
-                                  context.translete('mavi'),
-                                  context.translete('bone'),
-                                  context.translete('kahve'),
-                                  context.translete('dekor'),
-                                  context.translete('ekru'),
-                                  context.translete('gri'),
-                                  context.translete('kirmizi'),
-                                  context.translete('beyaz'),
-                                ].map((e) {
-                                  return DropdownMenuEntry(
-                                    value: e,
-                                    label: e,
-                                    style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                  );
-                                }).toList(),
-                                // DropdownMenuEntry(
-                                //   value: 0,
-                                //   label: 'label',
-                                //   style: ButtonStyle(textStyle: MaterialStateProperty.all(context.theme.textTheme.bodyMedium!), backgroundColor: MaterialStateProperty.all(context.theme.scaffoldBackgroundColor)),
-                                // ),
-                              ),
-                            ))
-                          ],
-                        ),
-                      ).wrapPaddingBottom(20),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 60.0),
-                        child: ElevatedButton(onPressed: () {}, child: Text(context.translete('find')), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor), shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))))),
-                      )
-                    ],
-                  ),
+                          ).wrapPaddingBottom(20)
+                        : const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 60.0),
+                      child: ElevatedButton(onPressed: () {}, child: Text(context.translete('find'))),
+                    )
+                  ],
                 ),
               ),
             ],

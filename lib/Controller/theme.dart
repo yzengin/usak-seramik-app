@@ -53,14 +53,14 @@ ThemeData appThemeLight() => ThemeData(
       // ----------------------------------- DECORATION
       inputDecorationTheme: InputDecorationTheme(
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(4),
+          borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(
             color: Colors.black.withOpacity(.25),
             width: 1,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(
             color: Colors.black.withOpacity(.25),
             width: 3,
@@ -142,6 +142,12 @@ ThemeData appThemeLight() => ThemeData(
       ),
       // ----------------------------------- BUTTON
       iconButtonTheme: const IconButtonThemeData(),
+      menuButtonTheme: MenuButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor),
+          foregroundColor: MaterialStateProperty.all(Colors.white)
+        ),
+      ),
       dropdownMenuTheme: DropdownMenuThemeData(
         textStyle: const TextStyle(
           color: Colors.black,
@@ -149,18 +155,18 @@ ThemeData appThemeLight() => ThemeData(
           fontSize: 14,
         ),
         inputDecorationTheme: const InputDecorationTheme(
-          iconColor: Colors.white,
-          fillColor: Colors.white,
-          focusColor: Colors.white,
-          hoverColor: Colors.white,
-          prefixIconColor: Colors.white,
-          suffixIconColor: Colors.white,
+          iconColor: Colors.black,
+          fillColor: Colors.black,
+          focusColor: Colors.black,
+          hoverColor: Colors.black,
+          prefixIconColor: Colors.black,
+          suffixIconColor: Colors.black,
         ),
         menuStyle: MenuStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.greyS1),
+          backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor),
           elevation: MaterialStateProperty.all(0),
-          padding: MaterialStateProperty.all(const EdgeInsets.only(top: 20)),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+          padding: MaterialStateProperty.all(EdgeInsets.zero),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),
           shadowColor: MaterialStateProperty.all(Colors.transparent),
           side: MaterialStateProperty.all(BorderSide.none),
         ),
@@ -309,27 +315,29 @@ ThemeData appThemeDark() => ThemeData(
       ),
       // ----------------------------------- BUTTON
       iconButtonTheme: const IconButtonThemeData(),
-      dropdownMenuTheme: DropdownMenuThemeData(
-        textStyle: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
+      menuButtonTheme: MenuButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(AppColors.blackS1),
         ),
+      ),
+      dropdownMenuTheme: DropdownMenuThemeData(
+        textStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
         inputDecorationTheme: InputDecorationTheme(
-            iconColor: AppColors.greyS1,
-            hintStyle: TextStyle(
-              color: AppColors.greyS4,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-            )),
+          iconColor: AppColors.greyS1,
+          hintStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
         menuStyle: MenuStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.blackS3),
+          backgroundColor: MaterialStateProperty.all(AppColors.blackS1),
           elevation: MaterialStateProperty.all(0),
-          padding: MaterialStateProperty.all(const EdgeInsets.only(top: 20)),
+          padding: MaterialStateProperty.all(EdgeInsets.zero),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
           shadowColor: MaterialStateProperty.all(Colors.transparent),
           side: MaterialStateProperty.all(BorderSide.none),
-          visualDensity: VisualDensity.comfortable
+          visualDensity: VisualDensity.comfortable,
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
