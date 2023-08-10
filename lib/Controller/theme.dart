@@ -98,9 +98,9 @@ ThemeData appThemeLight() => ThemeData(
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.greyS1,
         elevation: 0,
-        selectedIconTheme: const IconThemeData(color: Colors.black),
+        selectedIconTheme: IconThemeData(color: AppColors.secondaryColor),
         unselectedIconTheme: IconThemeData(color: AppColors.greyS3),
-        selectedItemColor: Colors.black,
+        selectedItemColor: AppColors.secondaryColor,
         selectedLabelStyle: const TextStyle(fontSize: 14),
         unselectedItemColor: AppColors.greyS3,
         unselectedLabelStyle: const TextStyle(fontSize: 14),
