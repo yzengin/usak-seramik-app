@@ -25,14 +25,14 @@ extension BuildContextExtensions on BuildContext {
 }
 
 extension WidgetExtension on Widget {
-  Widget wrapPaddingAll(double distance) => Padding(padding: EdgeInsets.all(distance), child: Center(child: this));
-  Widget wrapPaddingHorizontal(double distance) => Padding(padding: EdgeInsets.symmetric(horizontal: distance), child: Center(child: this));
-  Widget wrapPaddingVertical(double distance) => Padding(padding: EdgeInsets.symmetric(vertical: distance), child: Center(child: this));
+  Widget wrapPaddingAll(double distance) => Padding(padding: EdgeInsets.all(distance), child: this);
+  Widget wrapPaddingHorizontal(double distance) => Padding(padding: EdgeInsets.symmetric(horizontal: distance), child: this);
+  Widget wrapPaddingVertical(double distance) => Padding(padding: EdgeInsets.symmetric(vertical: distance), child: this);
   Widget wrapPaddingTop(double distance) => Padding(padding: EdgeInsets.only(top: distance), child: this);
-  Widget wrapPaddingBottom(double distance) => Padding(padding: EdgeInsets.only(bottom: distance), child: Center(child: this));
-  Widget wrapPaddingLeft(double distance) => Padding(padding: EdgeInsets.only(left: distance), child: Center(child: this));
-  Widget wrapPaddingRight(double distance) => Padding(padding: EdgeInsets.only(right: distance), child: Center(child: this));
-  Widget wrapPaddingParametric(EdgeInsetsGeometry edge) => Padding(padding: edge, child: Center(child: this));
+  Widget wrapPaddingBottom(double distance) => Padding(padding: EdgeInsets.only(bottom: distance), child: this);
+  Widget wrapPaddingLeft(double distance) => Padding(padding: EdgeInsets.only(left: distance), child: this);
+  Widget wrapPaddingRight(double distance) => Padding(padding: EdgeInsets.only(right: distance), child: this);
+  Widget wrapPaddingParametric(EdgeInsetsGeometry edge) => Padding(padding: edge, child: this);
   Widget wrapDecoration(BoxDecoration decoration) => DecoratedBox(decoration: decoration, child: this);
   Widget wrapTextStyle(TextStyle style) => DefaultTextStyle(style: style, child: this);
   Widget wrapFixedSize(Size size) => SizedBox(height: size.height, width: size.width, child: Center(child: this));
@@ -45,7 +45,15 @@ extension StringExtensions on String {
   String addQuotes() => "'$this'";
   String addSymbolBefore({String symbol = ''}) => "$symbol $this";
   String addSymbolAfter({String symbol = ''}) => "$this $symbol";
-  Widget copyOnTap({String? description, bool showCopyIcon = true, TextStyle? style, Color? color, Duration duration = const Duration(milliseconds: 500)}) => CopyOnTap(this, style: style, barrierColor: color, delay: duration, description: description, showCopyIcon: showCopyIcon);
+  String head() {
+    if (this.isNotEmpty) {
+      final parts = this.split(' ').where((part) => part.isNotEmpty);
+      final initials = parts.map((part) => part[0].toUpperCase()).join('');
+      return initials;
+    } else {
+      return "?";
+    }
+  }
 }
 
 extension DoubleExtensions on double {

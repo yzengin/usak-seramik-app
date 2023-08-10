@@ -2,6 +2,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
@@ -37,9 +38,10 @@ class _HomePageState extends State<HomePage> {
   Widget body(BuildContext context) {
     return PageView.builder(
       controller: pageViewController,
-      physics: NeverScrollableScrollPhysics(),
+      physics: ClampingScrollPhysics(),
       scrollDirection: Axis.vertical,
       itemCount: 2,
+      onPageChanged: (value) {},
       itemBuilder: (context, index) => pageItems[index],
     );
     // return Showreel(autoPlayDuration: autoPlayDuration, autoPlayAnimationDuration: autoPlayAnimationDuration);
@@ -121,9 +123,9 @@ class Showreel extends StatelessWidget {
             autoPlayAnimationDuration: autoPlayAnimationDuration,
             autoPlayCurve: AppCurves.smoothStep(),
           ),
-          itemCount: productList.length,
+          itemCount: showreelList.length,
           itemBuilder: (context, index, realIndex) {
-            final data = productList[index];
+            final data = showreelList[index];
             return Container(
               width: context.width,
               height: context.height,
@@ -149,13 +151,20 @@ class Showreel extends StatelessWidget {
                                 isRepeatingAnimation: false,
                                 totalRepeatCount: 1,
                                 animatedTexts: [
-                                  RotateAnimatedText(
+                                  // RotateAnimatedText(
+                                  //   data.name.toUpperCase(),
+                                  //   alignment: Alignment.centerLeft,
+                                  //   rotateOut: false,
+                                  //   textAlign: TextAlign.start,
+                                  //   transitionHeight: 100,
+                                  //   duration: autoPlayAnimationDuration,
+                                  //   textStyle: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 45, letterSpacing: 3, fontWeight: FontWeight.w300),
+                                  // ),
+                                  TyperAnimatedText(
                                     data.name.toUpperCase(),
-                                    alignment: Alignment.centerLeft,
-                                    rotateOut: false,
                                     textAlign: TextAlign.start,
-                                    transitionHeight: 200,
-                                    duration: autoPlayAnimationDuration,
+                                    curve: AppCurves.flicker(),
+                                    speed: Duration(milliseconds: autoPlayAnimationDuration.inMilliseconds ~/ (data.name.length)),
                                     textStyle: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 45, letterSpacing: 3, fontWeight: FontWeight.w300),
                                   ),
                                 ],
@@ -182,9 +191,9 @@ class Showreel extends StatelessWidget {
                           ),
                         ),
                         Align(
-                          alignment: Alignment.bottomRight,
+                          alignment: Alignment.bottomCenter,
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20.0),
+                            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 40.0 + kToolbarHeight),
                             child: SizedBox(
                               height: kToolbarHeight,
                               child: ElevatedButton(
@@ -209,33 +218,93 @@ class Showreel extends StatelessWidget {
             padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20.0),
             child: SizedBox(
               height: kToolbarHeight,
-              child: IconButton(
-                onPressed: () => pageViewController.animateToPage(1, duration: autoPlayAnimationDuration, curve: AppCurves.smoothStep()),
-                icon: Icon(
-                  FontAwesomeIcons.chevronDown,
-                ),
+              child: Row(
+                children: [
+                  Animate(
+                    effects: [
+                      MoveEffect(
+                        duration: autoPlayAnimationDuration,
+                        delay: 100.milliseconds,
+                      )
+                    ],
+                    onComplete: (controller) => controller.repeat(reverse: true),
+                    child: IconButton(
+                      onPressed: () => pageViewController.nextPage(duration: autoPlayAnimationDuration, curve: AppCurves.smoothStep()),
+                      icon: Icon(
+                        FontAwesomeIcons.chevronDown,
+                      ),
+                    ),
+                  ),
+                  Expanded(child: GestureDetector(onTap: () => pageViewController.nextPage(duration: autoPlayAnimationDuration, curve: AppCurves.overshoot()), child: Text(context.translete('findProductButton')))),
+                ],
               ),
             ),
           ),
         ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.only(top: context.paddingTop * 1.1),
+            child: Image.asset(
+              AppImage.logotype,
+              color: context.theme.textTheme.bodyMedium!.color,
+              width: context.width * 0.4,
+            ),
+          ),
+        )
       ],
     );
   }
 }
 
-class FindProductView extends StatelessWidget {
+class FindProductView extends StatefulWidget {
   FindProductView({super.key});
+
+  @override
+  State<FindProductView> createState() => _FindProductViewState();
+}
+
+class _FindProductViewState extends State<FindProductView> {
   final ScrollController scrollController = ScrollController();
-  final FocusNode usageAreaFocusNode = FocusNode();
-  final FocusNode prodTypeFocusNode = FocusNode();
-  final FocusNode prodTextureFocusNode = FocusNode();
-  final FocusNode prodColorFocusNode = FocusNode();
-  final FocusNode rawFocusNode = FocusNode();
-  final TextEditingController usageAreaController = TextEditingController();
-  final TextEditingController prodTypeController = TextEditingController();
-  final TextEditingController prodTextureController = TextEditingController();
-  final TextEditingController prodColorController = TextEditingController();
   final ValueNotifier<int> showIndex = ValueNotifier<int>(-1);
+
+  FocusNode usageAreaFocusNode = FocusNode();
+  FocusNode prodTypeFocusNode = FocusNode();
+  FocusNode prodTextureFocusNode = FocusNode();
+  FocusNode prodColorFocusNode = FocusNode();
+  FocusNode rawFocusNode = FocusNode();
+  TextEditingController usageAreaController = TextEditingController();
+  TextEditingController prodTypeController = TextEditingController();
+  TextEditingController prodTextureController = TextEditingController();
+  TextEditingController prodColorController = TextEditingController();
+
+  @override
+  void initState() {
+    usageAreaFocusNode = FocusNode();
+    prodTypeFocusNode = FocusNode();
+    prodTextureFocusNode = FocusNode();
+    prodColorFocusNode = FocusNode();
+    rawFocusNode = FocusNode();
+    usageAreaController = TextEditingController();
+    prodTypeController = TextEditingController();
+    prodTextureController = TextEditingController();
+    prodColorController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // usageAreaFocusNode.dispose();
+    // prodTypeFocusNode.dispose();
+    // prodTextureFocusNode.dispose();
+    // prodColorFocusNode.dispose();
+    // rawFocusNode.dispose();
+    // usageAreaController.dispose();
+    // prodTypeController.dispose();
+    // prodTextureController.dispose();
+    // prodColorController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,10 +319,12 @@ class FindProductView extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 40,
-                    child: IconButton(
-                      onPressed: () => pageViewController.animateToPage(0, duration: autoPlayAnimationDuration, curve: AppCurves.smoothStep()),
-                      icon: Icon(
-                        FontAwesomeIcons.chevronUp,
+                    child: Animate(
+                      effects: [MoveEffect(duration: autoPlayAnimationDuration, delay: 100.milliseconds)],
+                      onComplete: (controller) => controller.repeat(reverse: true),
+                      child: IconButton(
+                        onPressed: () => pageViewController.previousPage(duration: autoPlayAnimationDuration, curve: AppCurves.smoothStep()),
+                        icon: Icon(FontAwesomeIcons.chevronUp),
                       ),
                     ),
                   ),

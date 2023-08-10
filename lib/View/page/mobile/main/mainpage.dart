@@ -16,7 +16,7 @@ class MainPageViewState extends State<MainPageView> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(initialPage: PageViewIndexer.instance.currentIndex, keepPage: true);
+    _pageController = PageController(initialPage: PageViewIndexer.instance.currentIndex, keepPage: false);
   }
 
   @override
@@ -27,27 +27,28 @@ class MainPageViewState extends State<MainPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        bottomNavigationBar: SizedBox(
-          height: kBottomNavigationBarHeight * 2,
-          child: BottomNavigationBar(
-            items: mainNavBarItemList(context),
-            currentIndex: PageViewIndexer.instance.currentIndex,
-            onTap: (value) {
-              _pageController.jumpToPage(value);
-            },
-          ),
-        ),
-        body: PageView.builder(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) => mainPageList[index],
-          itemCount: mainPageList.length,
-          onPageChanged: (value) {
-            setState(() {
-              PageViewIndexer.instance.next(value);
-            });
+      key: _scaffoldKey,
+      bottomNavigationBar: SizedBox(
+        height: kBottomNavigationBarHeight * 2,
+        child: BottomNavigationBar(
+          items: mainNavBarItemList(context),
+          currentIndex: PageViewIndexer.instance.currentIndex,
+          onTap: (value) {
+            _pageController.jumpToPage(value);
           },
-        ));
+        ),
+      ),
+      body: PageView.builder(
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) => mainPageList[index],
+        itemCount: mainPageList.length,
+        onPageChanged: (value) {
+          setState(() {
+            PageViewIndexer.instance.next(value);
+          });
+        },
+      ),
+    );
   }
 }

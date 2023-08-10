@@ -19,7 +19,7 @@ class ThemeChangerButton extends StatelessWidget {
         onTap: () async => Provider.of<ThemeController>(context, listen: false).themeChanger(value: !isDark),
         child: Row(
           children: [
-            Icon(FontAwesomeIcons.solidMoon, color: context.theme.colorScheme.background, size: 30),
+            Icon(isDark ? Icons.sunny : FontAwesomeIcons.solidMoon, color: isDark ? Colors.amber.shade700 : context.theme.colorScheme.surface, size: context.theme.iconTheme.size),
             // Text("${context.translete('darkTheme')} ${isDark ? 'Açık' : 'Kapalı'}", style: context.theme.textTheme.bodyMedium!.copyWith(color: isDark ? AppColors.greyS1 : AppColors.greyS3)).wrapPaddingLeft(10)
           ],
         ),

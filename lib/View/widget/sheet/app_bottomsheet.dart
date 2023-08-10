@@ -11,12 +11,13 @@ class AppBottomSheet extends StatefulWidget {
     this.initialSize = 0.1,
     this.child,
     this.title,
+    this.icon,
   });
   double maxSize;
   double initialSize;
   Widget? child;
   String? title;
-  
+  IconData? icon;
 
   @override
   State<AppBottomSheet> createState() => _AppBottomSheetState();
@@ -90,7 +91,7 @@ class _AppBottomSheetState extends State<AppBottomSheet> with SingleTickerProvid
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Opacity(opacity: 0, child: Icon(FontAwesomeIcons.chevronUp)),
+                                    widget.icon != null ? Icon(widget.icon) : Opacity(opacity: 0, child: Icon(FontAwesomeIcons.chevronUp)),
                                     Text(widget.title ?? ""),
                                     ValueListenableBuilder(
                                         valueListenable: currentSheetPosition,

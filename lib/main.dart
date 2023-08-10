@@ -45,6 +45,7 @@ class AppStarter extends StatelessWidget {
           children: [
             MaterialApp(
               key: scaffoldKey,
+              showPerformanceOverlay: false,
               routes: appRoutes(),
               initialRoute: destination,
               navigatorKey: navigatorKey,

@@ -35,16 +35,29 @@ ThemeData appThemeLight() => ThemeData(
         onBackground: AppColors.greyS1,
         shadow: AppColors.greyS1,
         brightness: Brightness.dark,
+        onTertiary: Colors.black,
+        surfaceVariant: AppColors.blueS4,
+        outlineVariant: AppColors.blueS4,
       ),
       brightness: Brightness.dark,
       primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: Colors.white,
-      iconTheme: IconThemeData(color: Colors.black),
+      iconTheme: IconThemeData(color: Colors.black, size: 24),
       dividerColor: AppColors.greyS6,
       // ----------------------------------- TEXT
-      fontFamily: AppFont.avenir,
+      fontFamily: AppFont.roboto,
       textTheme: ThemeData.light().textTheme.copyWith(
             bodyMedium: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+              fontSize: 17,
+            ),
+            bodySmall: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w200,
+              fontSize: 17,
+            ),
+            bodyLarge: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 17,
@@ -52,6 +65,16 @@ ThemeData appThemeLight() => ThemeData(
           ),
       // ----------------------------------- DECORATION
       inputDecorationTheme: InputDecorationTheme(
+        hintStyle: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w200,
+          fontSize: 17,
+        ),
+        labelStyle: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w200,
+          fontSize: 17,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(0),
           borderSide: BorderSide(
@@ -143,10 +166,7 @@ ThemeData appThemeLight() => ThemeData(
       // ----------------------------------- BUTTON
       iconButtonTheme: const IconButtonThemeData(),
       menuButtonTheme: MenuButtonThemeData(
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor),
-          foregroundColor: MaterialStateProperty.all(Colors.white)
-        ),
+        style: ButtonStyle(backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor), foregroundColor: MaterialStateProperty.all(Colors.white)),
       ),
       dropdownMenuTheme: DropdownMenuThemeData(
         textStyle: const TextStyle(
@@ -172,7 +192,7 @@ ThemeData appThemeLight() => ThemeData(
         ),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.greyS3,
+        backgroundColor: AppColors.greyS1,
         focusColor: AppColors.purpleS1,
         hoverColor: AppColors.redS1,
         elevation: 0,
@@ -209,18 +229,31 @@ ThemeData appThemeDark() => ThemeData(
         surfaceTint: AppColors.blackS1,
         background: AppColors.greyS1,
         onBackground: AppColors.blackS4,
-        shadow: Colors.black,
+        shadow: Colors.white,
         brightness: Brightness.light,
+        onTertiary: Colors.white,
+        surfaceVariant: AppColors.purpleS3,
+        outlineVariant: AppColors.greenS2,
       ),
       brightness: Brightness.light,
       primaryColor: AppColors.primaryColor,
       scaffoldBackgroundColor: AppColors.blackS4,
-      iconTheme: IconThemeData(color: Colors.white),
+      iconTheme: IconThemeData(color: Colors.white, size: 24),
       dividerColor: Colors.white,
       // ----------------------------------- TEXT
-      fontFamily: AppFont.avenir,
+      fontFamily: AppFont.roboto,
       textTheme: ThemeData.dark().textTheme.copyWith(
             bodyMedium: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 17,
+            ),
+            bodySmall: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w200,
+              fontSize: 17,
+            ),
+            bodyLarge: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               fontSize: 17,
@@ -228,6 +261,16 @@ ThemeData appThemeDark() => ThemeData(
           ),
       // ----------------------------------- DECORATION
       inputDecorationTheme: InputDecorationTheme(
+        hintStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w200,
+          fontSize: 17,
+        ),
+        labelStyle: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w200,
+          fontSize: 17,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(
@@ -306,7 +349,7 @@ ThemeData appThemeDark() => ThemeData(
       ),
       bottomSheetTheme: BottomSheetThemeData(
         elevation: 0,
-        backgroundColor: AppColors.blackS3,
+        backgroundColor: AppColors.blackS5,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(kToolbarHeight * 0.5),
@@ -345,7 +388,7 @@ ThemeData appThemeDark() => ThemeData(
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))),
+          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(kToolbarHeight * 0.2))),
           fixedSize: MaterialStateProperty.all(const Size(1000, kToolbarHeight)),
           splashFactory: InkSparkle.constantTurbulenceSeedSplashFactory,
           overlayColor: MaterialStateProperty.all(AppColors.secondaryColor),
@@ -354,7 +397,7 @@ ThemeData appThemeDark() => ThemeData(
               if (states.contains(MaterialState.pressed)) {
                 return AppColors.secondaryColor;
               }
-              return AppColors.blackS5;
+              return AppColors.blackS3;
             },
           ),
           foregroundColor: MaterialStateProperty.resolveWith(
