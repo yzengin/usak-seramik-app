@@ -55,12 +55,7 @@ class _ContactPageState extends State<ContactPage> {
     return SizedBox.expand(
       child: SingleChildScrollView(
         physics: AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          bottom: 120
-        ),
+        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 120),
         child: Column(
           children: [
             ProfileCard(),
