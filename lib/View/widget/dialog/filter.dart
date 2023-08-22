@@ -17,17 +17,17 @@ Future appFilterDialog(
   double radius = 20;
   barrierColor = barrierColor ?? AppColors.primaryColor;
 
-  model ??= testFilter;
+  model ??= testFilter as FilterData?;
   return showDialog(
     context: context,
     barrierColor: Colors.transparent,
     barrierDismissible: onWillPop,
     routeSettings: RouteSettings(name: routeName),
     builder: (context) {
-      for (var element in model!.searchFilters) {
+      for (var element in model!.searchFilters!) {
         element.controller.clear();
       }
-      for (var element in model.chooseFilters) {
+      for (var element in model.chooseFilters!) {
         element.context.data = -1;
       }
       return StatefulBuilder(builder: (context, setState) {
@@ -58,9 +58,9 @@ Future appFilterDialog(
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: model!.searchFilters.length,
+                                itemCount: model!.searchFilters!.length,
                                 itemBuilder: (context, index) {
-                                  final data = model!.searchFilters[index];
+                                  final data = model!.searchFilters![index];
                                   return Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -73,7 +73,7 @@ Future appFilterDialog(
                                             child: TextField(
                                               controller: data.controller,
                                               focusNode: data.node,
-                                              textInputAction: index == model.searchFilters.length - 1 ? TextInputAction.done : TextInputAction.next,
+                                              textInputAction: index == model.searchFilters!.length - 1 ? TextInputAction.done : TextInputAction.next,
                                               decoration: InputDecoration(border: InputBorder.none, label: Text("${data.filter.context.label}"), floatingLabelAlignment: FloatingLabelAlignment.center),
                                             ),
                                           ),
@@ -87,7 +87,7 @@ Future appFilterDialog(
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: model.chooseFilters.length,
+                                itemCount: model.chooseFilters!.length,
                                 itemBuilder: (context, index) {
                                   return Column(
                                     children: [
@@ -104,7 +104,7 @@ Future appFilterDialog(
                                                   children: [
                                                     Icon(FontAwesomeIcons.circle, size: 15, color: Theme.of(context).textTheme.bodyMedium!.color),
                                                     Padding(padding: const EdgeInsets.only(left: 3.0), child: Icon(FontAwesomeIcons.solidCircle, size: 15, color: Theme.of(context).textTheme.bodyMedium!.color)),
-                                                    Padding(padding: const EdgeInsets.only(left: 8.0), child: Text("${model!.chooseFilters[index].context.label}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir'))),
+                                                    Padding(padding: const EdgeInsets.only(left: 8.0), child: Text("${model!.chooseFilters![index].context.label}", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir'))),
                                                   ],
                                                 ),
                                               ),
@@ -113,11 +113,11 @@ Future appFilterDialog(
                                                   shrinkWrap: true,
                                                   physics: const NeverScrollableScrollPhysics(),
                                                   padding: EdgeInsets.zero,
-                                                  itemCount: model.chooseFilters[index].filters!.length,
+                                                  itemCount: model.chooseFilters![index].filters!.length,
                                                   itemBuilder: (BuildContext context, int indexSub) {
                                                     return GestureDetector(
                                                       onTap: () {
-                                                        model!.chooseFilters[index].context.data = model.chooseFilters[index].filters![indexSub].context.data;
+                                                        model!.chooseFilters![index].context.data = model.chooseFilters![index].filters![indexSub].context.data;
                                                         setState(() {});
                                                       },
                                                       child: Row(
@@ -126,12 +126,12 @@ Future appFilterDialog(
                                                             duration: 300.millisecond(),
                                                             width: 15,
                                                             height: 15,
-                                                            decoration: BoxDecoration(border: Border.all(width: model!.chooseFilters[index].context.data == model.chooseFilters[index].filters![indexSub].context.data ? 7.5 : 2), shape: BoxShape.circle),
+                                                            decoration: BoxDecoration(border: Border.all(width: model!.chooseFilters![index].context.data == model.chooseFilters![index].filters![indexSub].context.data ? 7.5 : 2), shape: BoxShape.circle),
                                                           ),
                                                           Expanded(
                                                               child: Padding(
                                                             padding: const EdgeInsets.only(left: 10.0),
-                                                            child: Text("${model.chooseFilters[index].filters![indexSub].context.label}", style: TextStyle(color: model.chooseFilters[index].context.data == model.chooseFilters[index].filters![indexSub].context.data ? Theme.of(context).textTheme.bodyMedium!.color : Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5), fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir')),
+                                                            child: Text("${model.chooseFilters![index].filters![indexSub].context.label}", style: TextStyle(color: model.chooseFilters![index].context.data == model.chooseFilters![index].filters![indexSub].context.data ? Theme.of(context).textTheme.bodyMedium!.color : Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5), fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir')),
                                                           )),
                                                         ],
                                                       ),
@@ -151,7 +151,7 @@ Future appFilterDialog(
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: model.rangeFilters.length,
+                                itemCount: model.rangeFilters!.length,
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding: const EdgeInsets.only(bottom: 10.0),
@@ -164,7 +164,7 @@ Future appFilterDialog(
                                               Icon(FontAwesomeIcons.sliders, size: 15, color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.5)),
                                               Padding(
                                                 padding: const EdgeInsets.only(left: 8.0),
-                                                child: Text("${model!.rangeFilters[index].context.label}: ${model.rangeFilters[index].context.data.value.start.toStringAsFixed(0)} ile ${model.rangeFilters[index].context.data.value.end.toStringAsFixed(0)} aralığında", style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir')),
+                                                child: Text("${model!.rangeFilters![index].context.label}: ${model.rangeFilters![index].context.data.value.start.toStringAsFixed(0)} ile ${model.rangeFilters![index].context.data.value.end.toStringAsFixed(0)} aralığında", style: TextStyle(color: Theme.of(context).textTheme.bodyMedium!.color, fontSize: 16, fontWeight: FontWeight.bold, fontFamily: 'avenir')),
                                               ),
                                             ],
                                           ),
@@ -172,24 +172,24 @@ Future appFilterDialog(
                                         Padding(
                                           padding: const EdgeInsets.only(top: 20.0),
                                           child: RangeSlider(
-                                            values: model.rangeFilters[index].context.data.value,
+                                            values: model.rangeFilters![index].context.data.value,
                                             onChangeEnd: (value) {
-                                              model!.rangeFilters[index].context.data.value = new RangeValues(value.start, value.end);
+                                              model!.rangeFilters![index].context.data.value = new RangeValues(value.start, value.end);
                                               setState(() {});
                                             },
                                             onChangeStart: (value) {
-                                              model!.rangeFilters[index].context.data.value = new RangeValues(value.start, value.end);
+                                              model!.rangeFilters![index].context.data.value = new RangeValues(value.start, value.end);
                                               setState(() {});
                                             },
                                             onChanged: (RangeValues value) {
-                                              model!.rangeFilters[index].context.data.value = new RangeValues(value.start, value.end);
+                                              model!.rangeFilters![index].context.data.value = new RangeValues(value.start, value.end);
                                               setState(() {});
                                             },
                                             activeColor: Theme.of(context).textTheme.bodyMedium!.color,
                                             inactiveColor: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.15),
-                                            min: model.rangeFilters[index].context.data.minMax.start,
-                                            max: model.rangeFilters[index].context.data.minMax.end,
-                                            divisions: model.rangeFilters[index].context.data.division,
+                                            min: model.rangeFilters![index].context.data.minMax.start,
+                                            max: model.rangeFilters![index].context.data.minMax.end,
+                                            divisions: model.rangeFilters![index].context.data.division,
                                             labels: const RangeLabels('En Az', 'En Çok'),
                                           ),
                                         ),

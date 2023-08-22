@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '/view/style/glow.dart';
-import '/view/widget/utility/copy_on_tap.dart';
 import 'package:intl/intl.dart';
 
 import 'localization.dart';
@@ -22,6 +21,9 @@ extension BuildContextExtensions on BuildContext {
   List<dynamic>? get routeArguments => ModalRoute.of(this)!.settings.arguments as List<dynamic>?;
   String translete(String? keyw) => LocalizationController.of(this)!.translate(keyw)!;
   ThemeData get theme => Theme.of(this);
+  TextStyle get textStyle => Theme.of(this).textTheme.bodyMedium!;
+  TextTheme get textTheme => Theme.of(this).textTheme;
+  ColorScheme get colors => Theme.of(this).colorScheme;
 }
 
 extension WidgetExtension on Widget {
@@ -146,5 +148,18 @@ extension DateTimeExtensions on DateTime {
   bool get isToday {
     DateTime now = DateTime.now();
     return (day == now.day && month == now.month && year == now.year);
+  }
+}
+
+extension ColorExtensions on Color {
+  Color mix({Color mixing = Colors.white, double rate = 0.5}) => Color.lerp(this, mixing, rate)!;
+  bool isDarkContrast() => ThemeData.estimateBrightnessForColor(this) == Brightness.dark;
+  bool isLightContrast() => ThemeData.estimateBrightnessForColor(this) == Brightness.light;
+  double get luminance => ((0.299 * red + 0.587 * green + 0.114 * blue) / 255).toDoubleAsFixed();
+  bool contrastCheck(Color targetColor, {double threshold = 0.5}) => (this.luminance - targetColor.luminance).abs() >= threshold;
+  Color downLuminance(double value) {
+    final clampedLuminance = luminance - value;
+    final newLuminance = clampedLuminance.clamp(0.0, 1.0);
+    return HSLColor.fromColor(this).withLightness(newLuminance).toColor();
   }
 }

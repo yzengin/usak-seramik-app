@@ -23,8 +23,18 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   @override
   void initState() {
     themeInitialize();
-
-    timer = AppTimer(countdowntimer: true, countdowntime: 2, countdownCallback: () => Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false));
+    timer = AppTimer(
+        countdowntimer: true,
+        countdowntime: 2,
+        countdownCallback: () async {
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          bool? showFirst = preferences.getBool(AppPreferences.onboarding);
+          if (showFirst == null || showFirst == true) {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+          }
+        });
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       timer.start();

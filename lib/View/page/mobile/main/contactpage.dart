@@ -5,14 +5,12 @@ import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/formatter.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
-import 'package:usak_seramik_app/Model/fake/address.dart';
-import 'package:usak_seramik_app/View/style/colors.dart';
-import 'package:usak_seramik_app/View/widget/sheet/app_bottomsheet.dart';
-import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
-import 'package:usak_seramik_app/View/widget/utility/language_changer.dart';
-
-import '../../../../Controller/controller.dart';
+import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
+import '../../../../Controller/launcher.dart';
+import '../../../../Model/fake/seller.dart';
 import '../../../widget/drawer/appdrawer.dart';
+import '../../../widget/sheet/contactForm_bottomsheet.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -38,11 +36,10 @@ class _ContactPageState extends State<ContactPage> {
       ),
       body: body(context),
       drawer: AppDrawer(),
-      bottomSheet: AppBottomSheet(
+      bottomSheet: ContactFormBottomSheet(
         title: context.translete('contactForm'),
-        icon: FontAwesomeIcons.envelope,
+        icon: FontAwesomeIcons.solidEnvelope,
         maxSize: 1,
-        child: ContactFormSheet(),
       ),
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {},
@@ -77,97 +74,80 @@ class _ContactPageState extends State<ContactPage> {
       itemCount: addressList.length,
       itemBuilder: (context, index) {
         final data = addressList[index];
-        return Card(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(context.translete(data.title).toUpperCase()).wrapPaddingHorizontal(10),
-                Divider(color: context.theme.dividerColor.withOpacity(.25)),
-                GestureDetector(
-                  onTap: () async => launchMapsUrl(data.latitute, data.longtitute),
-                  child: Row(children: [
-                    Icon(FontAwesomeIcons.locationDot, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                    Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                  ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                ),
-                GestureDetector(
-                  onTap: () async => launchPhone(data.phone),
-                  child: Row(children: [
-                    Icon(FontAwesomeIcons.phone, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                    Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                  ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                ),
-                GestureDetector(
-                  onTap: () async => launchMail(data.email),
-                  child: Row(children: [
-                    Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                    Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                  ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                ),
-                Row(children: [
-                  Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                  Expanded(child: Text(data.email, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-              ],
-            ),
-          ),
-        );
+        return AddressCard(data: data, titleTranslate: true);
       },
     );
   }
 }
 
-class ContactFormSheet extends StatelessWidget {
-  ContactFormSheet({
-    super.key,
-  });
-  final TextEditingController nameController = new TextEditingController();
-  final TextEditingController emailController = new TextEditingController();
-  final TextEditingController phoneController = new TextEditingController();
-  final TextEditingController subjectController = new TextEditingController();
-  final TextEditingController messageController = new TextEditingController();
+class AddressCard extends StatelessWidget {
+  const AddressCard({super.key, required this.data, this.titleTranslate = false});
+  final bool titleTranslate;
+  final Point data;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20),
-      child: Column(
-        children: [
-          TextField(
-            controller: nameController,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(labelText: context.translete('name')),
-          ).wrapPaddingBottom(20),
-          TextField(
-            controller: emailController,
-            textInputAction: TextInputAction.next,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(labelText: context.translete('email')),
-          ).wrapPaddingBottom(20),
-          TextField(
-            controller: phoneController,
-            textInputAction: TextInputAction.next,
-            inputFormatters: [AppFormatter.phone],
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(labelText: context.translete('phone')),
-          ).wrapPaddingBottom(20),
-          TextField(
-            controller: subjectController,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(labelText: context.translete('subject')),
-          ).wrapPaddingBottom(20),
-          TextField(
-            controller: messageController,
-            textInputAction: TextInputAction.done,
-            inputFormatters: [],
-            minLines: 5,
-            maxLines: 5,
-            decoration: InputDecoration(labelText: context.translete('message')),
-          ).wrapPaddingBottom(20),
-          ElevatedButton(onPressed: () {}, child: Text(context.translete('send')))
-        ],
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Card(
+        margin: EdgeInsets.zero,
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text((titleTranslate) ? context.translete(data.title).toUpperCase() : data.title).wrapPaddingHorizontal(10),
+              Divider(color: context.theme.dividerColor.withOpacity(.25)),
+              GestureDetector(
+                onTap: () async => launchMapsUrl(data.coordinate.latitude, data.coordinate.longitude),
+                child: Row(children: [
+                  Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Row(
+                    children: [
+                      Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                      Icon(FontAwesomeIcons.locationArrow, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                    ],
+                  ),
+                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+              ),
+              GestureDetector(
+                onTap: () async => launchPhone(data.phone),
+                child: Row(children: [
+                  Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Row(
+                    children: [
+                      Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                      Icon(FontAwesomeIcons.phone, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                    ],
+                  ),
+                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+              ),
+              GestureDetector(
+                onTap: () async => launchMail(data.email ?? ""),
+                child: Row(children: [
+                  Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Row(
+                    children: [
+                      Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                      Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                    ],
+                  ),
+                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+              ),
+              (data.email == null)
+                  ? SizedBox()
+                  : Row(children: [
+                      Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Row(
+                        children: [
+                          Text(context.translete('email'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                          Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                        ],
+                      ),
+                    ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -211,7 +191,9 @@ class ProfileCard extends StatelessWidget {
                           TextSpan(text: logedUserNotifier.value!.name, style: context.theme.textTheme.bodyMedium),
                         ])),
                         CupertinoButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, AppRoutes.favourites_page);
+                          },
                           padding: EdgeInsets.zero,
                           child: Row(
                             children: [

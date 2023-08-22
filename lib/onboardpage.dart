@@ -2,19 +2,40 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:usak_seramik_app/Controller/preferences.dart';
+import 'package:usak_seramik_app/Controller/routes.dart';
 import '/view/style/colors.dart';
 import '/view/widget/utility/image_loading_builder.dart';
 import 'model/onboard.dart';
 import 'Controller/extension.dart';
 
-class OnboardingPage extends StatelessWidget {
+class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
 
   @override
+  State<OnboardingPage> createState() => _OnboardingPageState();
+}
+
+class _OnboardingPageState extends State<OnboardingPage> {
+  PageController pageController = PageController();
+
+  @override
+  void initState() {
+    preferenceHandler();
+    super.initState();
+  }
+
+  Future preferenceHandler() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    preferences.setBool(AppPreferences.onboarding, false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    PageController pageController = PageController();
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 133, 133, 132),
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -39,6 +60,9 @@ class OnboardingPage extends StatelessWidget {
   Widget onboardingContent(BuildContext context, PageController pageController) {
     return PageView.builder(
       controller: pageController,
+      onPageChanged: (value) {
+        setState(() {});
+      },
       itemCount: onboardList.length,
       itemBuilder: (context, index) {
         final data = onboardList[index];
@@ -53,21 +77,18 @@ class OnboardingPage extends StatelessWidget {
               Flexible(
                 flex: 4,
                 child: SizedBox.expand(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      data.image!,
-                      fit: BoxFit.fitWidth,
-                      loadingBuilder: loadingBuilder,
-                      errorBuilder: errorBuilder,
-                    ),
+                  child: Image.network(
+                    data.image!,
+                    fit: BoxFit.fitWidth,
+                    loadingBuilder: loadingBuilder,
+                    errorBuilder: errorBuilder,
                   ),
                 ),
               ),
               Flexible(
                 flex: 2,
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: Alignment.center,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -76,6 +97,7 @@ class OnboardingPage extends StatelessWidget {
                           TyperAnimatedText(
                             data.title!,
                             textStyle: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
                             speed: 50.millisecond(),
                           ),
                         ],
@@ -87,7 +109,7 @@ class OnboardingPage extends StatelessWidget {
                       Text(
                         data.description!,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: Colors.black.withOpacity(.7)),
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
                       ).wrapPaddingTop(20),
                     ],
                   ),
@@ -115,33 +137,30 @@ class OnboardingPage extends StatelessWidget {
             count: onboardList.length,
             effect: ExpandingDotsEffect(
               activeDotColor: AppColors.primaryColor,
-              dotColor: AppColors.greyS2,
+              dotColor: AppColors.greyS6,
               dotHeight: 7,
             ),
-            onDotClicked: (index) => pageController.animateToPage(index, duration: const Duration(milliseconds: 300), curve: Curves.elasticOut),
+            onDotClicked: (index) => pageController.animateToPage(index, duration: 300.millisecond(), curve: Curves.elasticOut),
           ),
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: IconButton(
-                  onPressed: () {
-                    pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
-                  },
-                  padding: EdgeInsets.zero,
-                  icon: CircleAvatar(
-                    backgroundColor: AppColors.primaryColor,
-                    minRadius: 160,
-                    child: const Icon(FontAwesomeIcons.chevronLeft, color: Colors.white, size: 20),
-                  ),
+              IconButton(
+                onPressed: () {
+                  pageController.previousPage(duration: 300.millisecond(), curve: Curves.ease);
+                },
+                padding: EdgeInsets.zero,
+                icon: CircleAvatar(
+                  backgroundColor: AppColors.primaryColor,
+                  minRadius: 160,
+                  child: const Icon(FontAwesomeIcons.chevronLeft, color: Colors.white, size: 20),
                 ),
-              ),
+              ).wrapPaddingRight(10),
               IconButton(
                 onPressed: () {
                   if (pageController.page == onboardList.length - 1) {
-                    Navigator.pushNamedAndRemoveUntil(context, 'auth_page', (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
                   }
-                  pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                  pageController.nextPage(duration: 300.millisecond(), curve: Curves.ease);
                 },
                 padding: EdgeInsets.zero,
                 icon: CircleAvatar(

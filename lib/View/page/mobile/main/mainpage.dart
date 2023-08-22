@@ -28,15 +28,14 @@ class MainPageViewState extends State<MainPageView> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      bottomNavigationBar: SizedBox(
-        height: kBottomNavigationBarHeight * 1.3,
-        child: BottomNavigationBar(
-          items: mainNavBarItemList(context),
-          currentIndex: PageViewIndexer.instance.currentIndex,
-          onTap: (value) {
-            _pageController.jumpToPage(value);
-          },
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: mainNavBarItemList(context),
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: PageViewIndexer.instance.currentIndex,
+        onTap: (value) {
+          _pageController.jumpToPage(value);
+        },
       ),
       body: PageView.builder(
         controller: _pageController,

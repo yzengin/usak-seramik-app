@@ -165,6 +165,15 @@ ThemeData appThemeLight() => ThemeData(
       ),
       // ----------------------------------- BUTTON
       iconButtonTheme: const IconButtonThemeData(),
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.orangeS2,
+        selectedColor: AppColors.orangeS6,
+        showCheckmark: true,
+        brightness: Brightness.light,
+        elevation: 0,
+        labelPadding: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.symmetric(horizontal: 5),
+      ),
       menuButtonTheme: MenuButtonThemeData(
         style: ButtonStyle(backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor), foregroundColor: MaterialStateProperty.all(Colors.white)),
       ),
@@ -233,7 +242,7 @@ ThemeData appThemeDark() => ThemeData(
         brightness: Brightness.light,
         onTertiary: Colors.white,
         surfaceVariant: AppColors.purpleS3,
-        outlineVariant: AppColors.greenS2,
+        outlineVariant: AppColors.blueS3,
       ),
       brightness: Brightness.light,
       primaryColor: AppColors.primaryColor,
@@ -302,7 +311,7 @@ ThemeData appThemeDark() => ThemeData(
       drawerTheme: DrawerThemeData(
         backgroundColor: AppColors.blackS3,
         elevation: 0,
-        scrimColor: AppColors.blackS1.withOpacity(.8),
+        scrimColor: AppColors.blackS1.withOpacity(1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.horizontal(right: Radius.circular(0))),
       ),
       cardTheme: CardTheme(
@@ -358,6 +367,21 @@ ThemeData appThemeDark() => ThemeData(
       ),
       // ----------------------------------- BUTTON
       iconButtonTheme: const IconButtonThemeData(),
+
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.greyS2,
+        selectedColor: AppColors.blueS2,
+        showCheckmark: true,
+        brightness: Brightness.light,
+        elevation: 0,
+        labelPadding: EdgeInsets.symmetric(horizontal: 5),
+        padding: EdgeInsets.symmetric(horizontal: 5),
+        labelStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          fontSize: 17,
+        ),
+      ),
       menuButtonTheme: MenuButtonThemeData(
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(AppColors.blackS1),
@@ -397,7 +421,7 @@ ThemeData appThemeDark() => ThemeData(
               if (states.contains(MaterialState.pressed)) {
                 return AppColors.secondaryColor;
               }
-              return AppColors.blackS3;
+              return AppColors.blackS1;
             },
           ),
           foregroundColor: MaterialStateProperty.resolveWith(

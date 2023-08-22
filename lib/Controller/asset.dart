@@ -18,6 +18,7 @@ class AppIcon {
   static String prodType = "assets/icon/prodType.png";
   static String prodTexture = "assets/icon/prodTexture.png";
   static String prodColor = "assets/icon/prodColor.png";
+  static String mapmarker = "assets/icon/mapmarker.png";
 }
 
 class AppSound {
@@ -63,4 +64,8 @@ class AppDummy {
   static String armattura = "assets/dummy/armattura.jpeg";
   static String arya = "assets/dummy/arya.jpeg";
   static String asos = "assets/dummy/asos.jpeg";
+}
+
+class AppData {
+  static String iller = "assets/data/iller.json";
 }

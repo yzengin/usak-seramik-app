@@ -14,7 +14,7 @@ void pictureViewer(BuildContext context, String url) {
                 backgroundDecoration: const BoxDecoration(color: Colors.white),
                 controller: PhotoViewController(),
                 // imageProvider: NetworkImage(url),
-                imageProvider: AssetImage(url),
+                imageProvider: NetworkImage(url),
                 loadingBuilder: (context, event) {
                   if (event == null || event.cumulativeBytesLoaded != event.expectedTotalBytes) {
                     return const AspectRatio(

@@ -8,10 +8,10 @@ Widget loadingBuilder(BuildContext context, Widget child, ImageChunkEvent? loadi
     double? loadRate = loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!;
     return Stack(
       children: [
-        Opacity(
-          opacity: loadRate,
-          child: Center(child: Icon(FontAwesomeIcons.solidFile, size: context.width * 0.3, color: AppColors.primaryColor)),
-        ),
+        // Opacity(
+        //   opacity: loadRate,
+        //   child: Center(child: Icon(FontAwesomeIcons.solidFile, size: context.width * 0.3, color: AppColors.primaryColor)),
+        // ),
         Center(child: CircularProgressIndicator(value: loadRate, color: AppColors.primaryColor))
       ],
     );

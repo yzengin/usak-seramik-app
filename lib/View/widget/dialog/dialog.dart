@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:usak_seramik_app/Controller/extension.dart';
 
 enum DialogType { success, warning, info, failed }
 
@@ -106,11 +107,11 @@ Future appDialog(
     builder: (context) {
       return BackdropFilter(
         // filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        filter: ColorFilter.mode(Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.75), BlendMode.srcOver),
+        filter: ColorFilter.mode(Theme.of(context).scaffoldBackgroundColor.withOpacity(.75), BlendMode.srcOver),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(radius),
           child: Dialog(
-            backgroundColor: Theme.of(context).textTheme.bodyMedium!.color,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             elevation: elevation,
             shadowColor: const Color.fromARGB(180, 0, 0, 0),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
@@ -127,11 +128,11 @@ Future appDialog(
                           padding: const EdgeInsets.all(20.0),
                           child: Row(
                             children: [
-                              Icon(icon ?? _getDialogIcon(dialogType), size: 30, color: Theme.of(context).scaffoldBackgroundColor),
+                              Icon(icon ?? _getDialogIcon(dialogType), size: 30, color: context.theme.iconTheme.color),
                               Expanded(
                                   child: Padding(
                                 padding: const EdgeInsets.only(left: 20.0),
-                                child: Text(message ?? _getDialogMessage(dialogType), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Theme.of(context).scaffoldBackgroundColor)),
+                                child: Text(message ?? _getDialogMessage(dialogType), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                               ))
                             ],
                           ),

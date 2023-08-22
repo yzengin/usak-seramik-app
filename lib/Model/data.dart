@@ -9,70 +9,72 @@ class DualData {
 class LabeledData<String, T> {
   String? label;
   dynamic data;
-  LabeledData({
-    this.label,
-    this.data,
-  });
-}
-
-class ColorData {
-  late String label;
-  late Color color;
-  dynamic data;
-  ColorData({
-    required this.label,
-    required this.color,
-    this.data,
-  });
+  bool isColor;
+  bool translate;
+  LabeledData({this.label, this.data, this.isColor = false, this.translate = true});
 }
 
 class RangeData {
   RangeValues? value;
   RangeValues minMax;
   int division;
-  RangeData({this.value, this.minMax = const RangeValues(0, 100), this.division = 10});
+  bool preferSlider;
+  RangeData({this.value, this.minMax = const RangeValues(0, 100), this.division = 10, this.preferSlider = true});
 }
 
 class FilterData {
-  List<SearchDataModel> searchFilters;
-  List<FilterDataModel> chooseFilters;
-  List<RangeDataModel> rangeFilters;
-  List<FilterDataModel> colorFilters;
+  List<SearchDataModel>? searchFilters;
+  List<ChooiceDataModel>? chooseFilters;
+  List<RangeDataModel>? rangeFilters;
   FilterData({
-    required this.searchFilters,
-    required this.chooseFilters,
-    required this.rangeFilters,
-    required this.colorFilters,
+    this.searchFilters,
+    this.chooseFilters,
+    this.rangeFilters,
   });
 
   void toDebugPrint() {
     debugPrint('---------------------------------------------------------------------------------------------------');
-    for (var element in searchFilters) {
-      debugPrint('${element.filter.context.label} : ${element.controller.text}');
+    if (searchFilters != null) {
+      for (var element in searchFilters!) {
+        debugPrint('${element.filter.context.label} : ${element.controller.text}');
+      }
     }
     debugPrint('---------------------------------------------------------------------------------------------------');
-    for (var element in chooseFilters) {
-      debugPrint('${element.context.label} : ${element.getDataByBoolean()}');
+    if (chooseFilters != null) {
+      for (var element in chooseFilters!) {
+        if (element.multiple) {
+          debugPrint('${element.context.label} : ${element.context.data.toString()}');
+        } else {
+          debugPrint('${element.context.label} : ${element.getDataByBoolean()}');
+        }
+      }
     }
     debugPrint('---------------------------------------------------------------------------------------------------');
-    for (var element in rangeFilters as List<RangeDataModel<String, RangeValues>>) {
-      debugPrint('${element.context.label} : (${element.context.data.value.start},${element.context.data.value.end})');
+    if (rangeFilters != null) {
+      for (var element in rangeFilters as List<RangeDataModel<String, RangeValues>>) {
+        if (element.context.data.preferSlider) {
+          debugPrint('${element.context.label} : (${element.context.data.value.start},${element.context.data.value.end})');
+        } else {
+          debugPrint('${element.context.label} : (${element.context.data.value.start},${element.context.data.value.end})');
+        }
+      }
     }
     debugPrint('---------------------------------------------------------------------------------------------------');
   }
 }
 
 class SearchDataModel {
-  FilterDataModel filter;
+  ChooiceDataModel filter;
   TextEditingController controller;
   FocusNode node;
   SearchDataModel({required this.filter, required this.controller, required this.node});
 }
 
-class FilterDataModel {
+class ChooiceDataModel {
   LabeledData context;
-  List<FilterDataModel>? filters;
-  FilterDataModel({required this.context, this.filters});
+  List<ChooiceDataModel>? filters;
+  bool multiple;
+  ChooiceDataModel({required this.context, this.filters, this.multiple = false});
   List getValues() {
     List values = [];
     if (filters != null) {
