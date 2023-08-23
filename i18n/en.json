@@ -173,5 +173,6 @@
   "stores": "Sales Point",
   "contact": "Contact",
   "searchResult": "Search Results",
+  "emptyFavourite" : "No favorite products",
   "end": "end"
 }

@@ -188,6 +188,7 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                           messageController.clear();
                                           draggableScrollableController.animateTo(0, duration: 300.millisecond(), curve: Curves.ease);
                                         });
+                                        FocusScope.of(context).unfocus();
                                       }
                                     },
                                     child: Text(context.translete('send')))

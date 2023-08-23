@@ -411,7 +411,9 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                       );
                     },
                   ),
-            ElevatedButton(onPressed: () {}, child: Text(context.translete('search'))).wrapPaddingTop(20)
+            ElevatedButton(onPressed: () {
+              Navigator.pop(context);
+            }, child: Text(context.translete('search'))).wrapPaddingTop(20)
           ],
         ),
       ),

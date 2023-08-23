@@ -29,7 +29,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
         child: ValueListenableBuilder(
           valueListenable: likedProduct,
           builder: (context,_,__) {
-            return GridView.custom(
+            return likedProduct.value!=null && likedProduct.value.length>0 ? GridView.custom(
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
@@ -47,7 +47,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
                 WovenGridTile(5 / 7, crossAxisRatio: 0.9, alignment: AlignmentDirectional.bottomEnd),
               ], crossAxisSpacing: 0, mainAxisSpacing: 0, tileBottomSpace: 0, crossAxisCount: 2),
               shrinkWrap: true,
-            );
+            ): Center(child: Text(context.translete('emptyFavourite')),);
           }
         ),
       ),
