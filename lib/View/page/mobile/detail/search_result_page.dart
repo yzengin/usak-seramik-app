@@ -28,9 +28,8 @@ class _SearchResultPageState extends State<SearchResultPage> {
             filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
             child: AppBar(
               backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
-              title: Text(context.translete('searchResult')),
-              actions: [
-              ],
+              title: context.routeArguments?[0] != null ? Text(context.translete('searchResult') + "\n" + context.translete(context.routeArguments![0]),textAlign: TextAlign.center) : Text(context.translete('searchResult'), textAlign: TextAlign.center),
+              actions: [],
             ),
           ),
         ),

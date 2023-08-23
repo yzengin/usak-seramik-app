@@ -43,18 +43,16 @@ class _ProductTexturesViewState extends State<ProductTexturesView> {
                   valueListenable: carouselIndex,
                   builder: (context, _, __) {
                     return CoverFlow(
-                      onCenterItemSelected: (i){
+                      onCenterItemSelected: (i) {
                         debugPrint('${i}');
-                        Navigator.pushNamed(context, AppRoutes.search_result_page);
+                        Navigator.pushNamed(context, AppRoutes.search_result_page, arguments: [textures[i].title]);
                       },
                       titles: textures.map((e) => context.translete('search')).toList(),
                       textStyle: context.textStyle,
                       displayOnlyCenterTitle: true,
                       images: textures.map((e) {
                         return GestureDetector(
-                          onTap: () {
-                            // Navigator.pushNamed(context, AppRoutes.search_result_page);
-                          },
+                          onTap: () {},
                           child: Column(
                             children: [
                               FittedBox(child: Text(context.translete(e.title))),

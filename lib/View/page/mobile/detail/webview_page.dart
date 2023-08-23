@@ -44,9 +44,7 @@ class _WebViewPageState extends State<WebViewPage> {
         onProgress: (progress) {
           onWebLoadProgress.value = progress.reduceRange01(100, 0);
           if (progress == 100) {
-            if (onWebLoad.value) {
-              // Navigator.pop(context);
-            }
+            if (onWebLoad.value) {}
             onWebLoad.value = false;
           }
         },
@@ -79,9 +77,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 builder: (context, value, child) {
                   WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                     if (mounted) {
-                      if (onWebLoad.value) {
-                        // appProcess(context);
-                      }
+                      if (onWebLoad.value) {}
                     }
                   });
                   return SizedBox();
@@ -102,24 +98,32 @@ class _WebViewPageState extends State<WebViewPage> {
                 )
               ],
             ),
-            body: Stack(
-              children: [
-                WebViewWidget(controller: controller),
-                ValueListenableBuilder(
-                  valueListenable: onWebLoad,
-                  builder: (context, value, child) {
-                    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                      if (mounted) {
-                        if (onWebLoad.value) {
-                          // appProcess(context);
-                        }
-                      }
-                    });
-                    return SizedBox();
-                  },
-                )
-              ],
-            ),
+            body: ValueListenableBuilder(
+                valueListenable: onWebLoad,
+                builder: (context, _, __) {
+                  if (onWebLoad.value) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    return WebViewWidget(controller: controller);
+                  }
+                  // return Stack(
+                  //   children: [
+                  //     ValueListenableBuilder(
+                  //       valueListenable: onWebLoad,
+                  //       builder: (context, value, child) {
+                  //         WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  //           if (mounted) {
+                  //             if (onWebLoad.value) {
+                  //               // appProcess(context);
+                  //             }
+                  //           }
+                  //         });
+                  //         return SizedBox();
+                  //       },
+                  //     )
+                  //   ],
+                  // );
+                }),
           );
   }
 }

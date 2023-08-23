@@ -62,7 +62,7 @@ class _FindProductViewState extends State<FindProductView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             DecoratedBox(
-                                decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.white)),
+                                decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Icon(data.icon, color: context.theme.textTheme.bodyMedium!.color),
@@ -91,7 +91,7 @@ class _FindProductViewState extends State<FindProductView> {
                                                       setState(() {});
                                                     },
                                                     dropdownColor: context.theme.colorScheme.surfaceTint,
-                                                    style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white),
+                                                    style: context.theme.textTheme.bodyMedium!,
                                                     items: data.options.map((e) {
                                                       return DropdownMenuItem(value: e, child: Text(context.translete(e)));
                                                     }).toList())

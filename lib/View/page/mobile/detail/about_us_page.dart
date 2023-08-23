@@ -30,7 +30,12 @@ class _AboutUsPageState extends State<AboutUsPage> {
             future: localeNotifier.value!.languageCode == 'tr' ? DefaultAssetBundle.of(context).loadString(AppData.aboutTr) : DefaultAssetBundle.of(context).loadString(AppData.aboutEn),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(md.Markdown(data: snapshot.data ?? "").data);
+                return Text(
+                  md.Markdown(
+                    data: snapshot.data ?? "",
+                  ).data,
+                  style: context.textStyle.copyWith(fontSize: 14, fontWeight: FontWeight.w500),
+                );
               } else {
                 return CircularProgressIndicator();
               }

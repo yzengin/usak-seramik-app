@@ -45,6 +45,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     hasLike.value = !hasLike.value;
                     if (hasLike.value) {
                       likedProduct.value.add(data);
+                      appDialog(
+                        context,
+                        message: context.translete('favoriteAddedDialog'),
+                        dialogType: DialogType.success
+                      );
                     } else {
                       likedProduct.value.remove(data);
                     }

@@ -23,7 +23,6 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   final _key = GlobalKey<ScaffoldState>();
   List<City> cities = [];
   ValueNotifier<int?> selectedCity = ValueNotifier<int?>(null);
-  ValueNotifier<Point?> selectedSeller = ValueNotifier<Point?>(null);
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
   ValueNotifier<String> selectedView = ValueNotifier<String>('domestic');
 
@@ -57,7 +56,6 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   @override
   void dispose() {
     selectedCity.dispose();
-    selectedSeller.dispose();
     super.dispose();
   }
 
@@ -236,6 +234,10 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                         zoomGesturesEnabled: true,
                                         rotateGesturesEnabled: true,
                                         scrollGesturesEnabled: true,
+                                        onTap: (argument) {
+                                          showScooterDialog.value = false;
+                                          selectedSeller.value = null;
+                                        },
                                         onMapCreated: (GoogleMapController controller) {
                                           try {
                                             _controller.complete(controller);
@@ -260,24 +262,34 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   ),
                 ),
                 Expanded(
-                  child: AnimatedCrossFade(
-                    crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                    alignment: Alignment.centerRight,
-                    duration: 300.millisecond(),
-                    firstChild: SizedBox(),
-                    secondChild: ListView.builder(
-                      shrinkWrap: true,
-                      // physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.only(top: 20),
-                      itemCount: sellerList.length,
-                      itemBuilder: (context, index) {
-                        final data = sellerList[index];
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 20),
-                          child: addressCard(data),
-                        );
-                      },
-                    ),
+                  child: ValueListenableBuilder(
+                    valueListenable: showScooterDialog,
+                    builder: (context,_,__) {
+                      return ValueListenableBuilder(
+                        valueListenable: selectedSeller,
+                        builder: (context,_,__) {
+                          return AnimatedCrossFade(
+                            crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                            alignment: Alignment.centerRight,
+                            duration: 300.millisecond(),
+                            firstChild: SizedBox(),
+                            secondChild: (showScooterDialog.value == true && selectedSeller != null && selectedSeller.value != null) ? addressCard(selectedSeller.value!) : ListView.builder(
+                              shrinkWrap: true,
+                              // physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.only(top: 20),
+                              itemCount: sellerList.length,
+                              itemBuilder: (context, index) {
+                                final data = sellerList[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 20),
+                                  child: addressCard(data),
+                                );
+                              },
+                            ),
+                          );
+                        }
+                      );
+                    }
                   ),
                 )
               ],
@@ -411,9 +423,12 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                       );
                     },
                   ),
-            ElevatedButton(onPressed: () {
-              Navigator.pop(context);
-            }, child: Text(context.translete('search'))).wrapPaddingTop(20)
+            ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(context.translete('search')))
+                .wrapPaddingTop(20)
           ],
         ),
       ),

@@ -22,30 +22,30 @@ IconData _getDialogIcon(DialogType dialogType) {
 String _getDialogSubmitTitle(DialogType dialogType) {
   switch (dialogType) {
     case DialogType.success:
-      return 'Tamam';
+      return 'ok';
     case DialogType.info:
-      return 'Anladım';
+      return 'iknown';
     case DialogType.warning:
-      return 'Onayla';
+      return 'accept';
     case DialogType.failed:
-      return 'Tamam';
+      return 'ok';
     default:
-      return 'Tamam';
+      return 'ok';
   }
 }
 
 String _getDialogMessage(DialogType dialogType) {
   switch (dialogType) {
     case DialogType.success:
-      return 'Başarılı';
+      return 'success';
     case DialogType.info:
-      return 'Onaylıyor musun?';
+      return 'areYouAccept';
     case DialogType.warning:
-      return 'Devam edilsin mi?';
+      return 'toBeContinue';
     case DialogType.failed:
-      return 'Tamamlanamadı';
+      return 'failed';
     default:
-      return 'Tamam';
+      return 'ok';
   }
 }
 
@@ -92,7 +92,7 @@ Future appDialog(
   double elevation = 10;
   double radius = 20;
   String? submitTitle;
-  String cancelTitle = 'İptal';
+  String cancelTitle = 'cancel';
   IconData? icon;
   return showCupertinoDialog(
     context: context,
@@ -132,7 +132,7 @@ Future appDialog(
                               Expanded(
                                   child: Padding(
                                 padding: const EdgeInsets.only(left: 20.0),
-                                child: Text(message ?? _getDialogMessage(dialogType), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                child: Text(message ?? context.translete(_getDialogMessage(dialogType)), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                               ))
                             ],
                           ),
@@ -157,7 +157,7 @@ Future appDialog(
                                       }
                                     }),
                                   ),
-                                  child: Center(child: Text(submitTitle ?? _getDialogSubmitTitle(dialogType), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium!.color!))),
+                                  child: Center(child: Text(submitTitle ?? context.translete(_getDialogSubmitTitle(dialogType)), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium!.color!))),
                                 ),
                               ),
                             ),
@@ -184,7 +184,7 @@ Future appDialog(
                                         }
                                       }),
                                     ),
-                                    child: Center(child: Text(cancelTitle, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                    child: Center(child: Text(context.translete(cancelTitle), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                                   ),
                                 ),
                               ),
@@ -229,7 +229,7 @@ Future appDialog(
                                             }
                                           }),
                                         ),
-                                        child: Center(child: Text(submitTitle ?? _getDialogSubmitTitle(dialogType), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium!.color!))),
+                                        child: Center(child: Text(submitTitle ?? context.translete(_getDialogSubmitTitle(dialogType)), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyMedium!.color!))),
                                       ),
                                     ),
                                   ),
@@ -255,7 +255,7 @@ Future appDialog(
                                             }
                                           }),
                                         ),
-                                        child: Center(child: Text(cancelTitle, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                        child: Center(child: Text(context.translete(cancelTitle), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
                                       ),
                                     ),
                                   ),

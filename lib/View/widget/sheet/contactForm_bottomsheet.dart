@@ -180,7 +180,7 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                 ElevatedButton(
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        appDialog(context, dialogType: DialogType.success, message: 'Mesajınız Gönderilmiştir').then((value) {
+                                        appDialog(context, dialogType: DialogType.success, message: context.translete('sendMessageDialog')).then((value) {
                                           nameController.clear();
                                           emailController.clear();
                                           phoneController.clear();
