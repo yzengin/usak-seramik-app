@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
+import 'package:usak_seramik_app/View/page/mobile/detail/about_us_page.dart';
 import 'package:usak_seramik_app/View/page/mobile/detail/favourites_page.dart';
 import 'package:usak_seramik_app/View/page/mobile/detail/product_detail_page.dart';
+import 'package:usak_seramik_app/View/page/mobile/detail/webview_page.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/contactpage.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/pruductspage.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/salespointpage.dart';
@@ -29,7 +31,9 @@ Map<String, Widget Function(BuildContext)> appRoutes() => {
       AppRoutes.favourites_page: (context) => const FavouritesPage(),
       AppRoutes.salespoints_page: (context) => const SalesPointsPage(),
       AppRoutes.contact_page: (context) => const ContactPage(),
+      AppRoutes.about_us_page: (context) => const AboutUsPage(),
       AppRoutes.search_result_page: (context) => const SearchResultPage(),
+      AppRoutes.webview_page: (context) => const WebViewPage(),
     };
 
 class AppRoutes {
@@ -44,7 +48,9 @@ class AppRoutes {
   static String favourites_page = "favourites_page";
   static String salespoints_page = "salespoints_page";
   static String contact_page = "contact_page";
+  static String about_us_page = "about_us_page";
   static String search_result_page = "search_result_page";
+  static String webview_page = "webview_page";
 }
 
 List<Widget> mainPageList = [

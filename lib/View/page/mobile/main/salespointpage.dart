@@ -28,10 +28,11 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   ValueNotifier<String> selectedView = ValueNotifier<String>('domestic');
 
   var defaultPosition = CameraPosition(target: LatLng(39, 35.3191), zoom: 4.8);
-  final Completer<GoogleMapController> _controller = Completer();
+  late Completer<GoogleMapController> _controller;
 
   @override
   void initState() {
+    _controller = Completer<GoogleMapController>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted) {
         setMarkers(sellerList, context).then((value) {
@@ -42,14 +43,14 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     fetchJson().whenComplete(() {
       setState(() {});
     });
-    selectedSeller.addListener(() async {
-      final GoogleMapController controllerData = await _controller.future;
-      if (selectedSeller.value != null) {
-        controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: selectedSeller.value!.coordinate, zoom: 16)));
-      } else {
-        controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
-      }
-    });
+    // selectedSeller.addListener(() async {
+    //   final GoogleMapController controllerData = await _controller.future;
+    //   if (selectedSeller.value != null) {
+    //     controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: selectedSeller.value!.coordinate, zoom: 16)));
+    //   } else {
+    //     controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
+    //   }
+    // });
     super.initState();
   }
 
@@ -289,73 +290,76 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     return ValueListenableBuilder(
         valueListenable: selectedSeller,
         builder: (context, _, __) {
-          return GestureDetector(
-            onTap: () async {
-              if (selectedSeller.value == data) {
-                selectedSeller.value = null;
-              } else {
-                selectedSeller.value = data;
-              }
-            },
-            child: Card(
-              margin: EdgeInsets.zero,
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
+          return Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () async {
+                      final GoogleMapController controllerData = await _controller.future;
+                      if (selectedSeller.value != data) {
+                        selectedSeller.value = data;
+                        controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: data.coordinate, zoom: 16)));
+                      } else {
+                        selectedSeller.value = null;
+                        controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
+                      }
+                    },
+                    child: Row(
                       children: [
                         Expanded(child: Text(data.title).wrapPaddingHorizontal(10)),
                         (selectedSeller.value == data) ? Text(context.translete('selected'), style: context.textStyle.copyWith(color: context.theme.iconTheme.color)).wrapPaddingRight(20) : Text(context.translete('select'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)).wrapPaddingRight(20),
                       ],
                     ),
-                    Divider(color: context.theme.dividerColor.withOpacity(.25)),
-                    GestureDetector(
-                      onTap: () async => launchMapsUrl(data.coordinate.latitude, data.coordinate.longitude),
-                      child: Row(children: [
-                        Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                        Row(
-                          children: [
-                            Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
-                            Icon(FontAwesomeIcons.locationArrow, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
-                          ],
-                        ),
-                      ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                    ),
-                    GestureDetector(
-                      onTap: () async => launchPhone(data.phone),
-                      child: Row(children: [
-                        Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                        Row(
-                          children: [
-                            Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
-                            Icon(FontAwesomeIcons.phone, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
-                          ],
-                        ),
-                      ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                    ),
-                    GestureDetector(
-                      onTap: () async => launchMail(data.email ?? ""),
-                      child: Row(children: [
-                        Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                        Row(
-                          children: [
-                            Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
-                            Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
-                          ],
-                        ),
-                        // Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                      ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                    ),
-                    (data.email == null)
-                        ? SizedBox()
-                        : Row(children: [
-                            Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                            Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                          ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-                  ],
-                ),
+                  ),
+                  Divider(color: context.theme.dividerColor.withOpacity(.25)),
+                  GestureDetector(
+                    onTap: () async => launchMapsUrl(data.coordinate.latitude, data.coordinate.longitude),
+                    child: Row(children: [
+                      Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Row(
+                        children: [
+                          Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                          Icon(FontAwesomeIcons.locationArrow, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                        ],
+                      ),
+                    ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                  ),
+                  GestureDetector(
+                    onTap: () async => launchPhone(data.phone),
+                    child: Row(children: [
+                      Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Row(
+                        children: [
+                          Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                          Icon(FontAwesomeIcons.phone, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                        ],
+                      ),
+                    ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                  ),
+                  GestureDetector(
+                    onTap: () async => launchMail(data.email ?? ""),
+                    child: Row(children: [
+                      Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Row(
+                        children: [
+                          Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                          Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                        ],
+                      ),
+                      // Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
+                    ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                  ),
+                  (data.email == null)
+                      ? SizedBox()
+                      : Row(children: [
+                          Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
+                          Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                        ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                ],
               ),
             ),
           );

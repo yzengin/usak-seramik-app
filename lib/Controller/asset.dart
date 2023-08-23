@@ -68,4 +68,6 @@ class AppDummy {
 
 class AppData {
   static String iller = "assets/data/iller.json";
+  static String aboutEn = "assets/data/aboutus_en.md";
+  static String aboutTr = "assets/data/aboutus_tr.md";
 }

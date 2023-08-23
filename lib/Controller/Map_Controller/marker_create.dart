@@ -12,7 +12,7 @@ ValueNotifier<bool> showScooterDialog = ValueNotifier<bool>(false);
 Uint8List? mapMarker;
 
 Future<void> setMarkers(List<Point> dataList, BuildContext context) async {
-  if (dataList != null && dataList.isNotEmpty) {
+  if (dataList.isNotEmpty) {
     try {
       for (var data in dataList) {
         final Uint8List markerIcon = await getBytesFromAsset(AppIcon.mapmarker, ((MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio) * 0.1).toInt());

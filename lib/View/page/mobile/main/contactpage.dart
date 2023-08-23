@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
-import 'package:usak_seramik_app/Controller/formatter.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
-import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
 import '../../../../Controller/launcher.dart';
 import '../../../../Model/fake/seller.dart';
-import '../../../widget/drawer/appdrawer.dart';
+import '../../../widget/drawer/contact_drawer.dart';
 import '../../../widget/sheet/contactForm_bottomsheet.dart';
 
 class ContactPage extends StatefulWidget {
@@ -35,7 +33,7 @@ class _ContactPageState extends State<ContactPage> {
         title: Text(context.translete('contact')),
       ),
       body: body(context),
-      drawer: AppDrawer(),
+      drawer: ContactDrawer(),
       bottomSheet: ContactFormBottomSheet(
         title: context.translete('contactForm'),
         icon: FontAwesomeIcons.solidEnvelope,

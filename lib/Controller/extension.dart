@@ -115,6 +115,9 @@ extension IntExtensions on int {
   Duration minute() => Duration(minutes: this);
   Duration second() => Duration(seconds: this);
   Duration millisecond() => Duration(milliseconds: this);
+  double reduceRange01(double max, double min) {
+    return (this - min) * (1 - 0) / (max - min) + 0;
+  }
 }
 
 extension DateTimeExtensions on DateTime {
