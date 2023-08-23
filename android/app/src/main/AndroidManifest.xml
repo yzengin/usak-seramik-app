@@ -4,6 +4,8 @@
         android:label="Uşak Seramik"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+       <meta-data android:name="com.google.android.geo.API_KEY"
+           android:value="AIzaSyC_Urz0L8CWcaCNvpsYFRzRacTHl_oD-40"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
