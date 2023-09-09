@@ -2,17 +2,24 @@
 
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:provider/provider.dart';
 import '/Model/languages.dart';
 import 'Controller/localization.dart';
+import 'Controller/notification_helper.dart';
 import 'Controller/theme.dart';
 import '/model/data.dart';
 import 'Controller/notifiers.dart';
 import 'Controller/stopwatch.dart';
 import 'Controller/routes.dart';
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 void main() => run();
 
@@ -20,9 +27,22 @@ Future run() async {
   // ignore: unused_local_variable
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
+  await Firebase.initializeApp();
+
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await LocalizationController().load();
   stopwatch.start(); // for a process timing analyz. use with stopwatchTick() method.
+  try {
+    if (GetPlatform.isMobile) {
+      final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
+
+      await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
+      FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
+    }
+  } catch (e) {
+    debugPrint('Error Main Data --- $e');
+  }
+
   runApp(AppStarter(destination: AppRoutes.splash_page));
 }
 

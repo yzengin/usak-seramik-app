@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "877642521684",
+    "project_id": "usakseramik-53fff",
+    "storage_bucket": "usakseramik-53fff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877642521684:android:16f3bfbcdd5bd1553721c1",
+        "android_client_info": {
+          "package_name": "com.usakseramik.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJV4-Gh8VSfBk8CVHJrKHKb6c2BQzIC0s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
