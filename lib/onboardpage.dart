@@ -2,8 +2,10 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:usak_seramik_app/Controller/color_generator.dart';
 import 'package:usak_seramik_app/Controller/preferences.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import '/view/style/colors.dart';
@@ -20,9 +22,15 @@ class OnboardingPage extends StatefulWidget {
 
 class _OnboardingPageState extends State<OnboardingPage> {
   PageController pageController = PageController();
+  ValueNotifier<PaletteGenerator?> palette = ValueNotifier<PaletteGenerator?>(null);
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      updatePaletteGenerator(url: onboardList.first.image!).then((value) => palette.value = value).whenComplete(() {
+        setState(() {});
+      });
+    });
     preferenceHandler();
     super.initState();
   }
@@ -34,35 +42,39 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color.fromARGB(255, 133, 133, 132),
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
-      ),
-      body: Column(
-        children: [
-          Flexible(
-            flex: 7,
-            child: onboardingContent(context, pageController),
-          ),
-          Flexible(
-            flex: 1,
-            child: onboardingController(context, pageController),
-          )
-        ],
-      ),
-    );
+    return (palette.value == null)
+        ? ColoredBox(color: context.theme.scaffoldBackgroundColor, child: Center(child: CircularProgressIndicator()))
+        : AnimatedContainer(
+            duration: 300.millisecond(),
+            color: palette.value!.colors.first.increaseLuminance(target: 0.65),
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              extendBodyBehindAppBar: true,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                systemOverlayStyle: SystemUiOverlayStyle.dark,
+              ),
+              body: Column(
+                children: [
+                  Flexible(
+                    flex: 7,
+                    child: onboardingContent(context, pageController),
+                  ),
+                  Flexible(
+                    flex: 1,
+                    child: onboardingController(context, pageController),
+                  )
+                ],
+              ),
+            ),
+          );
   }
 
   Widget onboardingContent(BuildContext context, PageController pageController) {
     return PageView.builder(
       controller: pageController,
-      onPageChanged: (value) {
-        setState(() {});
-      },
+      onPageChanged: (value) {},
       itemCount: onboardList.length,
       itemBuilder: (context, index) {
         final data = onboardList[index];
@@ -76,13 +88,49 @@ class _OnboardingPageState extends State<OnboardingPage> {
             children: [
               Flexible(
                 flex: 4,
-                child: SizedBox.expand(
-                  child: Image.network(
-                    data.image!,
-                    fit: BoxFit.fitWidth,
-                    loadingBuilder: loadingBuilder,
-                    errorBuilder: errorBuilder,
-                  ),
+                child: Stack(
+                  children: [
+                    Transform.rotate(
+                      angle: (index == 0) ? -0.25 : 0.25,
+                      child: Center(
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 10,
+                          color: palette.value!.colors.first,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Opacity(
+                              opacity: 0,
+                              child: Image.network(
+                                data.image!,
+                                opacity: AlwaysStoppedAnimation(0.2),
+                                fit: BoxFit.fitWidth,
+                                loadingBuilder: loadingBuilder,
+                                errorBuilder: errorBuilder,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.network(
+                            data.image!,
+                            fit: BoxFit.fitWidth,
+                            loadingBuilder: loadingBuilder,
+                            errorBuilder: errorBuilder,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               Flexible(
@@ -92,24 +140,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      AnimatedTextKit(
-                        animatedTexts: [
-                          TyperAnimatedText(
-                            data.title!,
-                            textStyle: const TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                            speed: 50.millisecond(),
-                          ),
-                        ],
-                        displayFullTextOnTap: true,
-                        stopPauseOnTap: true,
-                        isRepeatingAnimation: false,
-                        repeatForever: false,
+                      SizedBox(
+                        height: 100,
+                        child: AnimatedTextKit(
+                          animatedTexts: [
+                            TyperAnimatedText(
+                              data.title!,
+                              textStyle: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold, color: palette.value!.colors.first.increaseLuminance(target: 0.65).getContrastColor().toPastelColor().increaseLuminance(target: 0.3)),
+                              textAlign: TextAlign.center,
+                              speed: 50.millisecond(),
+                            ),
+                          ],
+                          displayFullTextOnTap: true,
+                          stopPauseOnTap: true,
+                          isRepeatingAnimation: false,
+                          repeatForever: false,
+                        ),
                       ),
                       Text(
                         data.description!,
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color: palette.value!.colors.first.getContrastColor().toPastelColor()),
                       ).wrapPaddingTop(20),
                     ],
                   ),
@@ -140,12 +191,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
               dotColor: AppColors.greyS6,
               dotHeight: 7,
             ),
-            onDotClicked: (index) => pageController.animateToPage(index, duration: 300.millisecond(), curve: Curves.elasticOut),
+            onDotClicked: (index) async {
+              await updatePaletteGenerator(url: onboardList[index].image!).then((value) => palette.value = value).whenComplete(() {
+                setState(() {});
+              });
+              pageController.animateToPage(index, duration: 300.millisecond(), curve: Curves.elasticOut);
+            },
           ),
           Row(
             children: [
               IconButton(
-                onPressed: () {
+                onPressed: () async {
+                  await updatePaletteGenerator(url: onboardList[0].image!).then((value) => palette.value = value).whenComplete(() {
+                    setState(() {});
+                  });
                   pageController.previousPage(duration: 300.millisecond(), curve: Curves.ease);
                 },
                 padding: EdgeInsets.zero,
@@ -156,10 +215,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
               ).wrapPaddingRight(10),
               IconButton(
-                onPressed: () {
+                onPressed: () async {
                   if (pageController.page == onboardList.length - 1) {
-                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
                   }
+                  await updatePaletteGenerator(url: onboardList[1].image!).then((value) => palette.value = value).whenComplete(() {
+                    setState(() {});
+                  });
                   pageController.nextPage(duration: 300.millisecond(), curve: Curves.ease);
                 },
                 padding: EdgeInsets.zero,

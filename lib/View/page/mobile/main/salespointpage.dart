@@ -1,16 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
+import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Model/fake/seller.dart';
 
 import '../../../../Controller/Map_Controller/marker_create.dart';
 import '../../../../Controller/launcher.dart';
 import '../../../../Model/city.dart';
+import '../../../widget/drawer/contact_drawer.dart';
+import '../../../widget/utility/copy_on_tap.dart';
 
 class SalesPointsPage extends StatefulWidget {
   const SalesPointsPage({super.key});
@@ -24,7 +28,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   List<City> cities = [];
   ValueNotifier<int?> selectedCity = ValueNotifier<int?>(null);
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
-  ValueNotifier<String> selectedView = ValueNotifier<String>('domestic');
+  // ValueNotifier<String> selectedView = ValueNotifier<String>('domestic');
 
   var defaultPosition = CameraPosition(target: LatLng(39, 35.3191), zoom: 4.8);
   late Completer<GoogleMapController> _controller;
@@ -68,6 +72,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _key,
+      drawer: ContactDrawer(),
       endDrawer: _filterDrawer(),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -76,44 +81,48 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
             filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
             child: AppBar(
               backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
+              centerTitle: true,
               title: Text(context.translete('stores')),
               bottom: PreferredSize(
-                  child: ValueListenableBuilder(
-                      valueListenable: selectedView,
-                      builder: (context, _, __) {
-                        return DefaultTabController(
-                          length: 2,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: ['domestic', 'overseas']
-                                .map((e) => GestureDetector(
-                                    onTap: () => selectedView.value = e,
-                                    child: Text(
-                                      context.translete(e),
-                                      style: context.textStyle.copyWith(color: selectedView.value == e ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
-                                    ).wrapPaddingHorizontal(10)))
-                                .toList(),
-                          ),
-                        );
-                      }),
-                  preferredSize: Size.fromHeight(kToolbarHeight * 0.5)),
+                preferredSize: Size.fromHeight(kToolbarHeight * 0.5),
+                child: DefaultTabController(
+                  length: 2,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: ['domestic', 'overseas']
+                        .map((e) => GestureDetector(
+                            onTap: () {
+                              if (e == 'overseas') {
+                                Navigator.pushNamed(context, AppRoutes.overseas_page);
+                              }
+                            },
+                            child: Text(
+                              context.translete(e),
+                              style: context.textStyle.copyWith(color: e == 'domestic' ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
+                            ).wrapPaddingHorizontal(10)))
+                        .toList(),
+                  ),
+                ),
+              ),
               actions: [
                 IconButton(
-                    onPressed: () {
-                      _key.currentState!.openEndDrawer();
-                    },
-                    icon: Icon(FontAwesomeIcons.filter))
+                  onPressed: () {
+                    _key.currentState!.openEndDrawer();
+                  },
+                  icon: Icon(FontAwesomeIcons.filter),
+                ),
               ],
             ),
           ),
         ),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: selectedView,
-        builder: (context, value, child) {
-          return selectedView.value == "domestic" ? bodyDomestic(context) : bodyOverseas(context);
-        },
-      ),
+      body: bodyDomestic(context),
+      // body: ValueListenableBuilder(
+      //   valueListenable: selectedView,
+      //   builder: (context, value, child) {
+      //     return selectedView.value == "domestic" ? bodyDomestic(context) : bodyOverseas(context);
+      //   },
+      // ),
     );
   }
 
@@ -235,7 +244,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                         rotateGesturesEnabled: true,
                                         scrollGesturesEnabled: true,
                                         onTap: (argument) {
-                                          showScooterDialog.value = false;
+                                          showMarkerDialog.value = false;
                                           selectedSeller.value = null;
                                         },
                                         onMapCreated: (GoogleMapController controller) {
@@ -263,34 +272,57 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                 ),
                 Expanded(
                   child: ValueListenableBuilder(
-                    valueListenable: showScooterDialog,
-                    builder: (context,_,__) {
-                      return ValueListenableBuilder(
-                        valueListenable: selectedSeller,
-                        builder: (context,_,__) {
-                          return AnimatedCrossFade(
-                            crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                            alignment: Alignment.centerRight,
-                            duration: 300.millisecond(),
-                            firstChild: SizedBox(),
-                            secondChild: (showScooterDialog.value == true && selectedSeller != null && selectedSeller.value != null) ? addressCard(selectedSeller.value!) : ListView.builder(
-                              shrinkWrap: true,
-                              // physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.only(top: 20),
-                              itemCount: sellerList.length,
-                              itemBuilder: (context, index) {
-                                final data = sellerList[index];
-                                return Padding(
-                                  padding: EdgeInsets.only(bottom: 20),
-                                  child: addressCard(data),
-                                );
-                              },
-                            ),
-                          );
-                        }
-                      );
-                    }
-                  ),
+                      valueListenable: showMarkerDialog,
+                      builder: (context, _, __) {
+                        return ValueListenableBuilder(
+                            valueListenable: selectedSeller,
+                            builder: (context, _, __) {
+                              return AnimatedCrossFade(
+                                crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                                alignment: Alignment.centerRight,
+                                duration: 300.millisecond(),
+                                firstChild: SizedBox(),
+                                secondChild: (showMarkerDialog.value == true && selectedSeller.value != null)
+                                    ? Padding(
+                                        padding: const EdgeInsets.only(top: 20.0),
+                                        child: addressCard(selectedSeller.value!),
+                                      )
+                                    : SingleChildScrollView(
+                                        // padding: EdgeInsets.only(top: 20),
+                                        child: Column(
+                                          children: [
+                                            CupertinoButton(
+                                              onPressed: () {},
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  IconButton(
+                                                    onPressed: () {},
+                                                    icon: Icon(FontAwesomeIcons.locationDot),
+                                                  ),
+                                                  Text(context.translete("findNearSeller")),
+                                                ],
+                                              ),
+                                            ),
+                                            ListView.builder(
+                                              shrinkWrap: true,
+                                              physics: NeverScrollableScrollPhysics(),
+                                              // padding: EdgeInsets.only(top: 20),
+                                              itemCount: sellerList.length,
+                                              itemBuilder: (context, index) {
+                                                final data = sellerList[index];
+                                                return Padding(
+                                                  padding: EdgeInsets.only(bottom: 20),
+                                                  child: addressCard(data),
+                                                );
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                              );
+                            });
+                      }),
                 )
               ],
             ),
@@ -308,6 +340,8 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   GestureDetector(
                     onTap: () async {
@@ -356,21 +390,33 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     onTap: () async => launchMail(data.email ?? ""),
                     child: Row(children: [
                       Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                      Row(
-                        children: [
-                          Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
-                          Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
-                        ],
+                      CopyOnTap(
+                        '${data.fax}',
+                        delay: 1.second(),
+                        child: Row(
+                          children: [
+                            Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                            Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                          ],
+                        ),
                       ),
                       // Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
                     ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
                   ),
                   (data.email == null)
                       ? SizedBox()
-                      : Row(children: [
-                          Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10),
-                          Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                        ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                      : GestureDetector(
+                          onTap: () async => launchMail(data.email ?? ""),
+                          child: Row(children: [
+                            Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                            Row(
+                              children: [
+                                Text(context.translete('email'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                                Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                              ],
+                            ),
+                          ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                        ),
                 ],
               ),
             ),

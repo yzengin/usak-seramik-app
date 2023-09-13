@@ -4,7 +4,7 @@ import '../../../Controller/extension.dart';
 import '/view/widget/dialog/popup.dart';
 
 class CopyOnTap extends StatelessWidget {
-  const CopyOnTap(this.text, {Key? key, this.description, this.delay = const Duration(milliseconds: 500), this.barrierColor, this.style, this.showCopyIcon = false, this.callback, this.isPhone = false}) : super(key: key);
+  const CopyOnTap(this.text, {Key? key, this.description, this.delay = const Duration(milliseconds: 500), this.barrierColor, this.style, this.showCopyIcon = false, this.callback, this.isPhone = false, this.child}) : super(key: key);
   final String? description;
   final String text;
   final Duration delay;
@@ -13,6 +13,7 @@ class CopyOnTap extends StatelessWidget {
   final bool showCopyIcon;
   final bool isPhone;
   final VoidCallback? callback;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,8 @@ class CopyOnTap extends StatelessWidget {
         },
         child: Row(
           children: [
-            Text(text),
+            (child == null) ? Text(text) : SizedBox(),
+            (child != null) ? child! : SizedBox(),
             if (showCopyIcon)
               Padding(
                   padding: const EdgeInsets.only(left: 3.0),

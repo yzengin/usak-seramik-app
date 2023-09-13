@@ -10,6 +10,7 @@ import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/View/widget/drawer/filter_drawer.dart';
 import '../../../../Controller/filter.dart';
 import '../../../../Model/fake/product.dart';
+import '../../../widget/drawer/contact_drawer.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -25,6 +26,7 @@ class _ProductsPageState extends State<ProductsPage> {
     return Scaffold(
       key: _key,
       extendBodyBehindAppBar: true,
+      drawer: ContactDrawer(),
       endDrawer: FilterDrawer(model: testFilter),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),

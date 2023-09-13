@@ -27,13 +27,15 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
         countdowntimer: true,
         countdowntime: 2,
         countdownCallback: () async {
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          bool? showFirst = preferences.getBool(AppPreferences.onboarding);
-          if (showFirst == null || showFirst == true) {
-            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
-          } else {
-            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
-          }
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
+          // SharedPreferences preferences = await SharedPreferences.getInstance();
+          // bool? showFirst = preferences.getBool(AppPreferences.onboarding);
+          // if (showFirst == null || showFirst == true) {
+          //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
+          // } else {
+          //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+          // //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+          // }
         });
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

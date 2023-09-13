@@ -123,6 +123,8 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return context.translete('emptyMessage');
+                                    } else if (value.length < 2) {
+                                      return context.translete('nameGreaterThan');
                                     }
                                     return null;
                                   },
@@ -133,9 +135,13 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(labelText: context.translete('email')),
                                   validator: (value) {
+                                    final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
                                     if (value == null || value.isEmpty) {
                                       return context.translete('emptyMessage');
+                                    } else if (!emailRegex.hasMatch(value)) {
+                                      return context.translete('emailValidation');
                                     }
+
                                     return null;
                                   },
                                 ).wrapPaddingBottom(20),
@@ -148,6 +154,8 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
                                       return context.translete('emptyMessage');
+                                    } else if (value.replaceAll(' ', '').replaceAll('+90', '').toString().length < 10) {
+                                      return context.translete('phoneGreaterThan');
                                     }
                                     return null;
                                   },
@@ -179,6 +187,8 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                 ).wrapPaddingBottom(20),
                                 ElevatedButton(
                                     onPressed: () {
+                                      debugPrint('${phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString()}');
+                                      debugPrint('${phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString().length}');
                                       if (_formKey.currentState!.validate()) {
                                         appDialog(context, dialogType: DialogType.success, message: context.translete('sendMessageDialog')).then((value) {
                                           nameController.clear();

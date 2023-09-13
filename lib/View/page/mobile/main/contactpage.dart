@@ -5,6 +5,7 @@ import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
 import '../../../../Controller/launcher.dart';
 import '../../../../Model/fake/seller.dart';
 import '../../../widget/drawer/contact_drawer.dart';
@@ -120,29 +121,33 @@ class AddressCard extends StatelessWidget {
                   ),
                 ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
               ),
-              GestureDetector(
-                onTap: () async => launchMail(data.email ?? ""),
-                child: Row(children: [
-                  Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                  Row(
+              Row(children: [
+                Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                CopyOnTap(
+                  '${data.fax}',
+                  delay: 1.second(),
+                  child: Row(
                     children: [
                       Text(context.translete('fax'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
                       Icon(FontAwesomeIcons.fax, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
                     ],
                   ),
-                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
-              ),
+                ),
+              ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
               (data.email == null)
                   ? SizedBox()
-                  : Row(children: [
-                      Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
-                      Row(
-                        children: [
-                          Text(context.translete('email'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
-                          Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
-                        ],
-                      ),
-                    ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                  : GestureDetector(
+                      onTap: () async => launchMail(data.email ?? ""),
+                      child: Row(children: [
+                        Expanded(child: Text(data.email!, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                        Row(
+                          children: [
+                            Text(context.translete('email'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                            Icon(FontAwesomeIcons.solidEnvelope, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                          ],
+                        ),
+                      ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+                    ),
             ],
           ),
         ),

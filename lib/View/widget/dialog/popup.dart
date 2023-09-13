@@ -33,7 +33,7 @@ Future<void> appModalPopup(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               child: Row(
                 children: [
-                  Expanded(child: Text(title, style: const TextStyle(color: Colors.white))),
+                  Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 14))),
                   if (action != null) action,
                   if (rewindCallback != null) GestureDetector(onTap: rewindCallback.call, child: const Text('Geri Al', style: TextStyle(color: Colors.blueAccent))),
                 ],

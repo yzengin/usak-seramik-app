@@ -8,7 +8,7 @@ import '../controller.dart';
 
 ValueNotifier<List<Marker>> allMarkers = ValueNotifier([]);
 ValueNotifier<List<Marker>> allMarkersMidLevel = ValueNotifier([]);
-ValueNotifier<bool> showScooterDialog = ValueNotifier<bool>(false);
+ValueNotifier<bool> showMarkerDialog = ValueNotifier<bool>(false);
 ValueNotifier<Point?> selectedSeller = ValueNotifier<Point?>(null);
 Uint8List? mapMarker;
 
@@ -25,7 +25,7 @@ Future<void> setMarkers(List<Point> dataList, BuildContext context) async {
             title: data.title,
           ),
           onTap: () {
-            showScooterDialog.value = true;
+            showMarkerDialog.value = true;
             selectedSeller.value = data;
           },
           icon: BitmapDescriptor.fromBytes(markerIcon), //Icon for Marker

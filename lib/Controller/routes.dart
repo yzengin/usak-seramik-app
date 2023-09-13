@@ -10,6 +10,7 @@ import 'package:usak_seramik_app/View/page/mobile/detail/webview_page.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/contactpage.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/pruductspage.dart';
 import 'package:usak_seramik_app/View/page/mobile/main/salespointpage.dart';
+import 'package:usak_seramik_app/View/widget/view/overseas_view.dart';
 import '../View/page/mobile/detail/search_result_page.dart';
 import '/main.dart';
 import '/view/page/mobile/main/mainpage.dart';
@@ -34,6 +35,7 @@ Map<String, Widget Function(BuildContext)> appRoutes() => {
       AppRoutes.about_us_page: (context) => const AboutUsPage(),
       AppRoutes.search_result_page: (context) => const SearchResultPage(),
       AppRoutes.webview_page: (context) => const WebViewPage(),
+      AppRoutes.overseas_page: (context) => OverseasView(),
     };
 
 class AppRoutes {
@@ -51,6 +53,7 @@ class AppRoutes {
   static String about_us_page = "about_us_page";
   static String search_result_page = "search_result_page";
   static String webview_page = "webview_page";
+  static String overseas_page = "overseas_page";
 }
 
 List<Widget> mainPageList = [
