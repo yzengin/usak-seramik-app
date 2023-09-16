@@ -10,6 +10,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:provider/provider.dart';
+import 'package:usak_seramik_app/View/style/colors.dart';
 import '/Model/languages.dart';
 import 'Controller/localization.dart';
 import 'Controller/notification_helper.dart';
@@ -92,8 +93,10 @@ class AppStarter extends StatelessWidget {
                       onWillPop: () async => exceptedAction.value,
                       child: ColoredBox(
                         color: Theme.of(context).textTheme.bodyMedium!.color!.withOpacity(.75),
-                        child: const Center(
-                          child: CircularProgressIndicator(),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
+                          ),
                         ),
                       ),
                     ),

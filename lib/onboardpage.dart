@@ -6,6 +6,7 @@ import 'package:palette_generator/palette_generator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:usak_seramik_app/Controller/color_generator.dart';
+import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/preferences.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import '/view/style/colors.dart';
@@ -27,7 +28,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      exceptedAction.value = true;
       updatePaletteGenerator(url: onboardList.first.image!).then((value) => palette.value = value).whenComplete(() {
+      exceptedAction.value = false;
         setState(() {});
       });
     });
@@ -43,7 +46,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   @override
   Widget build(BuildContext context) {
     return (palette.value == null)
-        ? ColoredBox(color: context.theme.scaffoldBackgroundColor, child: Center(child: CircularProgressIndicator()))
+        ? ColoredBox(color: context.theme.scaffoldBackgroundColor)
         : AnimatedContainer(
             duration: 300.millisecond(),
             color: palette.value!.colors.first.increaseLuminance(target: 0.65),
