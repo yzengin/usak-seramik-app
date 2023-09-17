@@ -18,7 +18,7 @@ Future<BaseResponse> postRequest(String url, {dynamic entityData, String? bearer
   if (entityData != null) {
     Map<String, dynamic> _json = entityData.toJson();
     String encoded = json.encode(_json);
-    // debugPrint(encoded);
+    debugPrint(encoded);
 
     return http.post(Uri.parse(url), headers: headers, body: encoded).then((http.Response response) {
       debugPrint(response.statusCode.toString());

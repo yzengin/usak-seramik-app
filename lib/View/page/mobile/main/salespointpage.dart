@@ -29,10 +29,11 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   final _key = GlobalKey<ScaffoldState>();
   List<City> cities = [];
   ValueNotifier<int?> selectedCity = ValueNotifier<int?>(null);
+  ValueNotifier<String?> searchSalesName = ValueNotifier<String?>(null);
+  TextEditingController salesNameController = TextEditingController();
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
   var defaultPosition = CameraPosition(target: LatLng(39, 35.3191), zoom: 4.8);
   late Completer<GoogleMapController> _controller;
-  late DealerData dealerData;
 
   @override
   void initState() {
@@ -41,7 +42,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
         if (mounted) {
-          setMarkers(dealerData.data!, context).then((value) {
+          setMarkers(Provider.of<DealerController>(context, listen: false).dealerData.data!, context).then((value) {
             setState(() {});
           });
         }
@@ -73,13 +74,13 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
 
   @override
   Widget build(BuildContext context) {
-    dealerData = Provider.of<DealerController>(context).dealerData;
+    DealerData dealerData = Provider.of<DealerController>(context, listen: true).dealerData;
     return (dealerData.data == null)
         ? SizedBox()
         : Scaffold(
             key: _key,
             drawer: ContactDrawer(),
-            endDrawer: _filterDrawer(),
+            endDrawer: _filterDrawer(dealerData),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: ClipRect(
@@ -122,11 +123,11 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                 ),
               ),
             ),
-            body: body(context),
+            body: body(context, dealerData),
           );
   }
 
-  Widget body(BuildContext context) {
+  Widget body(BuildContext context, DealerData dealerData) {
     return ValueListenableBuilder(
         valueListenable: expand,
         builder: (context, _, __) {
@@ -344,7 +345,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
         });
   }
 
-  Drawer _filterDrawer() {
+  Drawer _filterDrawer(DealerData dealerData) {
     return Drawer(
       child: Padding(
         padding: EdgeInsets.only(
@@ -363,8 +364,10 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Column(
                           children: [
-                            TextField(
-                              decoration: InputDecoration(hintText: context.translete('searchSalePoint'), hintStyle: context.textStyle.copyWith(color: context.textStyle.color!.withOpacity(.5))),
+                          TextField(
+                              controller: salesNameController,
+                              decoration: InputDecoration(hintText: context.translete('searchSalePoint'),
+                                  hintStyle: context.textStyle.copyWith(color: context.textStyle.color!.withOpacity(.5))),
                             ),
                             DecoratedBox(
                               decoration: BoxDecoration(border: Border.all(color: context.textStyle.color!), borderRadius: BorderRadius.circular(8)),
@@ -391,10 +394,34 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   ),
             ElevatedButton(
                     onPressed: () {
+                      Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity(city_id: selectedCity.value, name: salesNameController.text)).then((value) {
+                        if (mounted) {
+                          setMarkers(dealerData!.data!, context).then((value) {
+                            setState(() {});
+                          });
+                        }
+                      });
                       Navigator.pop(context);
                     },
                     child: Text(context.translete('search')))
+                .wrapPaddingTop(20),
+
+            ElevatedButton(
+                onPressed: () {
+                  Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
+                    if (mounted) {
+                      setMarkers(dealerData!.data!, context).then((value) {
+                        setState(() {});
+                        salesNameController.clear();
+                        selectedCity.value = null;
+                      });
+                    }
+                  });
+                  Navigator.pop(context);
+                },
+                child: Text(context.translete('clear')))
                 .wrapPaddingTop(20)
+
           ],
         ),
       ),

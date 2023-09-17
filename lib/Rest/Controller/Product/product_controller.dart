@@ -17,12 +17,11 @@ class ProductController with ChangeNotifier {
       productData = ProductData();
     }
     try {
-      BaseResponse response = await ProductService.operations().getProductService();
+      BaseResponse response = await ProductService.operations().getProductService(size: 20);
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productData = ProductData.fromJson(response.body);
-          debugPrint('${productData.data}');
         }
       }
     } catch (e) {

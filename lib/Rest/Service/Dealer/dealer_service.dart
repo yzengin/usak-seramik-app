@@ -10,10 +10,9 @@ class DealerService extends CrudService<DealerData> {
   }
 
   Future<BaseResponse> getDealerService(DealerFilterEntity dealerFilterEntity) async {
-    return await multiPartPostDataRequest(
-      "$apiURL/dealers.php",
-      bearerToken: bearerSessionTokenNotifier.value,
+    return await postRequest("$apiURL/dealers.php",
       entityData: dealerFilterEntity,
+      bearerToken: bearerSessionTokenNotifier.value,
     );
   }
 }

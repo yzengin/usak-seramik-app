@@ -24,8 +24,6 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   final _key = GlobalKey<ScaffoldState>();
-  late ProductData productData;
-
   @override
   void initState() {
     super.initState();
@@ -42,8 +40,8 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
-    productData = Provider.of<ProductController>(context, listen: true).productData;
-    return Scaffold(
+    ProductData productData = Provider.of<ProductController>(context, listen: true).productData;
+    return productData!=null && productData.data!=null ? Scaffold(
             key: _key,
             extendBodyBehindAppBar: true,
             drawer: ContactDrawer(),
@@ -67,12 +65,12 @@ class _ProductsPageState extends State<ProductsPage> {
                 ),
               ),
             ),
-            body: body(context),
-          );
+            body: body(context, productData),
+          ): Center(child: CircularProgressIndicator(),);
   }
 
-  Widget body(BuildContext context) {
-    return (productData.data == null) ? SizedBox() : RefreshIndicator(
+  Widget body(BuildContext context, ProductData productData) {
+    return productData.data != null && productData.data!.isNotEmpty ? RefreshIndicator(
       onRefresh: () async => null,
       child: GridView.custom(
         padding: EdgeInsets.only(
@@ -81,11 +79,11 @@ class _ProductsPageState extends State<ProductsPage> {
           top: 20 + AppBar().preferredSize.height + context.paddingTop,
         ),
         childrenDelegate: SliverChildBuilderDelegate(
-          (context, index) {
+              (context, index) {
             final data = productData.data![index];
             return ProductCard(data: data, index: index);
           },
-          childCount: productList.length,
+          childCount: productData.data!.length,
         ),
         gridDelegate: SliverWovenGridDelegate.count(pattern: [
           WovenGridTile(1, alignment: AlignmentDirectional.center),
@@ -93,7 +91,7 @@ class _ProductsPageState extends State<ProductsPage> {
         ], crossAxisSpacing: 0, mainAxisSpacing: 0, tileBottomSpace: 0, crossAxisCount: 2),
         shrinkWrap: true,
       ),
-    );
+    ): Center(child: Text("Ürün Listesi yok"),);
   }
 }
 
@@ -120,7 +118,7 @@ class ProductCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(data.images.cover, fit: BoxFit.cover),
+              Image.network(imagePathControl(imageEntity: data.images!, cover: false)!, fit: BoxFit.cover),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.bottomLeft,
@@ -150,5 +148,18 @@ class ProductCard extends StatelessWidget {
             ],
           )),
     );
+  }
+
+  String? imagePathControl({ImagesClass? imageEntity, bool? cover}){
+    try{
+      if(imageEntity!.thumb!=null && !cover!){
+        return imageEntity.thumb;
+      }else {
+        return imageEntity.cover;
+      }
+    }catch(e){
+      return "notImage";
+    }
+
   }
 }

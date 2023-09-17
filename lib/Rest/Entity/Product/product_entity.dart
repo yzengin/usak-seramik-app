@@ -14,9 +14,7 @@ class ProductData extends Persistent{
     });
 
     factory ProductData.fromJson(Map<String, dynamic> json) => ProductData(
-        data: (json["data"] as List<dynamic>?)
-            ?.map((x) => ProductEntity.fromJson(x))
-            .toList(),
+        data: (json["data"] as List<dynamic>?)?.map((x) => ProductEntity.fromJson(x)).toList(),
         message: json["message"] as String?,
         status: json["status"] as bool?,
         total: json["total"] as int?,
@@ -41,7 +39,7 @@ class ProductEntity extends Persistent{
     bool? active;
     DateTime? createdAt;
     DateTime? updatedAt;
-    dynamic images;
+    ImagesClass? images;
     int? faceCount;
     int? colorCount;
     int? sizeCount;
@@ -64,24 +62,20 @@ class ProductEntity extends Persistent{
     });
 
     factory ProductEntity.fromJson(Map<String, dynamic> json) => ProductEntity(
-        id: json["id"] as int?,
+        id: json["id"],
         productCollectionId: json["product_collection_id"],
-        productTypeId: ProductTypeId.fromJson(json["product_type_id"]),
-        name: json["name"] as String?,
-        slug: json["slug"] as String?,
-        description: Description.fromJson(json["description"]),
-        sortOrder: json["sort_order"] as int?,
-        active: json["active"] as bool?,
-        createdAt: json["created_at"] != null
-            ? DateTime.parse(json["created_at"])
-            : null,
-        updatedAt: json["updated_at"] != null
-            ? DateTime.parse(json["updated_at"])
-            : null,
-        images: json["images"],
-        faceCount: json["face_count"] as int?,
-        colorCount: json["color_count"] as int?,
-        sizeCount: json["size_count"] as int?,
+        productTypeId: json["product_type_id"]== null ? null : ProductTypeId.fromJson(json["product_type_id"]),
+        name: json["name"],
+        slug: json["slug"],
+        description: json["description"] == null ? null : Description.fromJson(json["description"]),
+        sortOrder: json["sort_order"],
+        active: json["active"],
+        createdAt: json["created_at"] != null ? DateTime.parse(json["created_at"]) : null,
+        updatedAt: json["updated_at"] != null ? DateTime.parse(json["updated_at"]) : null,
+        images: json["images"] == null ? null : ImagesClass.fromJson(json["images"]),
+        faceCount: json["face_count"],
+        colorCount: json["color_count"],
+        sizeCount: json["size_count"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -91,11 +85,11 @@ class ProductEntity extends Persistent{
         "name": name,
         "slug": slug,
         "description": description?.toJson(),
+        "images": images?.toJson(),
         "sort_order": sortOrder,
         "active": active,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-        "images": images,
         "face_count": faceCount,
         "color_count": colorCount,
         "size_count": sizeCount,

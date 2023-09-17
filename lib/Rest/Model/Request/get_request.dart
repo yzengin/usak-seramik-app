@@ -26,11 +26,7 @@ Future<BaseResponse> telegramGetRequest(String url, {String? chatId, String? mes
 
   final Uri uri = Uri.parse(url).replace(queryParameters: queryParams);
 
-  return http
-      .get(
-    uri,
-  )
-      .then((http.Response response) {
+  return http.get(uri,).then((http.Response response) {
     return FindResponse.control(response);
   });
 }
