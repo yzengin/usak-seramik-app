@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:usak_seramik_app/Rest/Entity/User/message_entity.dart';
+import 'package:usak_seramik_app/Rest/Handler/message_handler.dart';
 import '../../../Controller/formatter.dart';
 import '../dialog/dialog.dart';
 import '/Controller/extension.dart';
@@ -190,16 +192,27 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                       debugPrint('${phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString()}');
                                       debugPrint('${phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString().length}');
                                       if (_formKey.currentState!.validate()) {
-                                        appDialog(context, dialogType: DialogType.success, message: context.translete('sendMessageDialog')).then((value) {
-                                          nameController.clear();
-                                          emailController.clear();
-                                          phoneController.clear();
-                                          subjectController.clear();
-                                          messageController.clear();
-                                          draggableScrollableController.animateTo(0, duration: 300.millisecond(), curve: Curves.ease);
+                                        MessageEntity messageEntity = MessageEntity();
+                                        messageEntity.name = nameController.text;
+                                        messageEntity.email = emailController.text;
+                                        messageEntity.tel = phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString();
+                                        messageEntity.subject = subjectController.text;
+                                        messageEntity.message = messageController.text;
+                                        AppMessageHandler.operations().send_message_handler(messageEntity: messageEntity).then((value) {
+                                          if (value == 200) {
+                                            appDialog(context, message: context.translete('sendMessageDialog'), dialogType: DialogType.success).then((value) {
+                                              currentSheetPosition.value = 0;
+                                            });
+                                          }
                                         });
-                                        FocusScope.of(context).unfocus();
                                       }
+                                      nameController.clear();
+                                      emailController.clear();
+                                      phoneController.clear();
+                                      subjectController.clear();
+                                      messageController.clear();
+                                      draggableScrollableController.animateTo(0, duration: 300.millisecond(), curve: Curves.ease);
+                                      FocusScope.of(context).unfocus();
                                     },
                                     child: Text(context.translete('send')))
                               ],

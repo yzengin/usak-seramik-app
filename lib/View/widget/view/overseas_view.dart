@@ -1,11 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 
-import '../drawer/contact_drawer.dart';
 
 class OverseasView extends StatelessWidget {
   OverseasView({super.key});

@@ -5,10 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
-import 'package:usak_seramik_app/Model/fake/seller.dart';
+import 'package:usak_seramik_app/Rest/Controller/Dealer/dealer_controller.dart';
+import 'package:usak_seramik_app/Rest/Entity/Dealer/dealer_entity.dart';
 
 import '../../../../Controller/Map_Controller/marker_create.dart';
 import '../../../../Controller/launcher.dart';
@@ -28,20 +30,22 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   List<City> cities = [];
   ValueNotifier<int?> selectedCity = ValueNotifier<int?>(null);
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
-  // ValueNotifier<String> selectedView = ValueNotifier<String>('domestic');
-
   var defaultPosition = CameraPosition(target: LatLng(39, 35.3191), zoom: 4.8);
   late Completer<GoogleMapController> _controller;
+  late DealerData dealerData;
 
   @override
   void initState() {
+    super.initState();
     _controller = Completer<GoogleMapController>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      if (mounted) {
-        setMarkers(sellerList, context).then((value) {
-          setState(() {});
-        });
-      }
+      Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
+        if (mounted) {
+          setMarkers(dealerData.data!, context).then((value) {
+            setState(() {});
+          });
+        }
+      });
     });
     fetchJson().whenComplete(() {
       setState(() {});
@@ -54,7 +58,6 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     //     controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
     //   }
     // });
-    super.initState();
   }
 
   @override
@@ -70,143 +73,60 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _key,
-      drawer: ContactDrawer(),
-      endDrawer: _filterDrawer(),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: AppBar(
-              backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
-              centerTitle: true,
-              title: Text(context.translete('stores')),
-              bottom: PreferredSize(
-                preferredSize: Size.fromHeight(kToolbarHeight * 0.5),
-                child: DefaultTabController(
-                  length: 2,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: ['domestic', 'overseas']
-                        .map((e) => GestureDetector(
-                            onTap: () {
-                              if (e == 'overseas') {
-                                Navigator.pushNamed(context, AppRoutes.overseas_page);
-                              }
-                            },
-                            child: Text(
-                              context.translete(e),
-                              style: context.textStyle.copyWith(color: e == 'domestic' ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
-                            ).wrapPaddingHorizontal(10)))
-                        .toList(),
+    dealerData = Provider.of<DealerController>(context).dealerData;
+    return (dealerData.data == null)
+        ? SizedBox()
+        : Scaffold(
+            key: _key,
+            drawer: ContactDrawer(),
+            endDrawer: _filterDrawer(),
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: AppBar(
+                    backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
+                    centerTitle: true,
+                    title: Text(context.translete('stores')),
+                    bottom: PreferredSize(
+                      preferredSize: Size.fromHeight(kToolbarHeight * 0.5),
+                      child: DefaultTabController(
+                        length: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: ['domestic', 'overseas']
+                              .map((e) => GestureDetector(
+                                  onTap: () {
+                                    if (e == 'overseas') {
+                                      Navigator.pushNamed(context, AppRoutes.overseas_page);
+                                    }
+                                  },
+                                  child: Text(
+                                    context.translete(e),
+                                    style: context.textStyle.copyWith(color: e == 'domestic' ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
+                                  ).wrapPaddingHorizontal(10)))
+                              .toList(),
+                        ),
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                        onPressed: () {
+                          _key.currentState!.openEndDrawer();
+                        },
+                        icon: Icon(FontAwesomeIcons.filter),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              actions: [
-                IconButton(
-                  onPressed: () {
-                    _key.currentState!.openEndDrawer();
-                  },
-                  icon: Icon(FontAwesomeIcons.filter),
-                ),
-              ],
             ),
-          ),
-        ),
-      ),
-      body: bodyDomestic(context),
-      // body: ValueListenableBuilder(
-      //   valueListenable: selectedView,
-      //   builder: (context, value, child) {
-      //     return selectedView.value == "domestic" ? bodyDomestic(context) : bodyOverseas(context);
-      //   },
-      // ),
-    );
+            body: body(context),
+          );
   }
 
-  Widget bodyOverseas(BuildContext context) {
-    List<String> ulkeler = [
-      "ABD",
-      "ALMANYA",
-      "ANGOLA",
-      "ARJANTIN",
-      "ARNAVUTLUK",
-      "AZERBAYCAN",
-      "BOSNA",
-      "BULGARİSTAN",
-      "ÇEK CUMHURİYETİ",
-      "FİLDİŞİ",
-      "FRANSA",
-      "GAMBİA",
-      "GÜRCİSTAN",
-      "IRAK",
-      "İNGİLTERE",
-      "İSRAİL",
-      "İSVEÇ",
-      "KANADA",
-      "KIBRIS",
-      "KOSOVA",
-      "MAKEDONYA",
-      "MALİ",
-      "MALTA",
-      "POLANYA",
-      "ROMANYA",
-      "SENEGAL",
-      "SIRBISTAN",
-      "ŞİLİ",
-      "TÜRKMENİSTAN",
-      "UGANDA",
-      "YUNANİSTAN",
-    ];
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Image.network('https://www.usakseramik.com/img/overseas_salespoints.jpg'),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.only(top: 20),
-            itemCount: ulkeler.length,
-            itemBuilder: (context, index) {
-              final data = ulkeler[index];
-              return Align(
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: context.textStyle.color!.withOpacity(.25),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          (index + 1).toString(),
-                        ).wrapPaddingHorizontal(10),
-                      ),
-                    ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(border: Border.all(color: context.textStyle.color!)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(data),
-                      ),
-                    ),
-                  ],
-                ),
-              ).wrapPaddingBottom(20);
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget bodyDomestic(BuildContext context) {
+  Widget body(BuildContext context) {
     return ValueListenableBuilder(
         valueListenable: expand,
         builder: (context, _, __) {
@@ -308,9 +228,9 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                               shrinkWrap: true,
                                               physics: NeverScrollableScrollPhysics(),
                                               // padding: EdgeInsets.only(top: 20),
-                                              itemCount: sellerList.length,
+                                              itemCount: dealerData.data!.length,
                                               itemBuilder: (context, index) {
-                                                final data = sellerList[index];
+                                                final data = dealerData.data![index];
                                                 return Padding(
                                                   padding: EdgeInsets.only(bottom: 20),
                                                   child: addressCard(data),
@@ -330,7 +250,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
         });
   }
 
-  Widget addressCard(Point data) {
+  Widget addressCard(DealerEntity data) {
     return ValueListenableBuilder(
         valueListenable: selectedSeller,
         builder: (context, _, __) {
@@ -348,7 +268,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                       final GoogleMapController controllerData = await _controller.future;
                       if (selectedSeller.value != data) {
                         selectedSeller.value = data;
-                        controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: data.coordinate, zoom: 16)));
+                        controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng((data.latitude != null) ? double.parse(data.latitude!) : 0, (data.longitude != null) ? double.parse(data.longitude!) : 0), zoom: 16)));
                       } else {
                         selectedSeller.value = null;
                         controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
@@ -356,16 +276,16 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     },
                     child: Row(
                       children: [
-                        Expanded(child: Text(data.title).wrapPaddingHorizontal(10)),
+                        Expanded(child: Text(data.name??"").wrapPaddingHorizontal(10)),
                         (selectedSeller.value == data) ? Text(context.translete('selected'), style: context.textStyle.copyWith(color: context.theme.iconTheme.color)).wrapPaddingRight(20) : Text(context.translete('select'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)).wrapPaddingRight(20),
                       ],
                     ),
                   ),
                   Divider(color: context.theme.dividerColor.withOpacity(.25)),
                   GestureDetector(
-                    onTap: () async => launchMapsUrl(data.coordinate.latitude, data.coordinate.longitude),
+                    onTap: () async => launchMapsUrl((data.latitude != null) ? double.parse(data.latitude!) : 0, (data.longitude != null) ? double.parse(data.longitude!) : 0),
                     child: Row(children: [
-                      Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.address??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       Row(
                         children: [
                           Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -375,9 +295,9 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
                   ),
                   GestureDetector(
-                    onTap: () async => launchPhone(data.phone),
+                    onTap: () async => launchPhone(data.phone1??""),
                     child: Row(children: [
-                      Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.phone1??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       Row(
                         children: [
                           Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -389,7 +309,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   GestureDetector(
                     onTap: () async => launchMail(data.email ?? ""),
                     child: Row(children: [
-                      Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.fax??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       CopyOnTap(
                         '${data.fax}',
                         delay: 1.second(),

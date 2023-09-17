@@ -48,7 +48,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
       childrenDelegate: SliverChildBuilderDelegate(
         (context, index) {
           final data = productList[index];
-          return ProductCard(data: data, index: index);
+          // return ProductCard(data: data, index: index);
         },
         childCount: productList.length,
       ),

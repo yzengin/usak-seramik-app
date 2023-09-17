@@ -29,7 +29,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
         child: ValueListenableBuilder(
           valueListenable: likedProduct,
           builder: (context,_,__) {
-            return likedProduct.value!=null && likedProduct.value.length>0 ? GridView.custom(
+            return likedProduct.value.length>0 ? GridView.custom(
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
@@ -38,7 +38,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final data = likedProduct.value[index];
-                  return ProductCard(data: data, index: index);
+                  // return ProductCard(data: data, index: index);
                 },
                 childCount: likedProduct.value.length,
               ),

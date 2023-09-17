@@ -13,12 +13,16 @@ class ProductController with ChangeNotifier {
   Future<int> getProductController({int? page, int? size}) async {
     int status = 0;
     exceptedAction.value = true;
+    if (page == 0) {
+      productData = ProductData();
+    }
     try {
       BaseResponse response = await ProductService.operations().getProductService();
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productData = ProductData.fromJson(response.body);
+          debugPrint('${productData.data}');
         }
       }
     } catch (e) {

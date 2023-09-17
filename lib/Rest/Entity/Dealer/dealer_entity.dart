@@ -1,7 +1,7 @@
 import 'package:usak_seramik_app/Rest/Entity/persistent.dart';
 
 class DealerData extends Persistent {
-  List<DealerEntity?>? data;
+  List<DealerEntity>? data;
   String? message;
   bool? status;
   int? total;
@@ -21,7 +21,7 @@ class DealerData extends Persistent {
       );
 
   Map<String, dynamic> toJson() => {
-        "data": List<dynamic>.from(data!.map((x) => x!.toJson())),
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
         "message": message,
         "status": status,
         "total": total,
@@ -89,5 +89,25 @@ class DealerEntity extends Persistent {
         "longitude": longitude,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
+      };
+}
+
+class DealerFilterEntity extends Persistent{
+  int? city_id;
+  String? name;
+
+  DealerFilterEntity({
+    this.city_id,
+    this.name,
+  });
+
+  factory DealerFilterEntity.fromJson(Map<String, dynamic> json) => DealerFilterEntity(
+        city_id: json["city_id"] as int?,
+        name: json["name"] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        "city_id": city_id,
+        "name": name,
       };
 }

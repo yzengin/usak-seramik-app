@@ -2,6 +2,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'dart:math';
 import '/view/style/glow.dart';
 import 'package:intl/intl.dart';
@@ -19,13 +20,14 @@ extension BuildContextExtensions on BuildContext {
   bool get isMobile => mediaQuery.size.width < 850 && (defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS);
   String? get routeName => ModalRoute.of(this)!.settings.name;
   List<dynamic>? get routeArguments => ModalRoute.of(this)!.settings.arguments as List<dynamic>?;
-  String translete(String? keyw){
+  String translete(String? keyw) {
     try {
       return LocalizationController.of(this)!.translate(keyw)!;
     } catch (e) {
       return "";
     }
   }
+
   ThemeData get theme => Theme.of(this);
   TextStyle get textStyle => Theme.of(this).textTheme.bodyMedium!;
   TextTheme get textTheme => Theme.of(this).textTheme;
@@ -53,6 +55,15 @@ extension StringExtensions on String {
   String addQuotes() => "'$this'";
   String addSymbolBefore({String symbol = ''}) => "$symbol $this";
   String addSymbolAfter({String symbol = ''}) => "$this $symbol";
+  String firstLetterUpperCase() {
+    List<String> words = split(' ');
+    List<String> res = [];
+    for (var element in words) {
+      res.add("${element[0].toUpperCase()}${element.substring(1).toLowerCase()}");
+    }
+    return res.join(' ');
+  }
+
   String head() {
     if (this.isNotEmpty) {
       final parts = this.split(' ').where((part) => part.isNotEmpty);
@@ -62,6 +73,36 @@ extension StringExtensions on String {
       return "?";
     }
   }
+}
+
+String translateData(dynamic data) {
+  String locale = '';
+
+  locale = localeNotifier.value!.languageCode;
+  if (locale == 'tr') {
+    return data.tr;
+  } else {
+    if (locale == 'en') {
+      return data.en;
+    }
+  }
+
+  return data.tr;
+}
+
+String translateImage(dynamic data) {
+  String locale = '';
+
+  locale = localeNotifier.value!.languageCode;
+  if (locale == 'tr') {
+    return data.trImage;
+  } else {
+    if (locale == 'en') {
+      return data.enImage;
+    }
+  }
+
+  return data.tr;
 }
 
 extension DoubleExtensions on double {

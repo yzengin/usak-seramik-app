@@ -10,6 +10,10 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:provider/provider.dart';
+import 'package:usak_seramik_app/Rest/Controller/Dealer/dealer_controller.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/showreel_controller.dart';
+import 'package:usak_seramik_app/Rest/Controller/User/contact_controller.dart';
 import 'package:usak_seramik_app/View/style/colors.dart';
 import '/Model/languages.dart';
 import 'Controller/localization.dart';
@@ -35,6 +39,7 @@ Future run() async {
   stopwatch.start(); // for a process timing analyz. use with stopwatchTick() method.
   try {
     if (GetPlatform.isMobile) {
+      // ignore: unused_local_variable
       final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
 
       await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
@@ -57,8 +62,12 @@ class AppStarter extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context2) => ThemeController()),
-        ChangeNotifierProvider(create: (context2) => LocalizationController()),
+        ChangeNotifierProvider(create: (context) => ThemeController()),
+        ChangeNotifierProvider(create: (context) => LocalizationController()),
+        ChangeNotifierProvider(create: (context) => DealerController()),
+        ChangeNotifierProvider(create: (context) => ProductController()),
+        ChangeNotifierProvider(create: (context) => ShowreelController()),
+        ChangeNotifierProvider(create: (context) => ContactController()),
       ],
       child: Consumer<LocalizationController>(builder: (context, _, __) {
         return Stack(

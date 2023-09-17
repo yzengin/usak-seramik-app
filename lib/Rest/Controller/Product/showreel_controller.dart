@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/showreel_entity.dart';
 import 'package:usak_seramik_app/Rest/Model/Response/ok_response.dart';
-import 'package:usak_seramik_app/Rest/Service/Product/product_service.dart';
+import 'package:usak_seramik_app/Rest/Service/Product/showreel_service.dart';
 import '../../Model/Response/base_response.dart';
 import '/Controller/notifiers.dart';
 
@@ -14,7 +14,7 @@ class ShowreelController with ChangeNotifier {
     int status = 0;
     exceptedAction.value = true;
     try {
-      BaseResponse response = await ProductService.operations().getProductService();
+      BaseResponse response = await ShowreelService.operations().getShowreelService();
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {

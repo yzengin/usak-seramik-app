@@ -6,11 +6,11 @@ import '../../Service/User/contact_service.dart';
 import '/Controller/notifiers.dart';
 
 class ContactController with ChangeNotifier {
-  ContactData _contactEntity = ContactData();
-  ContactData get contactEntity => _contactEntity;
-  set contactEntity(ContactData data) => _contactEntity = data;
+  ContactData _contactData = ContactData();
+  ContactData get contactData => _contactData;
+  set contactData(ContactData data) => _contactData = data;
 
-  Future<int> getContactController(int id) async {
+  Future<int> getContactController() async {
     int status = 0;
     exceptedAction.value = true;
     try {
@@ -18,7 +18,7 @@ class ContactController with ChangeNotifier {
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
-          contactEntity = ContactData.fromJson(response.body);
+          contactData = ContactData.fromJson(response.body);
         }
       }
     } catch (e) {

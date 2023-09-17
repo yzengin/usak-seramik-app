@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
+import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
 import 'package:usak_seramik_app/View/widget/drawer/filter_drawer.dart';
 import '../../../../Controller/filter.dart';
 import '../../../../Model/fake/product.dart';
@@ -21,38 +24,55 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   final _key = GlobalKey<ScaffoldState>();
+  late ProductData productData;
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Provider.of<ProductController>(context, listen: false).getProductController().then((value) {
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      debugPrint('ProductsPage.initState() $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    productData = Provider.of<ProductController>(context, listen: true).productData;
     return Scaffold(
-      key: _key,
-      extendBodyBehindAppBar: true,
-      drawer: ContactDrawer(),
-      endDrawer: FilterDrawer(model: testFilter),
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: ClipRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-            child: AppBar(
-              backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
-              title: Text(context.translete('products')),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      _key.currentState!.openEndDrawer();
-                    },
-                    icon: Icon(FontAwesomeIcons.filter)),
-              ],
+            key: _key,
+            extendBodyBehindAppBar: true,
+            drawer: ContactDrawer(),
+            endDrawer: FilterDrawer(model: testFilter),
+            appBar: PreferredSize(
+              preferredSize: Size.fromHeight(kToolbarHeight),
+              child: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: AppBar(
+                    backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
+                    title: Text(context.translete('products')),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            _key.currentState!.openEndDrawer();
+                          },
+                          icon: Icon(FontAwesomeIcons.filter)),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-      body: body(context),
-    );
+            body: body(context),
+          );
   }
 
   Widget body(BuildContext context) {
-    return RefreshIndicator(
+    return (productData.data == null) ? SizedBox() : RefreshIndicator(
       onRefresh: () async => null,
       child: GridView.custom(
         padding: EdgeInsets.only(
@@ -62,7 +82,7 @@ class _ProductsPageState extends State<ProductsPage> {
         ),
         childrenDelegate: SliverChildBuilderDelegate(
           (context, index) {
-            final data = productList[index];
+            final data = productData.data![index];
             return ProductCard(data: data, index: index);
           },
           childCount: productList.length,
@@ -79,15 +99,15 @@ class _ProductsPageState extends State<ProductsPage> {
 
 class ProductCard extends StatelessWidget {
   const ProductCard({super.key, required this.data, required this.index});
-  final Product data;
+  final ProductEntity data;
   final int index;
 
   @override
   Widget build(BuildContext context) {
     Set<String> uniqueSizes = Set<String>();
-    data.face?.forEach((face) {
-      uniqueSizes.add(face.size);
-    });
+    // data.face?.forEach((face) {
+    //   uniqueSizes.add(face.size);
+    // });
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data]);
@@ -100,7 +120,7 @@ class ProductCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(data.image, fit: BoxFit.cover),
+              Image.network(data.images.cover, fit: BoxFit.cover),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.bottomLeft,
@@ -114,12 +134,12 @@ class ProductCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          data.title.toUpperCase(),
+                          data.name??"".toUpperCase(),
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
                         ),
                         Divider(thickness: 0.2, color: Colors.white, height: 3),
                         Text(
-                          '${data.face!.length} FACE ${data.color.length} RENK ${uniqueSizes.length} EBAT',
+                          '${data.faceCount} FACE ${data.colorCount} RENK ${uniqueSizes.length} EBAT',
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
                         ),
                       ],

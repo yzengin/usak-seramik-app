@@ -2,8 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
-import 'package:usak_seramik_app/View/widget/utility/language_changer.dart';
-import 'package:usak_seramik_app/View/widget/utility/title.dart';
 import '../../../Controller/extension.dart';
 import '../../../Controller/formatter.dart';
 import '../../../Controller/localization.dart';

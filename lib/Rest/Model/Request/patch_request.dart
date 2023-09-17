@@ -10,7 +10,7 @@ Future<BaseResponse> patchRequest(String url, {dynamic entityData, String? beare
   Map<String, String> headers = new Map();
   headers["Content-Type"] = "application/json";
   if (bearerToken != null) {
-    headers["token"] = "$bearerToken";
+    headers["Authorization"] = "Bearer $bearerToken";
   }
 
   Map<String, dynamic> _json = entityData.toJson();

@@ -11,7 +11,7 @@ Future<BaseResponse> putRequest(String url, {dynamic entityData, String? bearerT
   Map<String, String> headers = Map();
   headers["Content-Type"] = "application/json";
   if (bearerToken != null) {
-    headers["token"] = "$bearerToken";
+    headers["Authorization"] = "Bearer $bearerToken";
   }
   if (entityData != null) {
     Map<String, dynamic> _json = entityData.toJson();

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:usak_seramik_app/Rest/Entity/Dealer/dealer_entity.dart';
-import 'package:usak_seramik_app/Rest/Entity/Dealer/dealer_filter_entity.dart';
 import 'package:usak_seramik_app/Rest/Model/Response/ok_response.dart';
 import '../../Model/Response/base_response.dart';
 import '../../Service/Dealer/dealer_service.dart';

@@ -6,9 +6,9 @@ import '../../Controller/notifiers.dart';
 import '../Model/Response/base_response.dart';
 import '../Model/Response/ok_response.dart';
 
-class MessageHandler {
-  static MessageHandler operations() {
-    return MessageHandler();
+class AppMessageHandler {
+  static AppMessageHandler operations() {
+    return AppMessageHandler();
   }
 
   Future<int> send_message_handler({required MessageEntity messageEntity}) async {

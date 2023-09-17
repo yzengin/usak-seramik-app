@@ -10,7 +10,7 @@ Future<BaseResponse> getRequest(String url, {String? bearerToken}) async {
   Map<String, String> headers = {};
   headers["Content-Type"] = "application/json ; charset=utf-8";
   if (bearerToken != null) {
-    headers["token"] = "$bearerToken";
+    headers["Authorization"] = "Bearer $bearerToken";
   }
 
   return http.get(Uri.parse(url), headers: headers).then((http.Response response) {

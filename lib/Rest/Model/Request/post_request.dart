@@ -8,51 +8,51 @@ import 'package:http/http.dart' as http;
 import '../Response/base_response.dart';
 import '../Response/find_response.dart';
 
-Future<BaseResponse> postRequest (String url,{dynamic entityData, String? bearerToken}) async {
-  Map<String,String> headers = {};
+Future<BaseResponse> postRequest(String url, {dynamic entityData, String? bearerToken}) async {
+  Map<String, String> headers = {};
   headers["Content-Type"] = "application/json";
-  if(bearerToken != null){
-    headers["token"] = "$bearerToken";
+  if (bearerToken != null) {
+    headers["Authorization"] = "Bearer $bearerToken";
   }
 
-  if(entityData!=null){
-    Map<String,dynamic> _json = entityData.toJson();
+  if (entityData != null) {
+    Map<String, dynamic> _json = entityData.toJson();
     String encoded = json.encode(_json);
     // debugPrint(encoded);
 
-    return http.post(Uri.parse(url),
-        headers: headers,
-        body: encoded
-    ).then((http.Response response) {
+    return http.post(Uri.parse(url), headers: headers, body: encoded).then((http.Response response) {
       debugPrint(response.statusCode.toString());
       return FindResponse.control(response);
     });
-  }else{
-    return http.post(Uri.parse(url),
-        headers: headers,
-    ).then((http.Response response) {
+  } else {
+    return http
+        .post(
+      Uri.parse(url),
+      headers: headers,
+    )
+        .then((http.Response response) {
       debugPrint(response.statusCode.toString());
       return FindResponse.control(response);
     });
   }
 }
 
-Future<BaseResponse> multiPartPostDataRequest (String url, {dynamic entityData, String? bearerToken}) async {
-  Map<String,String> headers = {};
+Future<BaseResponse> multiPartPostDataRequest(String url, {dynamic entityData, String? bearerToken}) async {
+  Map<String, String> headers = {};
   headers["Content-Type"] = "application/json";
-  if(bearerToken != null){
+  if (bearerToken != null) {
     headers["Authorization"] = "Bearer $bearerToken";
   }
-  if(entityData!=null){
-    var request = http.MultipartRequest("POST",Uri.parse("$url"));
+  if (entityData != null) {
+    var request = http.MultipartRequest("POST", Uri.parse("$url"));
     request.headers.addAll(headers);
     request = jsonToFormData(request, entityData.toJson());
     return http.Response.fromStream(await request.send()).then((http.Response response) {
       debugPrint(response.statusCode.toString());
       return FindResponse.control(response);
     });
-  }else{
-    var request = http.MultipartRequest("POST",Uri.parse("$url"));
+  } else {
+    var request = http.MultipartRequest("POST", Uri.parse("$url"));
     request.headers.addAll(headers);
     return http.Response.fromStream(await request.send()).then((http.Response response) {
       debugPrint(response.statusCode.toString());
@@ -67,4 +67,3 @@ jsonToFormData(http.MultipartRequest request, Map<String, dynamic> data) {
   }
   return request;
 }
-

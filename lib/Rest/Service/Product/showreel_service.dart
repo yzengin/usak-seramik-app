@@ -1,6 +1,7 @@
-import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
+import 'package:flutter/material.dart';
+import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/showreel_entity.dart';
-import '../../Model/Request/post_request.dart';
+import '../../Model/Request/get_request.dart';
 import '../../Model/Response/base_response.dart';
 import '../crud_service.dart';
 
@@ -10,6 +11,11 @@ class ShowreelService extends CrudService<ShowreelData> {
   }
 
   Future<BaseResponse> getShowreelService() async {
-    return await postRequest("$apiURL/sliders.php");
+    String token = bearerSessionTokenNotifier.value;
+    debugPrint('token - $token ');
+    return await getRequest(
+      "$apiURL/sliders.php",
+      bearerToken: token,
+    );
   }
 }

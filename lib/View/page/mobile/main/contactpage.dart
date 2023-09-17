@@ -1,13 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/Rest/Controller/User/contact_controller.dart';
+import 'package:usak_seramik_app/Rest/Entity/User/contact_entity.dart';
 import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
 import '../../../../Controller/launcher.dart';
-import '../../../../Model/fake/seller.dart';
 import '../../../widget/drawer/contact_drawer.dart';
 import '../../../widget/sheet/contactForm_bottomsheet.dart';
 
@@ -20,10 +22,26 @@ class ContactPage extends StatefulWidget {
 
 class _ContactPageState extends State<ContactPage> {
   final scaffoldState = GlobalKey<ScaffoldState>();
+  late ContactData contactData;
+
+  @override
+  void initState() {
+    try {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+        Provider.of<ContactController>(context, listen: false).getContactController().then((value) {
+          setState(() {});
+        });
+      });
+    } catch (e) {
+      debugPrint('ContactPage.initState(), $e');
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    contactData = Provider.of<ContactController>(context, listen: true).contactData;
+    return (contactData.data == null) ? SizedBox() : Scaffold(
       key: scaffoldState,
       appBar: AppBar(
         backgroundColor: context.theme.scaffoldBackgroundColor,
@@ -70,9 +88,9 @@ class _ContactPageState extends State<ContactPage> {
     return ListView.builder(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
-      itemCount: addressList.length,
+      itemCount: contactData.data!.length,
       itemBuilder: (context, index) {
-        final data = addressList[index];
+        final data = contactData.data![index];
         return AddressCard(data: data, titleTranslate: true);
       },
     );
@@ -82,7 +100,7 @@ class _ContactPageState extends State<ContactPage> {
 class AddressCard extends StatelessWidget {
   const AddressCard({super.key, required this.data, this.titleTranslate = false});
   final bool titleTranslate;
-  final Point data;
+  final ContactEntity data;
 
   @override
   Widget build(BuildContext context) {
@@ -95,12 +113,12 @@ class AddressCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text((titleTranslate) ? context.translete(data.title).toUpperCase() : data.title).wrapPaddingHorizontal(10),
+              Text((data.title != null) ? data.title!.toUpperCase() : "").wrapPaddingHorizontal(10),
               Divider(color: context.theme.dividerColor.withOpacity(.25)),
               GestureDetector(
-                onTap: () async => launchMapsUrl(data.coordinate.latitude, data.coordinate.longitude),
+                onTap: () async => launchMapsUrl((data.lat != null) ? double.parse(data.lat!) : 0, (data.lng != null) ? double.parse(data.lng!) : 0),
                 child: Row(children: [
-                  Expanded(child: Text(data.address, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Expanded(child: Text(data.address??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                   Row(
                     children: [
                       Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -110,9 +128,9 @@ class AddressCard extends StatelessWidget {
                 ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
               ),
               GestureDetector(
-                onTap: () async => launchPhone(data.phone),
+                onTap: () async => launchPhone((data.gsm != null) ? data.gsm!  : ""),
                 child: Row(children: [
-                  Expanded(child: Text(data.phone, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Expanded(child: Text((data.gsm != null) ? data.gsm!  : "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                   Row(
                     children: [
                       Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -122,7 +140,7 @@ class AddressCard extends StatelessWidget {
                 ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
               ),
               Row(children: [
-                Expanded(child: Text(data.fax, style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                Expanded(child: Text((data.fax != null) ? data.fax!  : "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                 CopyOnTap(
                   '${data.fax}',
                   delay: 1.second(),
