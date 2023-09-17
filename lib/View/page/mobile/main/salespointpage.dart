@@ -366,6 +366,11 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                           children: [
                           TextField(
                               controller: salesNameController,
+                              onChanged: (val){
+                                setState(() {
+
+                                });
+                              },
                               decoration: InputDecoration(hintText: context.translete('searchSalePoint'),
                                   hintStyle: context.textStyle.copyWith(color: context.textStyle.color!.withOpacity(.5))),
                             ),
@@ -377,7 +382,11 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                   items: cities.map((e) => DropdownMenuItem(child: Text(e.title.toString()), value: e.code)).toList(),
                                   value: selectedCity.value,
                                   isExpanded: true,
-                                  onChanged: (value) => selectedCity.value = value,
+                                  onChanged: (value){
+                                    setState(() {
+                                      selectedCity.value = value;
+                                    });
+                                  },
                                   underline: SizedBox(),
                                   iconEnabledColor: context.textStyle.color,
                                   iconDisabledColor: context.textStyle.color!.withOpacity(.5),
@@ -396,7 +405,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     onPressed: () {
                       Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity(city_id: selectedCity.value, name: salesNameController.text)).then((value) {
                         if (mounted) {
-                          setMarkers(dealerData!.data!, context).then((value) {
+                          setMarkers(dealerData.data!, context).then((value) {
                             setState(() {});
                           });
                         }
@@ -405,22 +414,21 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     },
                     child: Text(context.translete('search')))
                 .wrapPaddingTop(20),
-
-            ElevatedButton(
-                onPressed: () {
+            salesNameController.text.isNotEmpty || selectedCity.value!=null ?
+            GestureDetector(
+                onTap: (){
+                  salesNameController.clear();
+                  selectedCity.value = null;
                   Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
                     if (mounted) {
-                      setMarkers(dealerData!.data!, context).then((value) {
+                      setMarkers(dealerData.data!, context).then((value) {
                         setState(() {});
-                        salesNameController.clear();
-                        selectedCity.value = null;
+
                       });
                     }
                   });
-                  Navigator.pop(context);
                 },
-                child: Text(context.translete('clear')))
-                .wrapPaddingTop(20)
+                child: Text(context.translete('clear')).wrapPaddingTop(20)): SizedBox()
 
           ],
         ),
