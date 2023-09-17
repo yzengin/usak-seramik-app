@@ -85,6 +85,7 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                       children: [
                         GestureDetector(
                           onTap: () {
+                            FocusScope.of(context).unfocus();
                             if (currentSheetPosition.value == 0) {
                               draggableScrollableController.animateTo(1, duration: 300.millisecond(), curve: Curves.ease);
                             } else {
@@ -198,7 +199,7 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                         messageEntity.tel = phoneController.text.replaceAll(' ', '').replaceAll('+90', '').toString();
                                         messageEntity.subject = subjectController.text;
                                         messageEntity.message = messageController.text;
-                                        AppMessageHandler.operations().send_message_handler(messageEntity: messageEntity).then((value) {
+                                        AppMessageHandler.operations().sendMessageHandler(messageEntity: messageEntity).then((value) {
                                           if (value == 200) {
                                             appDialog(context, message: context.translete('sendMessageDialog'), dialogType: DialogType.success).then((value) {
                                               currentSheetPosition.value = 0;

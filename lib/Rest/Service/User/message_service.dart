@@ -10,7 +10,7 @@ class MessageService extends CrudService<MessageEntity> {
   }
 
   Future<BaseResponse> send_message_service({required MessageEntity messageEntity}) async {
-    return await multiPartPostDataRequest(
+    return await postRequest(
       "$apiURL/send-message.php",
       bearerToken: bearerSessionTokenNotifier.value,
       entityData: messageEntity

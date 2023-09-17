@@ -11,7 +11,7 @@ class AppMessageHandler {
     return AppMessageHandler();
   }
 
-  Future<int> send_message_handler({required MessageEntity messageEntity}) async {
+  Future<int> sendMessageHandler({required MessageEntity messageEntity}) async {
     int status = 0;
     exceptedAction.value = true;
     try {
@@ -20,13 +20,20 @@ class AppMessageHandler {
       if (response is OkResponse) {
         // ignore: unnecessary_null_comparison
         if (response.body != null) {
+          if(response.body["status"]!=null && response.body["status"]){
+            status = 200;
+          }else{
+            status =  404;
+          }
           // UserData.fromJson(response.body).data!;
         } else {
           status = 404;
         }
-      } else {}
+      } else {
+        status = 404;
+      }
     } catch (e) {
-      debugPrint('catch on registerHandler() $e');
+      debugPrint('catch on send_message_handler() $e');
     }
     exceptedAction.value = false;
     return status;

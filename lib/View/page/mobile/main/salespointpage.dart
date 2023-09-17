@@ -32,7 +32,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   ValueNotifier<String?> searchSalesName = ValueNotifier<String?>(null);
   TextEditingController salesNameController = TextEditingController();
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
-  var defaultPosition = CameraPosition(target: LatLng(39, 35.3191), zoom: 4.8);
+  var defaultPosition = CameraPosition(target: LatLng(38.6730023335095, 29.40315111635541), zoom: 6.5);
   late Completer<GoogleMapController> _controller;
 
   @override
