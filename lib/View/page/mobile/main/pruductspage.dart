@@ -41,7 +41,8 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     ProductData productData = Provider.of<ProductController>(context, listen: true).productData;
-    return productData!=null && productData.data!=null ? Scaffold(
+    return productData != null && productData.data != null
+        ? Scaffold(
             key: _key,
             extendBodyBehindAppBar: true,
             drawer: ContactDrawer(),
@@ -66,32 +67,37 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
             ),
             body: body(context, productData),
-          ): Center(child: CircularProgressIndicator(),);
+          )
+        : Center(child: CircularProgressIndicator());
   }
 
   Widget body(BuildContext context, ProductData productData) {
-    return productData.data != null && productData.data!.isNotEmpty ? RefreshIndicator(
-      onRefresh: () async => null,
-      child: GridView.custom(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20 + AppBar().preferredSize.height + context.paddingTop,
-        ),
-        childrenDelegate: SliverChildBuilderDelegate(
-              (context, index) {
-            final data = productData.data![index];
-            return ProductCard(data: data, index: index);
-          },
-          childCount: productData.data!.length,
-        ),
-        gridDelegate: SliverWovenGridDelegate.count(pattern: [
-          WovenGridTile(1, alignment: AlignmentDirectional.center),
-          WovenGridTile(5 / 7, crossAxisRatio: 0.9, alignment: AlignmentDirectional.bottomEnd),
-        ], crossAxisSpacing: 0, mainAxisSpacing: 0, tileBottomSpace: 0, crossAxisCount: 2),
-        shrinkWrap: true,
-      ),
-    ): Center(child: Text("Ürün Listesi yok"),);
+    return productData.data != null && productData.data!.isNotEmpty
+        ? RefreshIndicator(
+            onRefresh: () async => null,
+            child: GridView.custom(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20 + AppBar().preferredSize.height + context.paddingTop,
+              ),
+              childrenDelegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final data = productData.data![index];
+                  return ProductCard(data: data, index: index);
+                },
+                childCount: productData.data!.length,
+              ),
+              gridDelegate: SliverWovenGridDelegate.count(pattern: [
+                WovenGridTile(1, alignment: AlignmentDirectional.center),
+                WovenGridTile(5 / 7, crossAxisRatio: 0.9, alignment: AlignmentDirectional.bottomEnd),
+              ], crossAxisSpacing: 0, mainAxisSpacing: 0, tileBottomSpace: 0, crossAxisCount: 2),
+              shrinkWrap: true,
+            ),
+          )
+        : Center(
+            child: Text("Ürün Listesi yok"),
+          );
   }
 }
 
@@ -102,13 +108,9 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Set<String> uniqueSizes = Set<String>();
-    // data.face?.forEach((face) {
-    //   uniqueSizes.add(face.size);
-    // });
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data]);
+        Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id]);
       },
       child: Animate(
           effects: [
@@ -132,12 +134,12 @@ class ProductCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          data.name??"".toUpperCase(),
+                          data.name ?? "".toUpperCase(),
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
                         ),
                         Divider(thickness: 0.2, color: Colors.white, height: 3),
                         Text(
-                          '${data.faceCount} FACE ${data.colorCount} RENK ${uniqueSizes.length} EBAT',
+                          '${data.faceCount} ${context.translete('face').toUpperCase()} ${data.colorCount} ${context.translete('color').toUpperCase()} ${data.sizeCount} ${context.translete('dimension').toUpperCase()}',
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
                         ),
                       ],
@@ -150,16 +152,15 @@ class ProductCard extends StatelessWidget {
     );
   }
 
-  String? imagePathControl({ImagesClass? imageEntity, bool? cover}){
-    try{
-      if(imageEntity!.thumb!=null && !cover!){
+  String? imagePathControl({ImagesClass? imageEntity, bool? cover}) {
+    try {
+      if (imageEntity!.thumb != null && !cover!) {
         return imageEntity.thumb;
-      }else {
+      } else {
         return imageEntity.cover;
       }
-    }catch(e){
+    } catch (e) {
       return "notImage";
     }
-
   }
 }

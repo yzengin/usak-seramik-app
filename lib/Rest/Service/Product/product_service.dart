@@ -12,4 +12,7 @@ class ProductService extends CrudService<ProductData> {
   Future<BaseResponse> getProductService({int page = 0, int size = 20}) async {
     return await postRequest("$apiURL/products.php?page=$page&size=$size", bearerToken: bearerSessionTokenNotifier.value);
   }
+  Future<BaseResponse> getProductByIdService(int id, {int page = 0, int size = 20}) async {
+    return await postRequest("$apiURL/product-detail.php?product_id=$id", bearerToken: bearerSessionTokenNotifier.value);
+  }
 }

@@ -20,6 +20,8 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
   late final AppTimer timer;
 
+  
+
   @override
   void initState() {
     themeInitialize();
@@ -27,15 +29,30 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
         countdowntimer: true,
         countdowntime: 2,
         countdownCallback: () async {
-          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
-          // SharedPreferences preferences = await SharedPreferences.getInstance();
-          // bool? showFirst = preferences.getBool(AppPreferences.onboarding);
-          // if (showFirst == null || showFirst == true) {
-          //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
-          // } else {
-          //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
-          // //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
-          // }
+          // await AppPreferencesHandler.getBool(AppPreferences.onboarding).then((value) {
+          //   debugPrint('1 $value');
+          //   if (value != null) {
+          //     if (value == false) {
+          //       AppPreferencesHandler.setBool(AppPreferences.onboarding, true);
+          //       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
+          //       AppPreferencesHandler.getBool(AppPreferences.onboarding).then((value) => debugPrint('2 $value'));
+          //     } else {
+          //       Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+          //     }
+          //   } else {
+          //     Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false).whenComplete(() {
+          //       AppPreferencesHandler.setBool(AppPreferences.onboarding, true);
+          //     });
+          //   }
+          // });
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          bool? showFirst = preferences.getBool(AppPreferences.onboarding);
+          if (showFirst == null || showFirst == true) {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+          //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+          }
         });
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {

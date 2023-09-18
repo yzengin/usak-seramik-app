@@ -73,6 +73,11 @@ extension StringExtensions on String {
       return "?";
     }
   }
+
+  Color hexToColor() {
+    String formattedHex = "FF" + this.replaceAll("#", "");
+    return Color(int.parse(formattedHex, radix: 16));
+  }
 }
 
 String translateData(dynamic data) {

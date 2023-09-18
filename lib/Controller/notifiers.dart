@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
 import '../Model/fake/product.dart';
 import '../Rest/Entity/User/user_entity.dart';
 import '/model/data.dart';
@@ -10,6 +11,6 @@ ValueNotifier<UserEntity?> logedUserNotifier = ValueNotifier<UserEntity?>(UserEn
 ValueNotifier<String> bearerSessionTokenNotifier = ValueNotifier<String>('UsakSeramik2023MobileApplication');
 ValueNotifier<bool> rememberMeNotifier = ValueNotifier<bool>(false);
 ValueNotifier<Locale?> localeNotifier = ValueNotifier<Locale?>(null);
-ValueNotifier<List<Product>> likedProduct = ValueNotifier<List<Product>>([]);
+ValueNotifier<List<ProductEntity>> likedProduct = ValueNotifier<List<ProductEntity>>([]);
 
 

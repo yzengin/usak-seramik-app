@@ -54,7 +54,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                         hintText: context.translete('search').toLowerCase(),
                                         hintStyle: context.textStyle,
                                         border: InputBorder.none,
-                                        
                                         floatingLabelAlignment: FloatingLabelAlignment.center,
                                       ),
                                     ),
@@ -100,16 +99,16 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                             return Row(
                                               children: [
                                                 FilterChip(
-                                                  label: (subData.context.translate) ? Text(context.translete(subData.context.label)) : Text(subData.context.label),
-                                                  labelStyle: subData.context.isColor ? context.textStyle.copyWith(color: (subData.context.data as Color).isDarkContrast() ? Colors.white : Colors.black) : context.theme.chipTheme.labelStyle,
+                                                  label: subData.context.isColor ? Text(context.translete(subData.context.label.label))  : (subData.context.translate) ? Text(context.translete(subData.context.label)) : Text(subData.context.label),
+                                                  labelStyle: subData.context.isColor ? context.textStyle.copyWith(color: (subData.context.label.data as Color).isDarkContrast() ? Colors.white : Colors.black) : context.theme.chipTheme.labelStyle,
                                                   checkmarkColor: subData.context.isColor
-                                                      ? (subData.context.data as Color).isDarkContrast()
+                                                      ? (subData.context.label.data as Color).isDarkContrast()
                                                           ? Colors.white
                                                           : Colors.black
                                                       : context.theme.iconTheme.color,
                                                   selected: data.context.data.contains(subData.context.data),
-                                                  backgroundColor: subData.context.isColor ? (subData.context.data as Color) : context.theme.chipTheme.backgroundColor,
-                                                  selectedColor: subData.context.isColor ? subData.context.data : context.theme.chipTheme.selectedColor,
+                                                  backgroundColor: subData.context.isColor ? (subData.context.label.data as Color) : context.theme.chipTheme.backgroundColor,
+                                                  selectedColor: subData.context.isColor ? subData.context.label.data : context.theme.chipTheme.selectedColor,
                                                   onSelected: (value) {
                                                     if (data.context.data.contains(subData.context.data)) {
                                                       data.context.data.remove(subData.context.data);
@@ -253,9 +252,11 @@ class _FilterDrawerState extends State<FilterDrawer> {
             ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamed(context, AppRoutes.search_result_page);
+                      widget.model.toDebugPrint();
                     },
                     child: Text(context.translete('search')))
-                .wrapPaddingRight(20).wrapPaddingVertical(20)
+                .wrapPaddingRight(20)
+                .wrapPaddingVertical(20)
           ],
         ),
       ),
