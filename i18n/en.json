@@ -123,6 +123,8 @@
   "CONST": "// ---------------------------------------------------------------- CONST",
   "all": "All",
   "piece": "Piece",
+  "dimension": "Size",
+  "face": "Face",
   "box": "Box",
   "pallet": "Pallet",
   "palletSize": "Pallet Size",

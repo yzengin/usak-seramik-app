@@ -123,6 +123,8 @@
   "CONST": "// ---------------------------------------------------------------- CONST",
   "all": "Tümü",
   "piece": "Adet",
+  "dimension" : "Ebat",
+  "face" : "Yüzey",
   "box": "Kutu",
   "pallet": "Palet",
   "palletSize": "Palet Ebadı",
