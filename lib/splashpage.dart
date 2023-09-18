@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
 import 'Controller/asset.dart';
 import 'Controller/extension.dart';
 import '/view/style/colors.dart';
@@ -57,6 +58,12 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       timer.start();
+      Provider.of<ProductFeaturesController>(context, listen: false).getColorController();
+      Provider.of<ProductFeaturesController>(context, listen: false).getGlossController();
+      Provider.of<ProductFeaturesController>(context, listen: false).getSizeController();
+      Provider.of<ProductFeaturesController>(context, listen: false).getSurfaceController();
+      Provider.of<ProductFeaturesController>(context, listen: false).getTypeController();
+      Provider.of<ProductFeaturesController>(context, listen: false).getUsageAreaController();
     });
   }
 

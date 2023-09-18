@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 
 import '../../../Model/data.dart';
+import '../../../Rest/Controller/Product/product_controller.dart';
 
 class FilterDrawer extends StatefulWidget {
-  const FilterDrawer({super.key, required this.model});
+  const FilterDrawer({super.key, required this.model, this.searchResultPage});
   final FilterData model;
+  final bool? searchResultPage;
 
   @override
   State<FilterDrawer> createState() => _FilterDrawerState();
@@ -251,8 +254,29 @@ class _FilterDrawerState extends State<FilterDrawer> {
             ),
             ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.search_result_page);
-                      widget.model.toDebugPrint();
+                      List<int>? urunTuru = returnDataSelected(widget.model.chooseFilters![0].context.data, "Ürün Türü - Product Type");
+                      List<int>? kullanimAlani = returnDataSelected(widget.model.chooseFilters![1].context.data, "Kullanım Alanı - Usage Area");
+                      List<int>? sizes = returnDataSelected(widget.model.chooseFilters![2].context.data, "Ebatlar - Sizes");
+                      List<int>? colors = returnDataSelected(widget.model.chooseFilters![3].context.data, "Renkler- Colors");
+                      List<int>? brightness = returnDataSelected(widget.model.chooseFilters![4].context.data, "Parlaklık - Glosses");
+                      List<int>? texture = returnDataSelected(widget.model.chooseFilters![5].context.data, "Doku - Surfaces");
+
+
+                      ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+                        productTypeId: urunTuru!,
+                        productUsagesId: kullanimAlani!,
+                        faceSizeId: sizes!,
+                        faceColorId: colors!,
+                        faceGlossId: brightness!,
+                        faceSurfaceId: texture!,
+                        faceThicknessId: [],
+                        faceStructureId: [],
+                      );
+                      Provider.of<ProductController>(context, listen: false).getProductSearchController(page: 0, productAttributesSearch);
+                      Navigator.pop(context);
+                      if(!widget.searchResultPage!){
+                        Navigator.pushNamed(context, AppRoutes.search_result_page);
+                      }
                     },
                     child: Text(context.translete('search')))
                 .wrapPaddingRight(20)
@@ -262,4 +286,35 @@ class _FilterDrawerState extends State<FilterDrawer> {
       ),
     );
   }
+
+  List<int>? returnDataSelected(List gelenData, String title){
+    List<int> myIntListNew = [];
+    try{
+      if (gelenData != null) {
+        if (gelenData is List) {
+          try {
+            List<int> myIntList = List<int>.from(gelenData.map((e) {
+              if (e is int) {
+                return e;
+              } else {
+                throw Exception('Listede int olmayan bir tür bulundu.');
+              }
+            }));
+            print('#### $title-->: $myIntList');
+            myIntListNew = myIntList;
+          } catch (e) {
+            print('$title-->:Dönüşüm sırasında hata oluştu: $e');
+          }
+        } else {
+          print('$title-->:Bu değişken List türünde değil.');
+        }
+      }
+    }catch(e){
+      debugPrint("$title-->: ReturnDataSelectFilter  Error-->  $e");
+    }
+
+    return myIntListNew;
+
+  }
+
 }

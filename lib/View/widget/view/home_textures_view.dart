@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 
+import '../../../Controller/asset.dart';
 import '../../../Controller/routes.dart';
+import '../../../Rest/Controller/Product/product_controller.dart';
 import '../../../view/page/mobile/main/homepage.dart';
 import '../../custom/curves.dart';
 import 'coverflow.dart';
@@ -44,7 +47,19 @@ class _ProductTexturesViewState extends State<ProductTexturesView> {
                   builder: (context, _, __) {
                     return CoverFlow(
                       onCenterItemSelected: (i) {
-                        debugPrint('${i}');
+                        debugPrint('ID NO -->${textures[i].id}');
+                        ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+                            faceColorId: [],
+                            faceSizeId: [],
+                            faceSurfaceId: [textures[i].id],
+                            faceGlossId: [],
+                            faceThicknessId: [],
+                            faceStructureId: [],
+                            productTypeId: [],
+                            productUsagesId: []
+                        );
+                        Provider.of<ProductController>(context, listen: false).getProductSearchController(productAttributesSearch);
+
                         Navigator.pushNamed(context, AppRoutes.search_result_page, arguments: [textures[i].title]);
                       },
                       titles: textures.map((e) => context.translete('search')).toList(),
@@ -59,7 +74,7 @@ class _ProductTexturesViewState extends State<ProductTexturesView> {
                               SizedBox(
                                 height: context.height * 0.5,
                                 child: Card(
-                                  child: ClipRRect(borderRadius: BorderRadius.circular(kToolbarHeight * 0.2), child: Image.network(e.image, fit: BoxFit.fitHeight)),
+                                  child: ClipRRect(borderRadius: BorderRadius.circular(kToolbarHeight * 0.2), child: Image.asset(e.image, fit: BoxFit.fitHeight)),
                                 ),
                               ),
                             ],
@@ -88,9 +103,9 @@ class TexturesModel {
 }
 
 List<TexturesModel> textures = [
-  TexturesModel(id: 0, title: "wood", image: "https://www.usakseramik.com/img/textures/wood.jpg"),
-  TexturesModel(id: 1, title: "marble", image: "https://www.usakseramik.com/img/textures/marble.jpg"),
-  TexturesModel(id: 2, title: "stone", image: "https://www.usakseramik.com/img/textures/stone.jpg"),
-  TexturesModel(id: 3, title: "decor", image: "https://www.usakseramik.com/img/textures/dekor.jpg"),
-  TexturesModel(id: 4, title: "concrete", image: "https://www.usakseramik.com/img/textures/beton.jpg"),
+  TexturesModel(id: 4, title: "wood", image: AppImage.homeWood),
+  TexturesModel(id: 7, title: "marble", image: AppImage.homeMarble),
+  TexturesModel(id: 8, title: "stone", image: AppImage.homeStone),
+  TexturesModel(id: 3, title: "combine", image: AppImage.homeCombineDekor),
+  TexturesModel(id: 5, title: "concrete", image: AppImage.homeBeton),
 ];

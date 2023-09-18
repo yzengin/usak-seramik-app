@@ -39,7 +39,7 @@ class FilterData {
         debugPrint('${element.filter.context.label} : ${element.controller.text}');
       }
     }
-    debugPrint('---------------------------------------------------------------------------------------------------');
+    debugPrint('----------------------------------------CHOose-----------------------------------------------------------');
     if (chooseFilters != null) {
       for (var element in chooseFilters!) {
         if (element.multiple) {

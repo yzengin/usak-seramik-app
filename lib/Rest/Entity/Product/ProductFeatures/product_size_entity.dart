@@ -15,9 +15,7 @@ class ProductSizeData extends Persistent {
 
   factory ProductSizeData.fromJson(Map<String, dynamic> json) {
     return ProductSizeData(
-      data: (json['data'] as List<dynamic>?)
-          ?.map((e) => ProductSizeEntity.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      data: (json['data'] as List<dynamic>?)?.map((e) => ProductSizeEntity.fromJson(e as Map<String, dynamic>)).toList(),
       message: json['message'] as String?,
       status: json['status'] as bool?,
       total: json['total'] as int?,
@@ -57,12 +55,8 @@ class ProductSizeEntity extends Persistent {
       name: json['name'] as String?,
       width: json['width'] as String?,
       height: json['height'] as String?,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : null,
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : null,
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
     );
   }
 

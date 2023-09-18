@@ -7,6 +7,11 @@ class AppImage {
   static String logo = "assets/image/logo.png";
   static String logotype = "assets/image/logotype.png";
   static String splash = "assets/image/splash.png";
+  static String homeWood = "assets/image/wood.jpg";
+  static String homeStone = "assets/image/stone.jpg";
+  static String homeMarble = "assets/image/marble.jpg";
+  static String homeCombineDekor = "assets/image/dekor.jpg";
+  static String homeBeton = "assets/image/beton.jpg";
 }
 
 class AppIllutration {

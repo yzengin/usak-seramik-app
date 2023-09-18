@@ -17,7 +17,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductColorData _productColorData = ProductColorData();
   ProductColorData get productColorData => _productColorData;
   set productColorData(ProductColorData data) => _productColorData = data;
-  Future<int> getColorController({int? page, int? size}) async {
+  Future<int> getColorController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductColorsService();
@@ -37,7 +37,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductGlossData _productGlossData = ProductGlossData();
   ProductGlossData get productGlossData => _productGlossData;
   set productGlossData(ProductGlossData data) => _productGlossData = data;
-  Future<int> getGlossController({int? page, int? size}) async {
+  Future<int> getGlossController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductGlossesService();
@@ -57,7 +57,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductSizeData _productSizeData = ProductSizeData();
   ProductSizeData get productSizeData => _productSizeData;
   set productSizeData(ProductSizeData data) => _productSizeData = data;
-  Future<int> getSizeController({int? page, int? size}) async {
+  Future<int> getSizeController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductSizesService();
@@ -77,7 +77,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductSurfaceData _productSurfaceData = ProductSurfaceData();
   ProductSurfaceData get productSurfaceData => _productSurfaceData;
   set productSurfaceData(ProductSurfaceData data) => _productSurfaceData = data;
-  Future<int> getSurfaceController({int? page, int? size}) async {
+  Future<int> getSurfaceController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductSurfacesService();
@@ -97,7 +97,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductTypesData _productTypesData = ProductTypesData();
   ProductTypesData get productTypesData => _productTypesData;
   set productTypesData(ProductTypesData data) => _productTypesData = data;
-  Future<int> getTypeController({int? page, int? size}) async {
+  Future<int> getTypeController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductTypesService();
@@ -117,7 +117,7 @@ class ProductFeaturesController with ChangeNotifier {
   ProductUsageAreaData _productUsageAreaData = ProductUsageAreaData();
   ProductUsageAreaData get productUsageAreaData => _productUsageAreaData;
   set productUsageAreaData(ProductUsageAreaData data) => _productUsageAreaData = data;
-  Future<int> getUsageAreaController({int? page, int? size}) async {
+  Future<int> getUsageAreaController() async {
     int status = 0;
     try {
       BaseResponse response = await ProductFeatureService.operations().getProductUsageAreaService();
@@ -125,6 +125,10 @@ class ProductFeaturesController with ChangeNotifier {
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productUsageAreaData = ProductUsageAreaData.fromJson(response.body);
+          for(var dataIn in productUsageAreaData.data!){
+            print('YESS tyşpeeee -- ${dataIn!.name!.tr}');
+          }
+
         }
       }
     } catch (e) {

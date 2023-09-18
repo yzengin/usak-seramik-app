@@ -12,6 +12,7 @@ import 'package:get/get_utils/src/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Rest/Controller/Dealer/dealer_controller.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/showreel_controller.dart';
 import 'package:usak_seramik_app/Rest/Controller/User/contact_controller.dart';
 import 'package:usak_seramik_app/View/style/colors.dart';
@@ -68,6 +69,7 @@ class AppStarter extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => ProductController()),
         ChangeNotifierProvider(create: (context) => ShowreelController()),
         ChangeNotifierProvider(create: (context) => ContactController()),
+        ChangeNotifierProvider(create: (context) => ProductFeaturesController()),
       ],
       child: Consumer<LocalizationController>(builder: (context, _, __) {
         return Stack(

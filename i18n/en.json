@@ -157,6 +157,7 @@
   "marble": "Marble",
   "stone": "Stone",
   "decor": "Combine",
+  "combine": "Combine",
   "concrete": "Concrete",
   "urunRengi": "Product Color",
   "colors": "Colors",
@@ -193,5 +194,6 @@
   "searchResult": "Search Results",
   "emptyFavourite": "No favorite products",
   "findNearSeller": "Find the nearest Sales Point",
+  "showCaseFilterMessage": "Please select any filter",
   "end": "end"
 }

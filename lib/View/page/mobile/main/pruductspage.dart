@@ -1,19 +1,16 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
-import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
 import 'package:usak_seramik_app/View/widget/drawer/filter_drawer.dart';
 import '../../../../Controller/filter.dart';
-import '../../../../Model/fake/product.dart';
 import '../../../widget/drawer/contact_drawer.dart';
+import '../../../widget/view/product_grid_widget.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -29,7 +26,17 @@ class _ProductsPageState extends State<ProductsPage> {
     super.initState();
     try {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        Provider.of<ProductController>(context, listen: false).getProductController().then((value) {
+        ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+            faceColorId: [],
+            faceSizeId: [],
+            faceSurfaceId: [],
+            faceGlossId: [],
+            faceThicknessId: [],
+            faceStructureId: [],
+            productTypeId: [],
+            productUsagesId: []
+        );
+        Provider.of<ProductController>(context, listen: false).getProductController(productAttributesSearch).then((value) {
           setState(() {});
         });
       });
@@ -46,7 +53,7 @@ class _ProductsPageState extends State<ProductsPage> {
             key: _key,
             extendBodyBehindAppBar: true,
             drawer: ContactDrawer(),
-            endDrawer: FilterDrawer(model: testFilter),
+            endDrawer: FilterDrawer(model: testFilter, searchResultPage: false,),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: ClipRect(
@@ -84,7 +91,7 @@ class _ProductsPageState extends State<ProductsPage> {
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
                   final data = productData.data![index];
-                  return ProductCard(data: data, index: index);
+                  return ProductGridCard(data: data, index: index);
                 },
                 childCount: productData.data!.length,
               ),
@@ -98,69 +105,5 @@ class _ProductsPageState extends State<ProductsPage> {
         : Center(
             child: Text("Ürün Listesi yok"),
           );
-  }
-}
-
-class ProductCard extends StatelessWidget {
-  const ProductCard({super.key, required this.data, required this.index});
-  final ProductEntity data;
-  final int index;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id]);
-      },
-      child: Animate(
-          effects: [
-            // TintEffect(begin: 1, end: 0),
-            MoveEffect(begin: Offset(index % 2 == 0 ? -100 : 100, 0), end: Offset.zero)
-          ],
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(imagePathControl(imageEntity: data.images!, cover: false)!, fit: BoxFit.cover),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.bottomLeft,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(.5)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data.name ?? "".toUpperCase(),
-                          style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
-                        ),
-                        Divider(thickness: 0.2, color: Colors.white, height: 3),
-                        Text(
-                          '${data.faceCount} ${context.translete('face').toUpperCase()} ${data.colorCount} ${context.translete('color').toUpperCase()} ${data.sizeCount} ${context.translete('dimension').toUpperCase()}',
-                          style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              )
-            ],
-          )),
-    );
-  }
-
-  String? imagePathControl({ImagesClass? imageEntity, bool? cover}) {
-    try {
-      if (imageEntity!.thumb != null && !cover!) {
-        return imageEntity.thumb;
-      } else {
-        return imageEntity.cover;
-      }
-    } catch (e) {
-      return "notImage";
-    }
   }
 }

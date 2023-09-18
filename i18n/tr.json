@@ -157,6 +157,7 @@
   "marble": "Mermer",
   "stone": "Taş",
   "decor": "Kombin",
+  "combine": "Kombin",
   "concrete": "Beton",
   "urunRengi": "Ürün Rengi",
   "colors": "Renkler",
@@ -193,5 +194,6 @@
   "searchResult": "Arama Sonuçları",
   "emptyFavourite": "Favoriye eklenmiş ürün yok",
   "findNearSeller": "En yakın satış noktasını bul",
+  "showCaseFilterMessage": "Lütfen herhangi bir filtre seçin",
   "end": "son"
 }
