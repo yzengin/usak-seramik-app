@@ -78,9 +78,7 @@ class ProductController with ChangeNotifier {
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
-          print('BUU11111');
           productDetailData = ProductDetailData.fromJson(response.body);
-          print('BUUUUUUUUU');
         }
       }
     } catch (e) {

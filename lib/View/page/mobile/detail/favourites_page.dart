@@ -26,6 +26,8 @@ class _FavouritesPageState extends State<FavouritesPage> {
   }
 
   void likePreferences() async {
+    debugPrint('runnnn');
+    likedList.clear();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     if (preferences.getStringList(AppPreferences.favorites) == null) {
       await preferences.setStringList(AppPreferences.favorites, []).then((value) {});
@@ -50,7 +52,7 @@ class _FavouritesPageState extends State<FavouritesPage> {
 
   Widget body(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async => null,
+      onRefresh: () async => likePreferences(),
       child: SizedBox.expand(
         // ignore: unnecessary_null_comparison
         child: (likedList != null)
@@ -59,12 +61,11 @@ class _FavouritesPageState extends State<FavouritesPage> {
                     padding: EdgeInsets.only(
                       left: 20,
                       right: 20,
-                      top: 20 + context.paddingTop,
+                      top: 20 + context.paddingTop + kToolbarHeight,
                     ),
                     childrenDelegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final data = likedList[index];
-                        debugPrint('${data.name}');
                         return ProductGridCard(data: data, index: index, showInfo: false);
                       },
                       childCount: likedList.length,
