@@ -26,6 +26,7 @@ class _WebViewPageState extends State<WebViewPage> {
           setState(() {});
         },
         onNavigationRequest: (request) async {
+          debugPrint('new -- ${request.url}');
           if (request.url != context.routeArguments?[0]) {
             await appDialog(context, dialogType: DialogType.warning, message: context.translete('leaveAppWebviewTitle')).then((value) async {
               if (value) {

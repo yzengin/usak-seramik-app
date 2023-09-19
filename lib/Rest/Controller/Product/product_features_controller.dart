@@ -30,7 +30,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getColorController(), $e');
     }
-    debugPrint('features color length: ${productColorData.data?.length}');
     if (productColorData.data != null) {
       productColorData.data!.forEach((element) {
         if (element != null) {
@@ -71,7 +70,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getGlossController(), $e');
     }
-    debugPrint('features gloss length: ${productGlossData.data?.length}');
     if (productGlossData.data != null) {
       productGlossData.data!.forEach((element) {
         if (element != null) {
@@ -108,7 +106,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getSizeController(), $e');
     }
-    debugPrint('features size length: ${productSizeData.data?.length}');
     if (productSizeData.data != null) {
       productSizeData.data!.forEach((element) {
         if (element != null) {
@@ -145,7 +142,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getSurfaceController(), $e');
     }
-    debugPrint('features surface length:  ${productSurfaceData.data?.length}');
     if (productSurfaceData.data != null) {
       productSurfaceData.data!.forEach((element) {
         if (element != null) {
@@ -182,7 +178,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getTypeController(), $e');
     }
-    debugPrint('features Type length: ${productTypesData.data?.length}');
     if (productTypesData.data != null) {
       productTypesData.data!.forEach((element) {
         if (element != null) {
@@ -219,7 +214,6 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getUsageAreaController(), $e');
     }
-    debugPrint('features usage length: ${productUsageAreaData.data?.length}');
     if (productUsageAreaData.data != null) {
       productUsageAreaData.data!.forEach((element) {
         if (element != null) {

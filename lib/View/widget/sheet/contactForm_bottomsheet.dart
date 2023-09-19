@@ -206,14 +206,14 @@ class _ContactFormBottomSheetState extends State<ContactFormBottomSheet> with Si
                                             });
                                           }
                                         });
+                                        nameController.clear();
+                                        emailController.clear();
+                                        phoneController.clear();
+                                        subjectController.clear();
+                                        messageController.clear();
+                                        draggableScrollableController.animateTo(0, duration: 300.millisecond(), curve: Curves.ease);
+                                        FocusScope.of(context).unfocus();
                                       }
-                                      nameController.clear();
-                                      emailController.clear();
-                                      phoneController.clear();
-                                      subjectController.clear();
-                                      messageController.clear();
-                                      draggableScrollableController.animateTo(0, duration: 300.millisecond(), curve: Curves.ease);
-                                      FocusScope.of(context).unfocus();
                                     },
                                     child: Text(context.translete('send')))
                               ],

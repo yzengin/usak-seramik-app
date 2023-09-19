@@ -18,6 +18,7 @@ class ContactDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('${localeNotifier.value!.languageCode}');
     return Drawer(
       // width: context.width * 0.75,
       child: Padding(
@@ -30,9 +31,9 @@ class ContactDrawer extends StatelessWidget {
               children: [
                 Image.asset(AppImage.logotype, fit: BoxFit.fitWidth, color: context.theme.colorScheme.onTertiary).wrapPaddingAll(20).wrapPaddingBottom(20),
                 ListTile(title: Text(context.translete('aboutUs')), onTap: () => Navigator.pushNamed(context, AppRoutes.about_us_page)),
-                ListTile(title: Text(context.translete('inventorRelations')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: ["https://www.usakseramik.com/en/investor-relations/valuation-reports", context.translete('inventorRelations'), false])),
-                ListTile(title: Text(context.translete('visionMission')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: ["https://www.usakseramik.com/en/corporate/vision-mission",context.translete('visionMission'), false])),
-                ListTile(title: Text(context.translete('history')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: ["https://www.usakseramik.com/en/corporate/history",context.translete('history'), false])),
+                ListTile(title: Text(context.translete('inventorRelations')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/yatirimci-iliskileri/degerleme-raporlari" : "https://www.usakseramik.com/en/investor-relations/valuation-reports", context.translete('inventorRelations'), false])),
+                ListTile(title: Text(context.translete('visionMission')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/kurumsal/misyon-vizyon" : "https://www.usakseramik.com/en/corporate/vision-mission",context.translete('visionMission'), false])),
+                ListTile(title: Text(context.translete('history')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/kurumsal/tarihce" : "https://www.usakseramik.com/en/corporate/history",context.translete('history'), false])),
               ],
             ),
             Padding(

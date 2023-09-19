@@ -23,12 +23,13 @@ class _ProductsPageState extends State<ProductsPage> {
   final _key = GlobalKey<ScaffoldState>();
   ScrollController scrollController = ScrollController();
   List<ProductEntity>? productData;
+  late ProductAttributesSearch productAttributesSearch;
   int page = 0;
 
   @override
   void initState() {
     super.initState();
-    ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+    productAttributesSearch = ProductAttributesSearch(
       faceColorId: [],
       faceSizeId: [],
       faceSurfaceId: [],
@@ -95,7 +96,9 @@ class _ProductsPageState extends State<ProductsPage> {
   Widget body(BuildContext context) {
     return productData != null && productData!.isNotEmpty
         ? RefreshIndicator(
-            onRefresh: () async => null,
+            onRefresh: () async => Provider.of<ProductController>(context, listen: false).getProductController(productAttributesSearch, page: ++page).then((value) {
+              setState(() {});
+            }),
             child: GridView.custom(
               controller: scrollController,
               padding: EdgeInsets.only(

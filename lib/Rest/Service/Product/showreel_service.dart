@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/showreel_entity.dart';
 import '../../Model/Request/get_request.dart';
@@ -12,7 +11,6 @@ class ShowreelService extends CrudService<ShowreelData> {
 
   Future<BaseResponse> getShowreelService() async {
     String token = bearerSessionTokenNotifier.value;
-    debugPrint('token - $token ');
     return await getRequest(
       "$apiURL/sliders.php",
       bearerToken: token,

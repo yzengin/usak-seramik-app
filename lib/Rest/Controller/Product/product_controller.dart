@@ -23,6 +23,10 @@ class ProductController with ChangeNotifier {
   List<ProductEntity> _productList = <ProductEntity>[];
   List<ProductEntity> get productList => _productList;
   set productList(List<ProductEntity> data) => _productList = data;
+  //
+  List<ProductEntity> _productSearchList = <ProductEntity>[];
+  List<ProductEntity> get productSearchList => _productSearchList;
+  set productSearchList(List<ProductEntity> data) => _productSearchList = data;
 
   Future<int> getProductController(ProductAttributesSearch productAttributesSearch, {int? page, int? size}) async {
     int status = 0;
@@ -31,12 +35,12 @@ class ProductController with ChangeNotifier {
       productData = ProductData();
     }
     try {
-      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page??0, size: 20);
+      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page ?? 0, size: 20);
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productData = ProductData.fromJson(response.body);
-          
+
           response.body["data"].forEach((element) {
             productList.add(ProductEntity.fromJson(element));
           });
@@ -56,11 +60,14 @@ class ProductController with ChangeNotifier {
       productSearchData = ProductData();
     }
     try {
-      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: 0, size: 24);
+      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page??0, size: 24);
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productSearchData = ProductData.fromJson(response.body);
+          response.body["data"].forEach((element) {
+            productSearchList.add(ProductEntity.fromJson(element));
+          });
         }
       }
     } catch (e) {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
+import 'Controller/Map_Controller/get_position.dart';
 import 'Controller/Map_Controller/marker_create.dart';
 import 'Controller/asset.dart';
 import 'Controller/extension.dart';
@@ -29,6 +31,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   void initState() {
     super.initState();
     themeInitialize();
+    determinePosition();
     timer = AppTimer(
         countdowntimer: true,
         countdowntime: 2,

@@ -4,15 +4,19 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:usak_seramik_app/Controller/Map_Controller/get_position.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Controller/stopwatch.dart';
 import 'package:usak_seramik_app/Rest/Controller/Dealer/dealer_controller.dart';
 import 'package:usak_seramik_app/Rest/Entity/Dealer/dealer_entity.dart';
+import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
 
+import '../../../../Controller/Map_Controller/map_methods.dart';
 import '../../../../Controller/Map_Controller/marker_create.dart';
 import '../../../../Controller/launcher.dart';
 import '../../../../Model/city.dart';
@@ -31,10 +35,13 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   List<City> cities = [];
   ValueNotifier<int?> selectedCity = ValueNotifier<int?>(null);
   ValueNotifier<String?> searchSalesName = ValueNotifier<String?>(null);
-  TextEditingController salesNameController = TextEditingController();
   ValueNotifier<bool> expand = ValueNotifier<bool>(false);
+  ValueNotifier<bool> clickOnNearest = ValueNotifier<bool>(false);
+  ValueNotifier<double> nearestDistance = ValueNotifier<double>(0);
+  TextEditingController salesNameController = TextEditingController();
   var defaultPosition = CameraPosition(target: LatLng(38.6730023335095, 29.40315111635541), zoom: 6.5);
   late Completer<GoogleMapController> _controller;
+  late DealerData dealerData;
 
   @override
   void initState() {
@@ -63,6 +70,10 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
   @override
   void dispose() {
     selectedCity.dispose();
+    searchSalesName.dispose();
+    clickOnNearest.dispose();
+    nearestDistance.dispose();
+    expand.dispose();
     super.dispose();
   }
 
@@ -73,7 +84,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
 
   @override
   Widget build(BuildContext context) {
-    DealerData dealerData = Provider.of<DealerController>(context, listen: true).dealerData;
+    dealerData = Provider.of<DealerController>(context, listen: true).dealerData;
     return (dealerData.data == null)
         ? SizedBox()
         : Scaffold(
@@ -191,58 +202,145 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   ),
                 ),
                 Expanded(
-                  child: ValueListenableBuilder(
-                      valueListenable: showMarkerDialog,
-                      builder: (context, _, __) {
-                        return ValueListenableBuilder(
-                            valueListenable: selectedSeller,
-                            builder: (context, _, __) {
-                              return AnimatedCrossFade(
-                                crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
-                                alignment: Alignment.centerRight,
-                                duration: 300.millisecond(),
-                                firstChild: SizedBox(),
-                                secondChild: (showMarkerDialog.value == true && selectedSeller.value != null)
-                                    ? Padding(
-                                        padding: const EdgeInsets.only(top: 20.0),
-                                        child: addressCard(selectedSeller.value!),
-                                      )
-                                    : SingleChildScrollView(
-                                        // padding: EdgeInsets.only(top: 20),
-                                        child: Column(
+                  child: RefreshIndicator(
+                    onRefresh: () async => Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity(city_id: selectedCity.value, name: salesNameController.text)).then((value) {
+                      if (mounted) {
+                        setMarkers(dealerData.data!, context).then((value) {
+                          setState(() {});
+                        });
+                      }
+                    }),
+                    child: ValueListenableBuilder(
+                        valueListenable: showMarkerDialog,
+                        builder: (context, _, __) {
+                          return ValueListenableBuilder(
+                              valueListenable: selectedSeller,
+                              builder: (context, _, __) {
+                                return AnimatedCrossFade(
+                                  crossFadeState: expand.value ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+                                  alignment: Alignment.centerRight,
+                                  duration: 300.millisecond(),
+                                  firstChild: SizedBox(),
+                                  secondChild: (showMarkerDialog.value == true && selectedSeller.value != null)
+                                      ? Column(
                                           children: [
-                                            CupertinoButton(
-                                              onPressed: () {},
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(FontAwesomeIcons.locationDot),
-                                                  ),
-                                                  Text(context.translete("findNearSeller")),
-                                                ],
-                                              ),
-                                            ),
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              // padding: EdgeInsets.only(top: 20),
-                                              itemCount: dealerData.data!.length,
-                                              itemBuilder: (context, index) {
-                                                final data = dealerData.data![index];
-                                                return Padding(
-                                                  padding: EdgeInsets.only(bottom: 20),
-                                                  child: addressCard(data),
-                                                );
-                                              },
-                                            ),
+                                            (clickOnNearest.value)
+                                                ? CupertinoButton(
+                                                    onPressed: () async {
+                                                      Position myPosition = await determinePosition();
+                                                      _findNearSeller(myPosition).then((nearestSeller) async {
+                                                        final GoogleMapController controllerData = await _controller.future;
+                                                        if (selectedSeller.value != nearestSeller) {
+                                                          selectedSeller.value = nearestSeller;
+                                                          clickOnNearest.value = true;
+                                                          showMarkerDialog.value = true;
+                                                          if (nearestSeller.latitude != null && nearestSeller.longitude != null) {
+                                                            nearestDistance.value = calculateDistance(LatLng(myPosition.latitude, myPosition.longitude), LatLng(double.tryParse(nearestSeller.latitude!)!, double.tryParse(nearestSeller.longitude!)!));
+                                                          }
+                                                          controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng((nearestSeller.latitude != null) ? double.parse(nearestSeller.latitude!) : 0, (nearestSeller.longitude != null) ? double.parse(nearestSeller.longitude!) : 0), zoom: 16)));
+                                                        } else {
+                                                          selectedSeller.value = null;
+                                                          clickOnNearest.value = false;
+                                                          showMarkerDialog.value = false;
+                                                          nearestDistance.value = 0;
+                                                          controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
+                                                        }
+
+                                                        debugPrint('selected ${nearestSeller.runtimeType}');
+                                                        // selectedSeller.value = nearestSeller;
+                                                        setState(() {});
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.center,
+                                                      children: [
+                                                        IconButton(
+                                                          onPressed: () {},
+                                                          icon: Icon(FontAwesomeIcons.locationDot),
+                                                        ),
+                                                        Text(clickOnNearest.value ? context.translete("all") : context.translete("findNearSeller")),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : SizedBox(),
+                                            addressCard(selectedSeller.value!),
                                           ],
+                                        )
+                                      : SingleChildScrollView(
+                                          // padding: EdgeInsets.only(top: 20),
+                                          child: Column(
+                                            children: [
+                                              ValueListenableBuilder(
+                                                  valueListenable: clickOnNearest,
+                                                  builder: (context, _, __) {
+                                                    return Column(
+                                                      children: [
+                                                        CupertinoButton(
+                                                          onPressed: () async {
+                                                            Position myPosition = await determinePosition();
+                                                            _findNearSeller(myPosition).then((nearestSeller) async {
+                                                              final GoogleMapController controllerData = await _controller.future;
+                                                              if (selectedSeller.value != nearestSeller) {
+                                                                selectedSeller.value = nearestSeller;
+                                                                clickOnNearest.value = true;
+                                                                showMarkerDialog.value = true;
+                                                                if (nearestSeller.latitude != null && nearestSeller.longitude != null) {
+                                                                  nearestDistance.value = calculateDistance(LatLng(myPosition.latitude, myPosition.longitude), LatLng(double.tryParse(nearestSeller.latitude!)!, double.tryParse(nearestSeller.longitude!)!));
+                                                                }
+                                                                controllerData.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(target: LatLng((nearestSeller.latitude != null) ? double.parse(nearestSeller.latitude!) : 0, (nearestSeller.longitude != null) ? double.parse(nearestSeller.longitude!) : 0), zoom: 16)));
+                                                              } else {
+                                                                selectedSeller.value = null;
+                                                                clickOnNearest.value = false;
+                                                                showMarkerDialog.value = false;
+                                                                nearestDistance.value = 0;
+                                                                controllerData.animateCamera(CameraUpdate.newCameraPosition(defaultPosition));
+                                                              }
+
+                                                              debugPrint('selected ${nearestSeller.runtimeType}');
+                                                              // selectedSeller.value = nearestSeller;
+                                                              setState(() {});
+                                                            });
+                                                          },
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              IconButton(
+                                                                onPressed: () {},
+                                                                icon: Icon(FontAwesomeIcons.locationDot),
+                                                              ),
+                                                              Text(clickOnNearest.value ? context.translete("all") : context.translete("findNearSeller")),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        // (clickOnNearest.value) ? ValueListenableBuilder(
+                                                        //   valueListenable: nearestDistance,
+                                                        //   builder: (context, value, child) {
+                                                        //     return Text('~${nearestDistance.value.toStringAsFixed(0)}KM uzaklıkta');
+                                                        //   },
+                                                        // ) : SizedBox()
+                                                      ],
+                                                    );
+                                                  }),
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                // padding: EdgeInsets.only(top: 20),
+                                                itemCount: dealerData.data!.length,
+                                                itemBuilder: (context, index) {
+                                                  final data = dealerData.data![index];
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(bottom: 20),
+                                                    child: addressCard(data),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                              );
-                            });
-                      }),
+                                );
+                              });
+                        }),
+                  ),
                 )
               ],
             ),
@@ -429,5 +527,38 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
         ),
       ),
     );
+  }
+
+  Future<DealerEntity> _findNearSeller(Position myPosition) async {
+    DealerEntity? nearestDealer;
+    if (dealerData.data != null) {
+      List<DealerEntity> allDealer = dealerData.data!;
+
+      // ignore: unnecessary_null_comparison
+      if (myPosition != null) {
+        double minDistance = double.infinity;
+
+        for (DealerEntity dealer in allDealer) {
+          if (dealer.latitude != null && dealer.longitude != null) {
+            double distance = calculateDistance(
+              LatLng(myPosition.latitude, myPosition.longitude),
+              LatLng(double.tryParse(dealer.latitude!)!, double.tryParse(dealer.longitude!)!),
+            );
+
+            if (distance < minDistance) {
+              minDistance = distance;
+              nearestDealer = dealer;
+            }
+          }
+        }
+
+        if (nearestDealer != null) {
+          print("En yakın bayi: ${nearestDealer.name} : ${nearestDealer.address}");
+        } else {
+          appDialog(context, message: 'Bulunamadı', dialogType: DialogType.failed);
+        }
+      } else {}
+    }
+    return nearestDealer!;
   }
 }

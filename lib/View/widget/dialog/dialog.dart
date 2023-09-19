@@ -88,7 +88,7 @@ Future appDialog(
   Widget? child,
   bool showButtonForChild = true,
 }) {
-  double aspectRatio = 2.5;
+  double aspectRatio = 2;
   double elevation = 10;
   double radius = 20;
   String? submitTitle;
