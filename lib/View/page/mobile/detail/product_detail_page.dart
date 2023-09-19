@@ -42,8 +42,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     try {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         dataId = context.routeArguments![0];
-        if (context.routeArguments![1] != null) {
+        debugPrint('${context.routeArguments![0]}');
+        if (context.routeArguments?[1] != null) {
           data = context.routeArguments![1];
+          debugPrint('${context.routeArguments![1]}');
         }
         AppLikeHelper.itWasLiked(data).then((value) => hasLike.value = value);
         Provider.of<ProductController>(context, listen: false).getProductByIdController(dataId).then((value) {});
