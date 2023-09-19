@@ -23,6 +23,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
   @override
   void initState() {
+    super.initState();
     themeInitialize();
     timer = AppTimer(
         countdowntimer: true,
@@ -38,15 +39,14 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
             //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
           }
         });
-    super.initState();
+    Provider.of<ProductFeaturesController>(context, listen: false).getColorController();
+    Provider.of<ProductFeaturesController>(context, listen: false).getGlossController();
+    Provider.of<ProductFeaturesController>(context, listen: false).getSizeController();
+    Provider.of<ProductFeaturesController>(context, listen: false).getSurfaceController();
+    Provider.of<ProductFeaturesController>(context, listen: false).getTypeController();
+    Provider.of<ProductFeaturesController>(context, listen: false).getUsageAreaController();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       timer.start();
-      Provider.of<ProductFeaturesController>(context, listen: false).getColorController();
-      Provider.of<ProductFeaturesController>(context, listen: false).getGlossController();
-      Provider.of<ProductFeaturesController>(context, listen: false).getSizeController();
-      Provider.of<ProductFeaturesController>(context, listen: false).getSurfaceController();
-      Provider.of<ProductFeaturesController>(context, listen: false).getTypeController();
-      Provider.of<ProductFeaturesController>(context, listen: false).getUsageAreaController();
     });
   }
 

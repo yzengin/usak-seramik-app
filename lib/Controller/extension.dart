@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
+import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/name_data_entity.dart';
 import 'dart:math';
 import '/view/style/glow.dart';
 import 'package:intl/intl.dart';
@@ -80,6 +81,20 @@ extension StringExtensions on String {
   }
 }
 
+String translateName(NameTextEntity data) {
+  String locale = '';
+
+  locale = localeNotifier.value!.languageCode;
+  if (locale == 'tr') {
+    return data.tr ?? "";
+  } else {
+    if (locale == 'en') {
+      return data.en ?? "";
+    }
+  }
+
+  return data.tr ?? "";
+}
 String translateData(dynamic data) {
   String locale = '';
 

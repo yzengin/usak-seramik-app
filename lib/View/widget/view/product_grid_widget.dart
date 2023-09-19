@@ -16,7 +16,6 @@ class ProductGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        debugPrint('SEND ARGUMENT PUSH ID: ${data.id}');
         Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id, data]);
       },
       child: Animate(
@@ -27,7 +26,7 @@ class ProductGridCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(imagePathControl(imageEntity: data.images!, cover: false)!, fit: BoxFit.cover),
+              Image.network(imagePathControl(imageEntity: data.images, cover: false)!, fit: BoxFit.cover),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.bottomLeft,

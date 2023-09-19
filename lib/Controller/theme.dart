@@ -173,6 +173,11 @@ ThemeData appThemeLight() => ThemeData(
         elevation: 0,
         labelPadding: EdgeInsets.symmetric(horizontal: 5),
         padding: EdgeInsets.symmetric(horizontal: 5),
+        labelStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w500,
+          fontSize: 17,
+        ),
       ),
       menuButtonTheme: MenuButtonThemeData(
         style: ButtonStyle(backgroundColor: MaterialStateProperty.all(AppColors.secondaryColor), foregroundColor: MaterialStateProperty.all(Colors.white)),

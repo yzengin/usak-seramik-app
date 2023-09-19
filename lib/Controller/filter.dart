@@ -11,12 +11,12 @@ List<SearchDataModel> _search = [
 ];
 
 List<ChooiceDataModel> _choose = [
-  ChooiceDataModel(context: LabeledData(data: [], label: 'urunTuru'), filters: _productType, multiple: true),
-  ChooiceDataModel(context: LabeledData(data: [], label: 'kullanimAlani'), filters: _usageArea, multiple: true),
-  ChooiceDataModel(context: LabeledData(data: [], label: 'sizes'), filters: _sizes, multiple: true),
-  ChooiceDataModel(context: LabeledData(data: [], label: 'colors'), filters: _colorFilter, multiple: true),
-  ChooiceDataModel(context: LabeledData(data: [], label: 'brightness'), filters: _brightness, multiple: true),
-  ChooiceDataModel(context: LabeledData(data: [], label: 'texture'), filters: _textures, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'urunTuru'), filters: productTypeFilter, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'kullanimAlani'), filters: usageAreaFilter, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'sizes'), filters: sizesFilter, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'colors'), filters: colorFilter, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'brightness'), filters: glossFilter, multiple: true),
+  ChooiceDataModel(context: LabeledData(data: [], label: 'texture'), filters: surfaceFilter, multiple: true),
 ];
 
 // List<RangeDataModel<String, RangeValues>> _range = [
@@ -91,3 +91,11 @@ List<ChooiceDataModel> _textures = [
   ChooiceDataModel(context: LabeledData(data: 9, label: 'ahsapMermer'), multiple: true),
   ChooiceDataModel(context: LabeledData(data: 4, label: 'wood'), multiple: true),
 ];
+
+// ---------------------------------------------------------------------------------------------------
+List<ChooiceDataModel> colorFilter = [];
+List<ChooiceDataModel> glossFilter = [];
+List<ChooiceDataModel> sizesFilter = [];
+List<ChooiceDataModel> surfaceFilter = [];
+List<ChooiceDataModel> productTypeFilter = [];
+List<ChooiceDataModel> usageAreaFilter = [];

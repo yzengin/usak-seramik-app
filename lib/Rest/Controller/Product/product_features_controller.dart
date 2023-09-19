@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Rest/Model/Response/ok_response.dart';
+import '../../../Controller/filter.dart';
+import '../../../Model/data.dart';
 import '../../Entity/Product/ProductFeatures/product_color_entity.dart';
 import '../../Entity/Product/ProductFeatures/product_gloss_entity.dart';
 import '../../Entity/Product/ProductFeatures/product_size_entity.dart';
@@ -27,6 +30,27 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getColorController(), $e');
     }
+    debugPrint('features color length: ${productColorData.data?.length}');
+    if (productColorData.data != null) {
+      productColorData.data!.forEach((element) {
+        if (element != null) {
+          colorFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: LabeledData(
+                  data: element.colorCode!.hexToColor(),
+                  label: element.name,
+                  translate: true,
+                ),
+                isColor: true,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
+    }
     return status;
   }
 
@@ -46,6 +70,23 @@ class ProductFeaturesController with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('ShowreelController.getGlossController(), $e');
+    }
+    debugPrint('features gloss length: ${productGlossData.data?.length}');
+    if (productGlossData.data != null) {
+      productGlossData.data!.forEach((element) {
+        if (element != null) {
+          glossFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: element.name,
+                translate: true,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
     }
     return status;
   }
@@ -67,6 +108,23 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getSizeController(), $e');
     }
+    debugPrint('features size length: ${productSizeData.data?.length}');
+    if (productSizeData.data != null) {
+      productSizeData.data!.forEach((element) {
+        if (element != null) {
+          sizesFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: element.name,
+                translate: false,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
+    }
     return status;
   }
 
@@ -86,6 +144,23 @@ class ProductFeaturesController with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('ShowreelController.getSurfaceController(), $e');
+    }
+    debugPrint('features surface length:  ${productSurfaceData.data?.length}');
+    if (productSurfaceData.data != null) {
+      productSurfaceData.data!.forEach((element) {
+        if (element != null) {
+          surfaceFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: element.name,
+                translate: true,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
     }
     return status;
   }
@@ -107,6 +182,23 @@ class ProductFeaturesController with ChangeNotifier {
     } catch (e) {
       debugPrint('ShowreelController.getTypeController(), $e');
     }
+    debugPrint('features Type length: ${productTypesData.data?.length}');
+    if (productTypesData.data != null) {
+      productTypesData.data!.forEach((element) {
+        if (element != null) {
+          productTypeFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: element.name,
+                translate: true,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
+    }
     return status;
   }
 
@@ -126,6 +218,23 @@ class ProductFeaturesController with ChangeNotifier {
       }
     } catch (e) {
       debugPrint('ShowreelController.getUsageAreaController(), $e');
+    }
+    debugPrint('features usage length: ${productUsageAreaData.data?.length}');
+    if (productUsageAreaData.data != null) {
+      productUsageAreaData.data!.forEach((element) {
+        if (element != null) {
+          usageAreaFilter.add(
+            ChooiceDataModel(
+              context: LabeledData(
+                data: element.id,
+                label: element.name,
+                translate: true,
+              ),
+              multiple: true,
+            ),
+          );
+        }
+      });
     }
     return status;
   }

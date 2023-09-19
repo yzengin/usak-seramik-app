@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/name_data_entity.dart';
 
 import '../../../Model/data.dart';
 import '../../../Rest/Controller/Product/product_controller.dart';
@@ -99,16 +100,16 @@ class _FilterDrawerState extends State<FilterDrawer> {
                                             return Row(
                                               children: [
                                                 FilterChip(
-                                                  label: subData.context.isColor ? Text(context.translete(subData.context.label.label))  : (subData.context.translate) ? Text(context.translete(subData.context.label)) : Text(subData.context.label),
-                                                  labelStyle: subData.context.isColor ? context.textStyle.copyWith(color: (subData.context.label.data as Color).isDarkContrast() ? Colors.white : Colors.black) : context.theme.chipTheme.labelStyle,
-                                                  checkmarkColor: subData.context.isColor
-                                                      ? (subData.context.label.data as Color).isDarkContrast()
-                                                          ? Colors.white
-                                                          : Colors.black
-                                                      : context.theme.iconTheme.color,
+                                                  label: subData.context.isColor
+                                                      ? Text(translateName((subData.context.label.label)))
+                                                      : subData.context.translate
+                                                          ? Text(translateName((subData.context.label)))
+                                                          : Text((subData.context.label)),
+                                                  labelStyle: subData.context.isColor ? context.theme.chipTheme.labelStyle?.copyWith(color: (subData.context.label.data as Color).getContrastColor()) : context.theme.chipTheme.labelStyle,
+                                                  checkmarkColor: subData.context.isColor ? (subData.context.label.data as Color).getContrastColor() : context.theme.iconTheme.color,
                                                   selected: data.context.data.contains(subData.context.data),
                                                   backgroundColor: subData.context.isColor ? (subData.context.label.data as Color) : context.theme.chipTheme.backgroundColor,
-                                                  selectedColor: subData.context.isColor ? subData.context.label.data : context.theme.chipTheme.selectedColor,
+                                                  selectedColor: subData.context.isColor ? (subData.context.label.data as Color) : context.theme.chipTheme.selectedColor,
                                                   onSelected: (value) {
                                                     if (data.context.data.contains(subData.context.data)) {
                                                       data.context.data.remove(subData.context.data);
@@ -258,7 +259,6 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       List<int>? brightness = returnDataSelected(widget.model.chooseFilters![4].context.data, "Parlaklık - Glosses");
                       List<int>? texture = returnDataSelected(widget.model.chooseFilters![5].context.data, "Doku - Surfaces");
 
-
                       ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
                         productTypeId: urunTuru!,
                         productUsagesId: kullanimAlani!,
@@ -271,7 +271,7 @@ class _FilterDrawerState extends State<FilterDrawer> {
                       );
                       Provider.of<ProductController>(context, listen: false).getProductSearchController(page: 0, productAttributesSearch);
                       Navigator.pop(context);
-                      if(!widget.searchResultPage!){
+                      if (!widget.searchResultPage!) {
                         Navigator.pushNamed(context, AppRoutes.search_result_page);
                       }
                     },
@@ -284,9 +284,9 @@ class _FilterDrawerState extends State<FilterDrawer> {
     );
   }
 
-  List<int>? returnDataSelected(List gelenData, String title){
+  List<int>? returnDataSelected(List gelenData, String title) {
     List<int> myIntListNew = [];
-    try{
+    try {
       try {
         List<int> myIntList = List<int>.from(gelenData.map((e) {
           if (e is int) {
@@ -300,12 +300,10 @@ class _FilterDrawerState extends State<FilterDrawer> {
       } catch (e) {
         print('$title-->:Dönüşüm sırasında hata oluştu: $e');
       }
-    }catch(e){
+    } catch (e) {
       debugPrint("$title-->: ReturnDataSelectFilter  Error-->  $e");
     }
 
     return myIntListNew;
-
   }
-
 }

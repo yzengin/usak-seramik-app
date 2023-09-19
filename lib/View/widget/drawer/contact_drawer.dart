@@ -5,6 +5,7 @@ import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/localization.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Model/languages.dart';
+import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
 import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
 import 'package:usak_seramik_app/View/widget/utility/theme_changer.dart';
 
