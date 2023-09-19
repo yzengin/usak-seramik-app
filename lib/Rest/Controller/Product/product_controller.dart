@@ -9,19 +9,20 @@ import '/Controller/notifiers.dart';
 
 class ProductController with ChangeNotifier {
   ProductData _productData = ProductData();
-  ProductData _productSearchData = ProductData();
   ProductData get productData => _productData;
   set productData(ProductData data) => _productData = data;
-
+  //
+  ProductData _productSearchData = ProductData();
   ProductData get productSearchData => _productSearchData;
-
-  set productSearchData(ProductData value) {
-    _productSearchData = value;
-  }
-
+  set productSearchData(ProductData value) => _productSearchData = value;
+  //
   ProductDetailData _productDetailData = ProductDetailData();
   ProductDetailData get productDetailData => _productDetailData;
   set productDetailData(ProductDetailData data) => _productDetailData = data;
+  //
+  List<ProductEntity> _productList = <ProductEntity>[];
+  List<ProductEntity> get productList => _productList;
+  set productList(List<ProductEntity> data) => _productList = data;
 
   Future<int> getProductController(ProductAttributesSearch productAttributesSearch, {int? page, int? size}) async {
     int status = 0;
@@ -30,11 +31,15 @@ class ProductController with ChangeNotifier {
       productData = ProductData();
     }
     try {
-      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: 0, size: 20);
+      BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page??0, size: 20);
       status = response.statusCode;
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productData = ProductData.fromJson(response.body);
+          
+          response.body["data"].forEach((element) {
+            productList.add(ProductEntity.fromJson(element));
+          });
         }
       }
     } catch (e) {
@@ -66,7 +71,6 @@ class ProductController with ChangeNotifier {
     return status;
   }
 
-
   Future<int> getProductByIdController(int id, {int? page, int? size}) async {
     int status = 0;
     exceptedAction.value = true;
@@ -90,8 +94,7 @@ class ProductController with ChangeNotifier {
   }
 }
 
-
-class ProductAttributesSearch extends Persistent{
+class ProductAttributesSearch extends Persistent {
   final List<int> faceColorId;
   final List<int> faceSizeId;
   final List<int> faceSurfaceId;

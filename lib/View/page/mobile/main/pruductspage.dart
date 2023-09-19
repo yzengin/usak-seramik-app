@@ -21,22 +21,33 @@ class ProductsPage extends StatefulWidget {
 
 class _ProductsPageState extends State<ProductsPage> {
   final _key = GlobalKey<ScaffoldState>();
+  ScrollController scrollController = ScrollController();
+  List<ProductEntity>? productData;
+  int page = 0;
+
   @override
   void initState() {
     super.initState();
+    ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+      faceColorId: [],
+      faceSizeId: [],
+      faceSurfaceId: [],
+      faceGlossId: [],
+      faceThicknessId: [],
+      faceStructureId: [],
+      productTypeId: [],
+      productUsagesId: [],
+    );
     try {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
-            faceColorId: [],
-            faceSizeId: [],
-            faceSurfaceId: [],
-            faceGlossId: [],
-            faceThicknessId: [],
-            faceStructureId: [],
-            productTypeId: [],
-            productUsagesId: []
-        );
-        Provider.of<ProductController>(context, listen: false).getProductController(productAttributesSearch).then((value) {
+        scrollController.addListener(() {
+          if (scrollController.position.pixels == scrollController.position.maxScrollExtent && context.isMobile) {
+            Provider.of<ProductController>(context, listen: false).getProductController(productAttributesSearch, page: ++page).then((value) {
+              setState(() {});
+            });
+          }
+        });
+        Provider.of<ProductController>(context, listen: false).getProductController(productAttributesSearch, page: page).then((value) {
           setState(() {});
         });
       });
@@ -47,13 +58,16 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
-    ProductData productData = Provider.of<ProductController>(context, listen: true).productData;
-    return productData.data != null
+    productData = Provider.of<ProductController>(context, listen: true).productList;
+    return (productData != null)
         ? Scaffold(
             key: _key,
             extendBodyBehindAppBar: true,
             drawer: ContactDrawer(),
-            endDrawer: FilterDrawer(model: testFilter, searchResultPage: false,),
+            endDrawer: FilterDrawer(
+              model: testFilter,
+              searchResultPage: false,
+            ),
             appBar: PreferredSize(
               preferredSize: Size.fromHeight(kToolbarHeight),
               child: ClipRect(
@@ -73,16 +87,17 @@ class _ProductsPageState extends State<ProductsPage> {
                 ),
               ),
             ),
-            body: body(context, productData),
+            body: body(context),
           )
         : Center(child: CircularProgressIndicator());
   }
 
-  Widget body(BuildContext context, ProductData productData) {
-    return productData.data != null && productData.data!.isNotEmpty
+  Widget body(BuildContext context) {
+    return productData != null && productData!.isNotEmpty
         ? RefreshIndicator(
             onRefresh: () async => null,
             child: GridView.custom(
+              controller: scrollController,
               padding: EdgeInsets.only(
                 left: 20,
                 right: 20,
@@ -90,10 +105,10 @@ class _ProductsPageState extends State<ProductsPage> {
               ),
               childrenDelegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final data = productData.data![index];
+                  final data = productData![index];
                   return ProductGridCard(data: data, index: index);
                 },
-                childCount: productData.data!.length,
+                childCount: productData!.length,
               ),
               gridDelegate: SliverWovenGridDelegate.count(pattern: [
                 WovenGridTile(1, alignment: AlignmentDirectional.center),
