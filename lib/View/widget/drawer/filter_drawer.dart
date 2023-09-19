@@ -290,24 +290,18 @@ class _FilterDrawerState extends State<FilterDrawer> {
   List<int>? returnDataSelected(List gelenData, String title){
     List<int> myIntListNew = [];
     try{
-      if (gelenData != null) {
-        if (gelenData is List) {
-          try {
-            List<int> myIntList = List<int>.from(gelenData.map((e) {
-              if (e is int) {
-                return e;
-              } else {
-                throw Exception('Listede int olmayan bir tür bulundu.');
-              }
-            }));
-            print('#### $title-->: $myIntList');
-            myIntListNew = myIntList;
-          } catch (e) {
-            print('$title-->:Dönüşüm sırasında hata oluştu: $e');
+      try {
+        List<int> myIntList = List<int>.from(gelenData.map((e) {
+          if (e is int) {
+            return e;
+          } else {
+            throw Exception('Listede int olmayan bir tür bulundu.');
           }
-        } else {
-          print('$title-->:Bu değişken List türünde değil.');
-        }
+        }));
+        print('#### $title-->: $myIntList');
+        myIntListNew = myIntList;
+      } catch (e) {
+        print('$title-->:Dönüşüm sırasında hata oluştu: $e');
       }
     }catch(e){
       debugPrint("$title-->: ReturnDataSelectFilter  Error-->  $e");

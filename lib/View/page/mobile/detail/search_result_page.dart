@@ -29,7 +29,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   @override
   Widget build(BuildContext context) {
     ProductData productData = Provider.of<ProductController>(context, listen: true).productSearchData;
-    return productData != null && productData.data != null ? Scaffold(
+    return productData.data != null ? Scaffold(
       key: _key,
       extendBodyBehindAppBar: true,
       endDrawer: FilterDrawer(model: testFilter, searchResultPage: true,),
@@ -80,7 +80,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
         shrinkWrap: true,
       ),
     ): Center(
-      child: Text("Ürün Listesi yok"),
+      child: Text(context.translete('emptyProducts')),
     );
   }
 }

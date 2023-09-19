@@ -3,8 +3,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 
-import '../main/pruductspage.dart';
-
 class FavouritesPage extends StatefulWidget {
   const FavouritesPage({super.key});
 

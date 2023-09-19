@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
-import '../Model/fake/product.dart';
 import '../Rest/Entity/User/user_entity.dart';
 import '/model/data.dart';
 

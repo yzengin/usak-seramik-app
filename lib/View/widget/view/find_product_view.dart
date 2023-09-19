@@ -6,7 +6,6 @@ import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/product_color_entity.dart';
-import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/product_gloss_entity.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/product_surface_entity.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/product_types_entity.dart';
 import 'package:usak_seramik_app/Rest/Entity/Product/ProductFeatures/product_usage_area_entity.dart';
@@ -119,10 +118,10 @@ class _FindProductViewState extends State<FindProductView> {
                         }
 
                         ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
-                          productTypeId: productTypeIds!,
-                          productUsagesId: productUsageAreaIds!,
-                          faceColorId: productColorIds!,
-                          faceSurfaceId: productSurfacesIds!,
+                          productTypeId: productTypeIds,
+                          productUsagesId: productUsageAreaIds,
+                          faceColorId: productColorIds,
+                          faceSurfaceId: productSurfacesIds,
                           faceThicknessId: [],
                           faceStructureId: [],
                           faceSizeId: [],
@@ -210,7 +209,7 @@ class _FindProductViewState extends State<FindProductView> {
                               items: dataList!.map((data) {
                                 return DropdownMenuItem<int?>(
                                   value: data!.id,
-                                  child: Text(languageControl(data.name!).toString() ?? 'Tümü'),
+                                  child: Text(languageControl(data.name!).toString()),
                                 );
                               }).toList(),
                             );
@@ -228,17 +227,14 @@ class _FindProductViewState extends State<FindProductView> {
 
   String? languageControl(NameTextEntity nameTextEntity){
     try{
-      if(nameTextEntity!=null){
-        if(localeNotifier.value!.languageCode.compareTo("en") == 0){
-          return nameTextEntity.en;
-        }else{
-          return nameTextEntity.tr;
-        }
+      if(localeNotifier.value!.languageCode.compareTo("en") == 0){
+        return nameTextEntity.en;
+      }else{
+        return nameTextEntity.tr;
       }
     }catch(e){
 
       return "null";
     }
-    return null;
   }
 }

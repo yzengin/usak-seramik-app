@@ -8,7 +8,6 @@ import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
-import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
 import 'package:usak_seramik_app/View/style/colors.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
 import 'package:usak_seramik_app/View/widget/utility/picture_viewer.dart';

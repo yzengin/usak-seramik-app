@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:usak_seramik_app/Rest/Entity/Product/showreel_entity.dart';
 import 'package:usak_seramik_app/Rest/Model/Response/ok_response.dart';
-import 'package:usak_seramik_app/Rest/Service/Product/showreel_service.dart';
 import '../../Entity/Product/ProductFeatures/product_color_entity.dart';
 import '../../Entity/Product/ProductFeatures/product_gloss_entity.dart';
 import '../../Entity/Product/ProductFeatures/product_size_entity.dart';
@@ -10,7 +8,6 @@ import '../../Entity/Product/ProductFeatures/product_types_entity.dart';
 import '../../Entity/Product/ProductFeatures/product_usage_area_entity.dart';
 import '../../Model/Response/base_response.dart';
 import '../../Service/Product/product_features_service.dart';
-import '/Controller/notifiers.dart';
 
 class ProductFeaturesController with ChangeNotifier {
   // COLOR
@@ -125,9 +122,6 @@ class ProductFeaturesController with ChangeNotifier {
       if (response is OkResponse) {
         if (response.body["data"] != null) {
           productUsageAreaData = ProductUsageAreaData.fromJson(response.body);
-          for(var dataIn in productUsageAreaData.data!){
-          }
-
         }
       }
     } catch (e) {

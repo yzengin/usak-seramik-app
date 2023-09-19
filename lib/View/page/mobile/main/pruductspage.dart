@@ -48,7 +48,7 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     ProductData productData = Provider.of<ProductController>(context, listen: true).productData;
-    return productData != null && productData.data != null
+    return productData.data != null
         ? Scaffold(
             key: _key,
             extendBodyBehindAppBar: true,
@@ -103,7 +103,7 @@ class _ProductsPageState extends State<ProductsPage> {
             ),
           )
         : Center(
-            child: Text("Ürün Listesi yok"),
+            child: Text(context.translete('emptyProducts')),
           );
   }
 }
