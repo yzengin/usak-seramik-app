@@ -126,7 +126,6 @@ class ProductFeaturesController with ChangeNotifier {
         if (response.body["data"] != null) {
           productUsageAreaData = ProductUsageAreaData.fromJson(response.body);
           for(var dataIn in productUsageAreaData.data!){
-            print('YESS tyşpeeee -- ${dataIn!.name!.tr}');
           }
 
         }

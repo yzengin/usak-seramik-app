@@ -148,7 +148,7 @@ class _ShowreelState extends State<Showreel> {
                                           height: kToolbarHeight,
                                           child: ElevatedButton(
                                             onPressed: () {
-                                              Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data]);
+                                              Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.productId]);
                                             },
                                             style: ButtonStyle(maximumSize: MaterialStateProperty.all(Size.fromWidth(context.width * 0.4))),
                                             // child: Text(context.translete('show')),

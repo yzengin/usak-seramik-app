@@ -13,6 +13,7 @@ import 'package:usak_seramik_app/View/style/colors.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
 import 'package:usak_seramik_app/View/widget/utility/picture_viewer.dart';
 
+import '../../../../Rest/Entity/Product/ProductFeatures/name_data_entity.dart';
 import '../../../../Rest/Entity/Product/product_detail_entity.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -24,10 +25,10 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int dataId = 0;
-  late ProductDetailData productDetailData;
   Set<String> uniqueSizes = Set<String>();
   Set<String> uniqueColor = Set<String>();
   Set<String> uniqueUsageArea = Set<String>();
+  Set<String> uniqueFaceGlosses = Set<String>();
   ValueNotifier<bool> hasLike = ValueNotifier<bool>(false);
 
   @override
@@ -36,9 +37,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     try {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         dataId = context.routeArguments![0];
-        debugPrint('1-${context.routeArguments![0]}');
-        debugPrint('2-${dataId}');
-
         Provider.of<ProductController>(context, listen: false).getProductByIdController(dataId).then((value) {});
       });
     } catch (e) {
@@ -46,11 +44,46 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
   }
 
-  void optimizing() {
+  String? languageControl(NameTextEntity nameTextEntity){
+    try{
+      if(nameTextEntity!=null){
+        if(localeNotifier.value!.languageCode.compareTo("en") == 0){
+          return nameTextEntity.en;
+        }else{
+          return nameTextEntity.tr;
+        }
+      }
+    }catch(e){
+
+      return "null";
+    }
+    return null;
+  }
+
+  String getInitials(String? text) {
+    if (text == null || text.isEmpty) {
+      return '';
+    }
+    List<String> words = text.split(' ');
+    List<String> initials = words.map((word) => word.isNotEmpty ? word[0].toUpperCase() : '').toList();
+    String joinText = initials.join();
+    if(joinText.compareTo("P") == 0 ){
+      return "S";
+    }
+    return joinText;
+  }
+
+
+  void optimizing(ProductDetailData productDetailData) {
+    uniqueSizes.clear();
+    uniqueColor.clear();
+    uniqueUsageArea.clear();
+    uniqueFaceGlosses.clear();
     if (productDetailData != null && productDetailData.data != null) {
       if (productDetailData.data!.features != null) {
         productDetailData.data!.features!.forEach((element) {
           // SIZE OPTIMIZATION
+
           if (element.faceSizeId != null) {
             if (!uniqueSizes.contains(element.faceSizeId!.name)) {
               uniqueSizes.add(element.faceSizeId!.name!);
@@ -59,17 +92,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
           // COLOR OPTIMIZATION
           if (element.faceColorId != null) {
-            if (!uniqueColor.contains(element.faceColorId!.code)) {
-              uniqueColor.add(element.faceColorId!.code!);
+            if (!uniqueColor.contains(element.faceColorId!.colorCode)) {
+              uniqueColor.add(element.faceColorId!.colorCode!);
             }
           }
 
           // USAGE OPTIMIZATION
-          // if (element.usageArea != null) {
-          //   if (!uniqueColor.contains(element.usageArea!)) {
-          //     uniqueColor.add(element.faceColorId!.code!);
-          //   }
-          // }
+           if (element.usageArea != null) {
+             element.usageArea!.forEach((elementUsage) {
+               if (!uniqueUsageArea.contains(languageControl(elementUsage.name!))) {
+                 uniqueUsageArea.add(languageControl(elementUsage.name!)!);
+               }
+             });
+           }
+
+          // USAGE OPTIMIZATION
+          if (element.faceGlosses != null) {
+            element.faceGlosses!.forEach((elementGlosses) {
+              if (!uniqueFaceGlosses.contains(languageControl(elementGlosses.name!))) {
+                uniqueFaceGlosses.add(languageControl(elementGlosses.name!)!);
+              }
+            });
+          }
         });
       }
     }
@@ -77,10 +121,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    productDetailData = Provider.of<ProductController>(context, listen: true).productDetailData;
-    optimizing();
-    debugPrint('3-${productDetailData.data?.toString()}');
-    // hasLike = ValueNotifier<bool>(likedProduct.value.contains(data));
+    ProductDetailData productDetailData = Provider.of<ProductController>(context, listen: true).productDetailData;
+    optimizing(productDetailData);
     return (productDetailData.data != null)
         ? Scaffold(
             extendBodyBehindAppBar: true,
@@ -104,24 +146,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           //   likedProduct.value.remove(data);
                           // }
                         },
-                        icon: (hasLike.value)
-                            ? Icon(
-                                FontAwesomeIcons.solidHeart,
-                                color: AppColors.redS3,
-                              )
-                            : Icon(FontAwesomeIcons.heart),
+                        icon: (hasLike.value) ? Icon(FontAwesomeIcons.solidHeart, color: AppColors.redS3,) : Icon(FontAwesomeIcons.heart),
                       );
                     })
               ],
             ),
-            body: body(context),
+            body: body(context,productDetailData),
           )
         : Center(
             child: CircularProgressIndicator(),
           );
   }
 
-  Widget body(BuildContext context) {
+
+
+  Widget body(BuildContext context, ProductDetailData productDetailData) {
     return SingleChildScrollView(
       padding: EdgeInsets.only(top: kToolbarHeight + context.paddingTop, bottom: 120),
       child: Column(
@@ -152,12 +191,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Animate(effects: [MoveEffect(begin: Offset(-50, 0), duration: 200.milliseconds)], child: Text(productDetailData.data?.name ?? "".toUpperCase(), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontSize: 26))).wrapPaddingHorizontal(20),
               Text(context.translete("productMainDescription"), style: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 14)).wrapPaddingHorizontal(20),
-              // Row(
-              //   children: [
-              //     Text(context.translete("productProperties"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
-              //     Expanded(child: Text('FL', style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)).wrapPaddingLeft(20)),
-              //   ],
-              // ).wrapPaddingTop(20).wrapPaddingLeft(20),
+               Row(
+                 children: [
+                   Text(context.translete("productProperties"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
+                   Expanded(
+                       child: SizedBox(
+                         height: kToolbarHeight * 0.5 + 20,
+                         child: ListView.builder(
+                           scrollDirection: Axis.horizontal,
+                           itemCount: uniqueFaceGlosses.length,
+                           itemBuilder: (context, index) {
+                             return Center(
+                                 child: DecoratedBox(
+                                     decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
+                                     child: Padding(
+                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                       child: Text(getInitials(uniqueFaceGlosses.toList()[index])),
+                                     )).wrapPaddingRight(10));
+                           },
+                         ).wrapPaddingLeft(20),
+                       ))
+                ],
+               ).wrapPaddingTop(20).wrapPaddingLeft(20),
               Row(
                 children: [
                   Text(context.translete("colors"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
@@ -171,7 +226,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         // final feature = productDetailData.data!.features?[index];
                         // if (feature != null) {
                         // if (feature.faceColorId != null) {
-                        return SizedBox(height: kToolbarHeight * 0.5, width: kToolbarHeight, child: ColoredBox(color: uniqueColor.toList()[index].hexToColor())).wrapPaddingRight(10);
+                        return SizedBox(
+                          height: kToolbarHeight * 0.5,
+                          width: kToolbarHeight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.black, // Çerçevenin rengi
+                                width: 1.0, // Çerçevenin genişliği
+                              ),
+                            ),
+                            child: ColoredBox(
+                                color: uniqueColor.toList()[index].hexToColor()
+                            ),
+                          ),
+                        ).wrapPaddingRight(10);
                         // }
                         // }
                       },
@@ -182,7 +251,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               Row(
                 children: [
                   Text(context.translete("urunTuru"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
-                  Expanded(child: Text('Takım Ürünleri', style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.w100)).wrapPaddingLeft(20)),
+                  Expanded(child: Text(languageControl(productDetailData.data!.productTypeEntity!.name!)!, style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.w100)).wrapPaddingLeft(20)),
                 ],
               ).wrapPaddingTop(20).wrapPaddingLeft(20),
               Row(
@@ -207,159 +276,187 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   )),
                 ],
               ).wrapPaddingTop(20).wrapPaddingLeft(20),
+              Row(
+                children: [
+                  Text(context.translete("kullanimAlani"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
+                  Expanded(
+                      child: SizedBox(
+                        height: kToolbarHeight * 0.5 + 20,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: uniqueUsageArea.length,
+                          itemBuilder: (context, index) {
+                            return Center(
+                                child: DecoratedBox(
+                                    decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                      child: Text(uniqueUsageArea.toList()[index]),
+                                    )).wrapPaddingRight(10));
+                          },
+                        ).wrapPaddingLeft(20),
+                      )),
+                ],
+              ).wrapPaddingTop(20).wrapPaddingLeft(20),
               Divider(),
               Text(context.translete('series'), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontSize: 26)).wrapPaddingLeft(20),
-              // AspectRatio(
-              //     aspectRatio: 0.75,
-              //     child: ListView.builder(
-              //       scrollDirection: Axis.horizontal,
-              //       itemCount: (data.faceCount != null) ? data.faceCount! : 0,
-              //       padding: EdgeInsets.only(left: 20),
-              //       itemBuilder: (context, index) {
-              //         // final face = data.face![index];
-              //         // return SizedBox(
-              //         //   width: context.width * 0.5,
-              //         //   child: DecoratedBox(
-              //         //     decoration: BoxDecoration(color: context.theme.colorScheme.surfaceTint.withOpacity(.25)),
-              //         //     child: Column(
-              //         //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //       children: [
-              //         //         Flexible(
-              //         //           child: AspectRatio(
-              //         //             aspectRatio: double.parse(face.size.split('x')[0]) / double.parse(face.size.split('x')[1]),
-              //         //             child: Image.network(
-              //         //               face.image,
-              //         //               alignment: Alignment.topCenter,
-              //         //               fit: BoxFit.cover,
-              //         //             ),
-              //         //           ),
-              //         //         ),
-              //         //         Column(
-              //         //           crossAxisAlignment: CrossAxisAlignment.start,
-              //         //           mainAxisAlignment: MainAxisAlignment.end,
-              //         //           children: [
-              //         //             Text(face.title),
-              //         //             Text(face.size, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w200)),
-              //         //             SizedBox(
-              //         //               height: kToolbarHeight * 0.5 + 20,
-              //         //               child: ListView.builder(
-              //         //                 scrollDirection: Axis.horizontal,
-              //         //                 itemCount: face.properties.length,
-              //         //                 itemBuilder: (context, index) {
-              //         //                   final data = face.properties[index];
-              //         //                   return Center(
-              //         //                     child: DecoratedBox(
-              //         //                       decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
-              //         //                       child: Padding(
-              //         //                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              //         //                         child: Text(data),
-              //         //                       ),
-              //         //                     ).wrapPaddingRight(10),
-              //         //                   );
-              //         //                 },
-              //         //               ),
-              //         //             ),
-              //         //             Align(
-              //         //               alignment: Alignment.centerRight,
-              //         //               child: GestureDetector(
-              //         //                   onTap: () {
-              //         //                     appDialog(
-              //         //                       context,
-              //         //                       dialogType: DialogType.failed,
-              //         //                       showButtonForChild: false,
-              //         //                       child: SingleChildScrollView(
-              //         //                         child: Column(
-              //         //                           crossAxisAlignment: CrossAxisAlignment.start,
-              //         //                           children: [
-              //         //                             Padding(
-              //         //                               padding: const EdgeInsets.all(8.0),
-              //         //                               child: Align(
-              //         //                                 alignment: Alignment.center,
-              //         //                                 child: Column(
-              //         //                                   children: [
-              //         //                                     Text(face.title, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                     Text(face.size, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)),
-              //         //                                   ],
-              //         //                                 ),
-              //         //                               ),
-              //         //                             ),
-              //         //                             Divider(),
-              //         //                             Padding(
-              //         //                               padding: const EdgeInsets.all(16.0),
-              //         //                               child: Column(
-              //         //                                 children: [
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("${context.translete('piece').toUpperCase()}/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('4.00', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                   Divider(),
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("M2/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('1.44', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                   Divider(),
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("M2/${context.translete('pallet').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('43.20', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                   Divider(),
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("${context.translete('box').toUpperCase()}/${context.translete('pallet').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('30.00', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                   Divider(),
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("KG/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('30.00', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                   Divider(),
-              //         //                                   Row(
-              //         //                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         //                                     children: [
-              //         //                                       Text("${context.translete('palletSize').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
-              //         //                                       Text('80*120', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
-              //         //                                     ],
-              //         //                                   ),
-              //         //                                 ],
-              //         //                               ),
-              //         //                             ),
-              //         //                           ],
-              //         //                         ),
-              //         //                       ),
-              //         //                     );
-              //         //                   },
-              //         //                   child: Text(
-              //         //                     context.translete('info'),
-              //         //                     style: context.theme.textTheme.bodyMedium!.copyWith(color: AppColors.blueS3),
-              //         //                   ).wrapPaddingRight(10)),
-              //         //             )
-              //         //           ],
-              //         //         ).wrapPaddingParametric(EdgeInsets.only(top: 10, left: 10, bottom: 10))
-              //         //       ],
-              //         //     ),
-              //         //   ),
-              //         // ).wrapPaddingRight(20);
-              //       },
-              //     )).wrapPaddingTop(20)
+              featuresProducts(productDetailData.data!.features),
             ],
           ).wrapPaddingTop(20)
         ],
       ),
     );
+  }
+
+  Widget featuresProducts(List<Feature>? featureDatas){
+    return AspectRatio(
+        aspectRatio: 0.75,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: (featureDatas != null) ? featureDatas.length : 0,
+          padding: EdgeInsets.only(left: 20),
+          itemBuilder: (context, index) {
+            final faceProductEntity = featureDatas![index];
+            return SizedBox(
+              width: context.width * 0.5,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: context.theme.colorScheme.surfaceTint.withOpacity(.25)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                      child: AspectRatio(
+                        aspectRatio: double.parse(faceProductEntity.faceSizeId!.width!) / double.parse(faceProductEntity.faceSizeId!.height!),
+                        child: (faceProductEntity != null)
+                            ? (faceProductEntity.images != null)
+                            ? (faceProductEntity.images!.image != null)
+                            ? Image.network(faceProductEntity.images!.image!, alignment: Alignment.topCenter, fit:BoxFit.cover)
+                            : Center(child: CircularProgressIndicator())
+                            : Center(child: CircularProgressIndicator())
+                            : Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(faceProductEntity.name!.tr!),
+                        Text(faceProductEntity.faceSizeId!.name!, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w200)),
+                        SizedBox(
+                          height: kToolbarHeight * 0.5 + 20,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: faceProductEntity.faceGlosses!.length,
+                            itemBuilder: (context, index) {
+                              final data = faceProductEntity.faceGlosses![index];
+                              return Center(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                    child: Text(getInitials(languageControl(data.name!)!)),
+                                  ),
+                                ).wrapPaddingRight(10),
+                              );
+                            },
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                              onTap: () {
+                                appDialog(
+                                  context,
+                                  dialogType: DialogType.failed,
+                                  showButtonForChild: false,
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Align(
+                                            alignment: Alignment.center,
+                                            child: Column(
+                                              children: [
+                                                Text(faceProductEntity.name!.tr!, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                Text(faceProductEntity.faceSizeId!.name!, style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Divider(),
+                                        Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("${context.translete('piece').toUpperCase()}/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.pieceInBox!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("M2/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.boxSize!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("M2/${context.translete('pallet').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.palletSize!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("${context.translete('box').toUpperCase()}/${context.translete('pallet').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.boxInPallet!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("KG/${context.translete('box').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.boxWeight!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                              Divider(),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text("${context.translete('palletSize').toUpperCase()}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold)),
+                                                  Text('${faceProductEntity.ebatlar!.palletDimensions!}', style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w300)).wrapPaddingLeft(20),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                context.translete('info'),
+                                style: context.theme.textTheme.bodyMedium!.copyWith(color: AppColors.blueS3),
+                              ).wrapPaddingRight(10)),
+                        )
+                      ],
+                    ).wrapPaddingParametric(EdgeInsets.only(top: 10, left: 10, bottom: 10))
+                  ],
+                ),
+              ),
+            ).wrapPaddingRight(20);
+          },
+        )).wrapPaddingTop(20);
   }
 }

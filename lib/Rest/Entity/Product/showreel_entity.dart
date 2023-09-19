@@ -37,6 +37,7 @@ class ShowreelData extends Persistent {
 
 class ShowreelEntity extends Persistent {
   int? id;
+  int? productId;
   String? img;
   Title? title;
   Subtitle? subtitle;
@@ -52,6 +53,7 @@ class ShowreelEntity extends Persistent {
 
   ShowreelEntity({
     this.id,
+    this.productId,
     this.img,
     this.title,
     this.subtitle,
@@ -69,6 +71,7 @@ class ShowreelEntity extends Persistent {
   factory ShowreelEntity.fromJson(Map<String, dynamic> json) {
     return ShowreelEntity(
       id: json['id'] as int?,
+      productId: json['product_id'] as int?,
       img: json['img'] as String?,
       title: Title.fromJson(json['title']),
       subtitle: Subtitle.fromJson(json['subtitle']),
@@ -88,6 +91,7 @@ class ShowreelEntity extends Persistent {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = this.id;
+    data['product_id'] = this.productId;
     data['img'] = this.img;
     data['title'] = this.title?.toJson();
     data['subtitle'] = this.subtitle?.toJson();

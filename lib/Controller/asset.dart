@@ -12,6 +12,10 @@ class AppImage {
   static String homeMarble = "assets/image/marble.jpg";
   static String homeCombineDekor = "assets/image/dekor.jpg";
   static String homeBeton = "assets/image/beton.jpg";
+  static String semiLappato = "assets/image/semi_lappato.jpg";
+  static String fullLappato = "assets/image/ful_lappato.jpg";
+  static String matFeature = "assets/image/mat.jpg";
+  static String parlakFeature = "assets/image/parlak.jpg";
 }
 
 class AppIllutration {
