@@ -10,9 +10,10 @@ class DealerController with ChangeNotifier {
   DealerData get dealerData => _dealerData;
   set dealerData(DealerData data) => _dealerData = data;
 
+
+  ///TODO BURAYA FİLTRE SONRASINDA OLUŞACAK GERİ DÖNÜŞÜM DATASI KOYULACAK
   Future<int> getDealerController({required DealerFilterEntity dealerFilterEntity}) async {
     int status = 0;
-    exceptedAction.value = true;
     try {
       BaseResponse response = await DealerService.operations().getDealerService(dealerFilterEntity);
       status = response.statusCode;
@@ -24,7 +25,7 @@ class DealerController with ChangeNotifier {
     } catch (e) {
       debugPrint('DealerController.getDealerController(), $e');
     }
-    exceptedAction.value = false;
+    notifyListeners();
     return status;
   }
 }

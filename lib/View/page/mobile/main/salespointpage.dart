@@ -43,13 +43,10 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     _controller = Completer<GoogleMapController>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       stopwatchTick('magazalar getDealerController öncesi');
-      Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
-        stopwatchTick('magazalar setMarker öncesi');
-        setMarkers(Provider.of<DealerController>(context, listen: false).dealerData.data!, context).then((value) {
-          if (mounted) {
-            setState(() {});
-          }
-        });
+      setMarkers(Provider.of<DealerController>(context, listen: false).dealerData.data!, context).then((value) {
+        if (mounted) {
+          setState(() {});
+        }
       });
     });
     fetchJson().whenComplete(() {});

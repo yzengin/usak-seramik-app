@@ -26,15 +26,6 @@ class _ContactPageState extends State<ContactPage> {
 
   @override
   void initState() {
-    try {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-        Provider.of<ContactController>(context, listen: false).getContactController().then((value) {
-          setState(() {});
-        });
-      });
-    } catch (e) {
-      debugPrint('ContactPage.initState(), $e');
-    }
     super.initState();
   }
 

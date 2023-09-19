@@ -4,12 +4,16 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
+import 'Controller/Map_Controller/marker_create.dart';
 import 'Controller/asset.dart';
 import 'Controller/extension.dart';
 import '/view/style/colors.dart';
 import 'Controller/preferences.dart';
 import 'Controller/theme.dart';
 import 'Controller/timer.dart';
+import 'Rest/Controller/Dealer/dealer_controller.dart';
+import 'Rest/Controller/User/contact_controller.dart';
+import 'Rest/Entity/Dealer/dealer_entity.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -45,6 +49,8 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     Provider.of<ProductFeaturesController>(context, listen: false).getSurfaceController();
     Provider.of<ProductFeaturesController>(context, listen: false).getTypeController();
     Provider.of<ProductFeaturesController>(context, listen: false).getUsageAreaController();
+    Provider.of<ContactController>(context, listen: false).getContactController();
+    Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity());
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       timer.start();
     });

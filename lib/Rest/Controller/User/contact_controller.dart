@@ -12,7 +12,6 @@ class ContactController with ChangeNotifier {
 
   Future<int> getContactController() async {
     int status = 0;
-    exceptedAction.value = true;
     try {
       BaseResponse response = await ContactService.operations().getContactService();
       status = response.statusCode;
@@ -24,7 +23,7 @@ class ContactController with ChangeNotifier {
     } catch (e) {
       debugPrint('ContactController.getContactController(), $e');
     }
-    exceptedAction.value = false;
+    notifyListeners();
     return status;
   }
 }
