@@ -16,7 +16,7 @@ class ProductGridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        debugPrint('PUSH ID: ${data.id}');
+        debugPrint('SEND ARGUMENT PUSH ID: ${data.id}');
         Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id, data]);
       },
       child: Animate(
