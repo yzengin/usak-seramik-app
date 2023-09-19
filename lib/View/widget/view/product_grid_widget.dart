@@ -7,15 +7,17 @@ import '../../../Controller/asset.dart';
 import '../../../Rest/Entity/Product/product_entity.dart';
 
 class ProductGridCard extends StatelessWidget {
-  const ProductGridCard({super.key, required this.data, required this.index});
+  const ProductGridCard({super.key, required this.data, required this.index, this.showInfo = true});
   final ProductEntity data;
   final int index;
+  final bool showInfo;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id]);
+        debugPrint('PUSH ID: ${data.id}');
+        Navigator.pushNamed(context, AppRoutes.product_detail_page, arguments: [data.id, data]);
       },
       child: Animate(
           effects: [
@@ -43,10 +45,10 @@ class ProductGridCard extends StatelessWidget {
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
                         ),
                         Divider(thickness: 0.2, color: Colors.white, height: 3),
-                        Text(
+                        (showInfo) ? Text(
                           '${data.faceCount} ${context.translete('face').toUpperCase()} ${data.colorCount} ${context.translete('color').toUpperCase()} ${data.sizeCount} ${context.translete('dimension').toUpperCase()}',
                           style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
-                        ),
+                        ) : SizedBox(),
                       ],
                     ),
                   ),

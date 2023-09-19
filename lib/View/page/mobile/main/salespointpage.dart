@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
+import 'package:usak_seramik_app/Controller/stopwatch.dart';
 import 'package:usak_seramik_app/Rest/Controller/Dealer/dealer_controller.dart';
 import 'package:usak_seramik_app/Rest/Entity/Dealer/dealer_entity.dart';
 
@@ -37,20 +38,21 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
 
   @override
   void initState() {
+    stopwatchTick('sıfırlama');
     super.initState();
     _controller = Completer<GoogleMapController>();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      stopwatchTick('magazalar getDealerController öncesi');
       Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
-        if (mounted) {
-          setMarkers(Provider.of<DealerController>(context, listen: false).dealerData.data!, context).then((value) {
+        stopwatchTick('magazalar setMarker öncesi');
+        setMarkers(Provider.of<DealerController>(context, listen: false).dealerData.data!, context).then((value) {
+          if (mounted) {
             setState(() {});
-          });
-        }
+          }
+        });
       });
     });
-    fetchJson().whenComplete(() {
-      setState(() {});
-    });
+    fetchJson().whenComplete(() {});
     // selectedSeller.addListener(() async {
     //   final GoogleMapController controllerData = await _controller.future;
     //   if (selectedSeller.value != null) {
@@ -277,7 +279,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     },
                     child: Row(
                       children: [
-                        Expanded(child: Text(data.name??"").wrapPaddingHorizontal(10)),
+                        Expanded(child: Text(data.name ?? "").wrapPaddingHorizontal(10)),
                         (selectedSeller.value == data) ? Text(context.translete('selected'), style: context.textStyle.copyWith(color: context.theme.iconTheme.color)).wrapPaddingRight(20) : Text(context.translete('select'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)).wrapPaddingRight(20),
                       ],
                     ),
@@ -286,7 +288,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   GestureDetector(
                     onTap: () async => launchMapsUrl((data.latitude != null) ? double.parse(data.latitude!) : 0, (data.longitude != null) ? double.parse(data.longitude!) : 0),
                     child: Row(children: [
-                      Expanded(child: Text(data.address??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.address ?? "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       Row(
                         children: [
                           Text(context.translete('getRoute'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -296,9 +298,9 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
                   ),
                   GestureDetector(
-                    onTap: () async => launchPhone(data.phone1??""),
+                    onTap: () async => launchPhone(data.phone1 ?? ""),
                     child: Row(children: [
-                      Expanded(child: Text(data.phone1??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.phone1 ?? "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       Row(
                         children: [
                           Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
@@ -310,7 +312,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   GestureDetector(
                     onTap: () async => launchMail(data.email ?? ""),
                     child: Row(children: [
-                      Expanded(child: Text(data.fax??"", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                      Expanded(child: Text(data.fax ?? "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                       CopyOnTap(
                         '${data.fax}',
                         delay: 1.second(),
@@ -364,15 +366,12 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Column(
                           children: [
-                          TextField(
+                            TextField(
                               controller: salesNameController,
-                              onChanged: (val){
-                                setState(() {
-
-                                });
+                              onChanged: (val) {
+                                setState(() {});
                               },
-                              decoration: InputDecoration(hintText: context.translete('searchSalePoint'),
-                                  hintStyle: context.textStyle.copyWith(color: context.textStyle.color!.withOpacity(.5))),
+                              decoration: InputDecoration(hintText: context.translete('searchSalePoint'), hintStyle: context.textStyle.copyWith(color: context.textStyle.color!.withOpacity(.5))),
                             ),
                             DecoratedBox(
                               decoration: BoxDecoration(border: Border.all(color: context.textStyle.color!), borderRadius: BorderRadius.circular(8)),
@@ -382,7 +381,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                   items: cities.map((e) => DropdownMenuItem(child: Text(e.title.toString()), value: e.code)).toList(),
                                   value: selectedCity.value,
                                   isExpanded: true,
-                                  onChanged: (value){
+                                  onChanged: (value) {
                                     setState(() {
                                       selectedCity.value = value;
                                     });
@@ -414,22 +413,21 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                     },
                     child: Text(context.translete('search')))
                 .wrapPaddingTop(20),
-            salesNameController.text.isNotEmpty || selectedCity.value!=null ?
-            GestureDetector(
-                onTap: (){
-                  salesNameController.clear();
-                  selectedCity.value = null;
-                  Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
-                    if (mounted) {
-                      setMarkers(dealerData.data!, context).then((value) {
-                        setState(() {});
-
+            salesNameController.text.isNotEmpty || selectedCity.value != null
+                ? GestureDetector(
+                    onTap: () {
+                      salesNameController.clear();
+                      selectedCity.value = null;
+                      Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity()).then((value) {
+                        if (mounted) {
+                          setMarkers(dealerData.data!, context).then((value) {
+                            setState(() {});
+                          });
+                        }
                       });
-                    }
-                  });
-                },
-                child: Text(context.translete('clear')).wrapPaddingTop(20)): SizedBox()
-
+                    },
+                    child: Text(context.translete('clear')).wrapPaddingTop(20))
+                : SizedBox()
           ],
         ),
       ),

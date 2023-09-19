@@ -44,21 +44,18 @@ class _FilterDrawerState extends State<FilterDrawer> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(context.translete(data.filter.context.label)).wrapPaddingLeft(20),
-                                Material(
-                                  color: context.colors.shadow,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kToolbarHeight)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                                    child: TextField(
-                                      controller: data.controller,
-                                      focusNode: data.node,
-                                      textInputAction: index == widget.model.searchFilters!.length - 1 ? TextInputAction.done : TextInputAction.next,
-                                      decoration: InputDecoration(
-                                        hintText: context.translete('search').toLowerCase(),
-                                        hintStyle: context.textStyle,
-                                        border: InputBorder.none,
-                                        floatingLabelAlignment: FloatingLabelAlignment.center,
-                                      ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  child: TextField(
+                                    controller: data.controller,
+                                    focusNode: data.node,
+                                    textInputAction: index == widget.model.searchFilters!.length - 1 ? TextInputAction.done : TextInputAction.next,
+                                    style: context.textStyle,
+                                    decoration: InputDecoration(
+                                      hintText: context.translete('search').toLowerCase(),
+                                      hintStyle: context.textStyle,
+                                      border: InputBorder.none,
+                                      floatingLabelAlignment: FloatingLabelAlignment.center,
                                     ),
                                   ),
                                 ).wrapPaddingTop(10),

@@ -7,26 +7,26 @@ import '../asset.dart';
 import '../controller.dart';
 
 ValueNotifier<List<Marker>> allMarkers = ValueNotifier([]);
-ValueNotifier<List<Marker>> allMarkersMidLevel = ValueNotifier([]);
+List<Marker> allMarkersMidLevel = [];
 ValueNotifier<bool> showMarkerDialog = ValueNotifier<bool>(false);
 ValueNotifier<DealerEntity?> selectedSeller = ValueNotifier<DealerEntity?>(null);
 Uint8List? mapMarker;
 
 Future<void> setMarkers(List<DealerEntity> dataList, BuildContext context) async {
+  allMarkersMidLevel.clear();
+  final Uint8List markerIcon = await getBytesFromAsset(AppIcon.mapmarker, ((MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio) * 0.1).toInt());
   if (dataList.isNotEmpty) {
     try {
       for (var data in dataList) {
-        final Uint8List markerIcon = await getBytesFromAsset(AppIcon.mapmarker, ((MediaQuery.of(context).size.width * MediaQuery.of(context).devicePixelRatio) * 0.1).toInt());
-        allMarkersMidLevel.value.add(Marker(
-          //add first marker
-          markerId: MarkerId(data.name??""),
-          position: LatLng((data.latitude != null) ? double.parse(data.latitude!) : 0,(data.longitude != null) ? double.parse(data.longitude!) : 0),
-          infoWindow: InfoWindow(
-            title: data.name,
-          ),
+        allMarkersMidLevel.add(Marker(
+          markerId: MarkerId(data.name ?? ""),
+          position: LatLng((data.latitude != null) ? double.parse(data.latitude!) : 0, (data.longitude != null) ? double.parse(data.longitude!) : 0),
+          // infoWindow: InfoWindow(title: '${plakaList.firstWhere((map) => map.keys.first == data.cityId).values.first}', snippet: data.name),
+          infoWindow: InfoWindow(title: '${data.phone1}', snippet: data.name),
           onTap: () {
             showMarkerDialog.value = true;
             selectedSeller.value = data;
+            // debugPrint('${plakaList.firstWhere((map) => map.keys.first == data.cityId).values.first}');
           },
           icon: BitmapDescriptor.fromBytes(markerIcon), //Icon for Marker
         ));
@@ -37,5 +37,5 @@ Future<void> setMarkers(List<DealerEntity> dataList, BuildContext context) async
   }
 
   allMarkers.value.clear();
-  allMarkers.value.addAll(allMarkersMidLevel.value);
+  allMarkers.value.addAll(allMarkersMidLevel);
 }

@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
+import 'package:usak_seramik_app/Controller/like_helper.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
+import 'package:usak_seramik_app/Controller/preferences.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_controller.dart';
 import 'package:usak_seramik_app/View/style/colors.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
@@ -14,6 +17,7 @@ import 'package:usak_seramik_app/View/widget/utility/picture_viewer.dart';
 
 import '../../../../Rest/Entity/Product/ProductFeatures/name_data_entity.dart';
 import '../../../../Rest/Entity/Product/product_detail_entity.dart';
+import '../../../../Rest/Entity/Product/product_entity.dart';
 
 class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({super.key});
@@ -24,6 +28,8 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int dataId = 0;
+  ProductEntity data = ProductEntity();
+  ProductDetailData productDetailData = ProductDetailData();
   Set<String> uniqueSizes = Set<String>();
   Set<String> uniqueColor = Set<String>();
   Set<String> uniqueUsageArea = Set<String>();
@@ -36,6 +42,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     try {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         dataId = context.routeArguments![0];
+        if (context.routeArguments![1] != null) {
+          data = context.routeArguments![1];
+        }
+        AppLikeHelper.itWasLiked(data).then((value) => hasLike.value = value);
         Provider.of<ProductController>(context, listen: false).getProductByIdController(dataId).then((value) {});
       });
     } catch (e) {
@@ -43,17 +53,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
   }
 
-  String? languageControl(NameTextEntity nameTextEntity){
-    try{
-      if(nameTextEntity!=null){
-        if(localeNotifier.value!.languageCode.compareTo("en") == 0){
+  @override
+  void dispose() {
+    hasLike.dispose();
+    super.dispose();
+  }
+
+  String? languageControl(NameTextEntity nameTextEntity) {
+    try {
+      if (nameTextEntity != null) {
+        if (localeNotifier.value!.languageCode.compareTo("en") == 0) {
           return nameTextEntity.en;
-        }else{
+        } else {
           return nameTextEntity.tr;
         }
       }
-    }catch(e){
-
+    } catch (e) {
       return "null";
     }
     return null;
@@ -66,12 +81,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     List<String> words = text.split(' ');
     List<String> initials = words.map((word) => word.isNotEmpty ? word[0].toUpperCase() : '').toList();
     String joinText = initials.join();
-    if(joinText.compareTo("P") == 0 ){
+    if (joinText.compareTo("P") == 0) {
       return "S";
     }
     return joinText;
   }
-
 
   void optimizing(ProductDetailData productDetailData) {
     uniqueSizes.clear();
@@ -97,15 +111,15 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           }
 
           // USAGE OPTIMIZATION
-           if (element.usageArea != null) {
-             element.usageArea!.forEach((elementUsage) {
-               if (!uniqueUsageArea.contains(languageControl(elementUsage.name!))) {
-                 uniqueUsageArea.add(languageControl(elementUsage.name!)!);
-               }
-             });
-           }
+          if (element.usageArea != null) {
+            element.usageArea!.forEach((elementUsage) {
+              if (!uniqueUsageArea.contains(languageControl(elementUsage.name!))) {
+                uniqueUsageArea.add(languageControl(elementUsage.name!)!);
+              }
+            });
+          }
 
-          // USAGE OPTIMIZATION
+          // GLOSS OPTIMIZATION
           if (element.faceGlosses != null) {
             element.faceGlosses!.forEach((elementGlosses) {
               if (!uniqueFaceGlosses.contains(languageControl(elementGlosses.name!))) {
@@ -120,7 +134,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    ProductDetailData productDetailData = Provider.of<ProductController>(context, listen: true).productDetailData;
+    productDetailData = Provider.of<ProductController>(context, listen: true).productDetailData;
     optimizing(productDetailData);
     return (productDetailData.data != null)
         ? Scaffold(
@@ -136,28 +150,27 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                     valueListenable: hasLike,
                     builder: (context, _, __) {
                       return IconButton(
-                        onPressed: () {
-                          // hasLike.value = !hasLike.value;
-                          // if (hasLike.value) {
-                          //   likedProduct.value.add(data);
-                          //   appDialog(context, message: context.translete('favoriteAddedDialog'), dialogType: DialogType.success);
-                          // } else {
-                          //   likedProduct.value.remove(data);
-                          // }
+                        onPressed: () async {
+                          AppLikeHelper.likeToggle(data).then((value) {
+                            hasLike.value = value;
+                          });
                         },
-                        icon: (hasLike.value) ? Icon(FontAwesomeIcons.solidHeart, color: AppColors.redS3,) : Icon(FontAwesomeIcons.heart),
+                        icon: (hasLike.value)
+                            ? Icon(
+                                FontAwesomeIcons.solidHeart,
+                                color: AppColors.redS3,
+                              )
+                            : Icon(FontAwesomeIcons.heart),
                       );
                     })
               ],
             ),
-            body: body(context,productDetailData),
+            body: body(context, productDetailData),
           )
         : Center(
             child: CircularProgressIndicator(),
           );
   }
-
-
 
   Widget body(BuildContext context, ProductDetailData productDetailData) {
     return SingleChildScrollView(
@@ -190,28 +203,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             children: [
               Animate(effects: [MoveEffect(begin: Offset(-50, 0), duration: 200.milliseconds)], child: Text(productDetailData.data?.name ?? "".toUpperCase(), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontSize: 26))).wrapPaddingHorizontal(20),
               Text(context.translete("productMainDescription"), style: context.theme.textTheme.bodyMedium!.copyWith(fontSize: 14)).wrapPaddingHorizontal(20),
-               Row(
-                 children: [
-                   Text(context.translete("productProperties"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
-                   Expanded(
-                       child: SizedBox(
-                         height: kToolbarHeight * 0.5 + 20,
-                         child: ListView.builder(
-                           scrollDirection: Axis.horizontal,
-                           itemCount: uniqueFaceGlosses.length,
-                           itemBuilder: (context, index) {
-                             return Center(
-                                 child: DecoratedBox(
-                                     decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
-                                     child: Padding(
-                                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                       child: Text(getInitials(uniqueFaceGlosses.toList()[index])),
-                                     )).wrapPaddingRight(10));
-                           },
-                         ).wrapPaddingLeft(20),
-                       ))
+              Row(
+                children: [
+                  Text(context.translete("productProperties"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
+                  Expanded(
+                      child: SizedBox(
+                    height: kToolbarHeight * 0.5 + 20,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: uniqueFaceGlosses.length,
+                      itemBuilder: (context, index) {
+                        return Center(
+                            child: DecoratedBox(
+                                decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                  child: Text(getInitials(uniqueFaceGlosses.toList()[index])),
+                                )).wrapPaddingRight(10));
+                      },
+                    ).wrapPaddingLeft(20),
+                  ))
                 ],
-               ).wrapPaddingTop(20).wrapPaddingLeft(20),
+              ).wrapPaddingTop(20).wrapPaddingLeft(20),
               Row(
                 children: [
                   Text(context.translete("colors"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
@@ -235,9 +248,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 width: 1.0, // Çerçevenin genişliği
                               ),
                             ),
-                            child: ColoredBox(
-                                color: uniqueColor.toList()[index].hexToColor()
-                            ),
+                            child: ColoredBox(color: uniqueColor.toList()[index].hexToColor()),
                           ),
                         ).wrapPaddingRight(10);
                         // }
@@ -280,21 +291,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   Text(context.translete("kullanimAlani"), style: context.theme.textTheme.bodyMedium!.copyWith(fontFamily: AppFont.oswald, fontWeight: FontWeight.bold)),
                   Expanded(
                       child: SizedBox(
-                        height: kToolbarHeight * 0.5 + 20,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: uniqueUsageArea.length,
-                          itemBuilder: (context, index) {
-                            return Center(
-                                child: DecoratedBox(
-                                    decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                                      child: Text(uniqueUsageArea.toList()[index]),
-                                    )).wrapPaddingRight(10));
-                          },
-                        ).wrapPaddingLeft(20),
-                      )),
+                    height: kToolbarHeight * 0.5 + 20,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: uniqueUsageArea.length,
+                      itemBuilder: (context, index) {
+                        return Center(
+                            child: DecoratedBox(
+                                decoration: BoxDecoration(border: Border.all(width: 2, color: context.theme.iconTheme.color!)),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                                  child: Text(uniqueUsageArea.toList()[index]),
+                                )).wrapPaddingRight(10));
+                      },
+                    ).wrapPaddingLeft(20),
+                  )),
                 ],
               ).wrapPaddingTop(20).wrapPaddingLeft(20),
               Divider(),
@@ -307,7 +318,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  Widget featuresProducts(List<Feature>? featureDatas){
+  Widget featuresProducts(List<Feature>? featureDatas) {
     return AspectRatio(
         aspectRatio: 0.75,
         child: ListView.builder(
@@ -328,10 +339,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         aspectRatio: double.parse(faceProductEntity.faceSizeId!.width!) / double.parse(faceProductEntity.faceSizeId!.height!),
                         child: (faceProductEntity != null)
                             ? (faceProductEntity.images != null)
-                            ? (faceProductEntity.images!.image != null)
-                            ? Image.network(faceProductEntity.images!.image!, alignment: Alignment.topCenter, fit:BoxFit.cover)
-                            : Center(child: CircularProgressIndicator())
-                            : Center(child: CircularProgressIndicator())
+                                ? (faceProductEntity.images!.image != null)
+                                    ? Image.network(faceProductEntity.images!.image!, alignment: Alignment.topCenter, fit: BoxFit.cover)
+                                    : Center(child: CircularProgressIndicator())
+                                : Center(child: CircularProgressIndicator())
                             : Center(child: CircularProgressIndicator()),
                       ),
                     ),

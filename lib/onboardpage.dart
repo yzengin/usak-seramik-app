@@ -105,11 +105,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             borderRadius: BorderRadius.circular(20),
                             child: Opacity(
                               opacity: 0,
-                              child: Image.network(
-                                data.image!,
+                              child: Image.asset(
+                                data.imageAsset!,
                                 opacity: AlwaysStoppedAnimation(0.2),
                                 fit: BoxFit.fitWidth,
-                                loadingBuilder: loadingBuilder,
                                 errorBuilder: errorBuilder,
                               ),
                             ),

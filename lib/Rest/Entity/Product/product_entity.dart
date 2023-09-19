@@ -1,3 +1,4 @@
+import 'package:usak_seramik_app/Rest/Entity/Product/product_detail_entity.dart';
 import 'package:usak_seramik_app/Rest/Entity/persistent.dart';
 
 class ProductData extends Persistent{
@@ -94,6 +95,27 @@ class ProductEntity extends Persistent{
         "color_count": colorCount,
         "size_count": sizeCount,
     };
+
+    // CONVERT
+    factory ProductEntity.fromProductDetailEntity(ProductDetailEntity product) => ProductEntity(
+        id: product.id,
+        productCollectionId: null,
+        productTypeId: ProductTypeId(tr: product.productTypeId.toString()),
+        name: product.name,
+        slug: product.slug,
+        description: (product.description == null) ? null : Description(tr: product.description!.tr),
+        sortOrder: product.sortOrder,
+        active: product.active,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
+        images: product.images == null ? null : ImagesClass(
+          cover: product.images!.cover,
+          thumb: product.images!.thumb,
+        ),
+        faceCount: null,
+        colorCount: null,
+        sizeCount: null,
+    );
 }
 
 class Description {

@@ -1,5 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, unnecessary_new
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
 import '../../../Controller/extension.dart';
@@ -43,7 +44,8 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Scaffold(
         key: scaffoldKey,
         appBar: AppBar(
-          title: const Text('Kayıt Ol'),
+          title: Text(context.translete('register')),
+          leading: IconButton(onPressed: () => widget.switchCallback.call(), icon: Icon(FontAwesomeIcons.chevronLeft)),
           actions: [
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -140,13 +142,13 @@ class _RegisterPageState extends State<RegisterPage> {
                           },
                           child: Text(context.translete('register')))
                       .wrapPaddingTop(20),
-                  Divider().wrapPaddingTop(20),
-                  ElevatedButton(
-                          onPressed: () {
-                            widget.switchCallback.call();
-                          },
-                          child: Text(context.translete('login')))
-                      .wrapPaddingTop(20),
+                  // Divider().wrapPaddingTop(20),
+                  // ElevatedButton(
+                  //         onPressed: () {
+                  //           widget.switchCallback.call();
+                  //         },
+                  //         child: Text(context.translete('login')))
+                  //     .wrapPaddingTop(20),
                 ],
               ).wrapPaddingHorizontal(20),
             ),

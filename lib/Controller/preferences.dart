@@ -8,6 +8,7 @@ class AppPreferences {
   static String language = "lang";
   static String themeIsDark = "themeIsDark";
   static String onboarding = "onboarding";
+  static String favorites = "favorites";
 }
 
 class AppPreferencesHandler {

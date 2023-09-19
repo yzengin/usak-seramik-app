@@ -1,8 +1,9 @@
+import 'package:usak_seramik_app/Rest/Entity/Product/product_entity.dart';
 import 'package:usak_seramik_app/Rest/Entity/persistent.dart';
 
 import 'ProductFeatures/name_data_entity.dart';
 
-class ProductDetailData extends Persistent{
+class ProductDetailData extends Persistent {
   ProductDetailEntity? data;
   String? message;
   bool? status;
@@ -30,7 +31,7 @@ class ProductDetailData extends Persistent{
   }
 }
 
-class ProductDetailEntity extends Persistent{
+class ProductDetailEntity extends Persistent {
   int? id;
   int? productTypeId;
   String? name;
@@ -65,14 +66,14 @@ class ProductDetailEntity extends Persistent{
       productTypeId: json['product_type_id'] as int?,
       name: json['name'] as String?,
       slug: json['slug'] as String?,
-      description: json['description']!=null ? Description.fromJson(json['description']): null,
+      description: json['description'] != null ? Description.fromJson(json['description']) : null,
       sortOrder: json['sort_order'] as int?,
       active: json['active'] as bool?,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
-      images: json['images']!=null ? DataImages.fromJson(json['images']): null,
-      productTypeEntity: json['product_type']!=null ? NameDataEntity.fromJson(json['product_type']) : null,
-      features: json['features']!=null ? (json['features'] as List<dynamic>?)?.map((e) => Feature.fromJson(e as Map<String, dynamic>)).toList(): null,
+      images: json['images'] != null ? DataImages.fromJson(json['images']) : null,
+      productTypeEntity: json['product_type'] != null ? NameDataEntity.fromJson(json['product_type']) : null,
+      features: json['features'] != null ? (json['features'] as List<dynamic>?)?.map((e) => Feature.fromJson(e as Map<String, dynamic>)).toList() : null,
     );
   }
 
@@ -91,6 +92,31 @@ class ProductDetailEntity extends Persistent{
     data['product_type'] = this.productTypeEntity?.toJson();
     data['features'] = this.features?.map((e) => e.toJson()).toList();
     return data;
+  }
+
+  // CONVERT
+  factory ProductDetailEntity.fromProductEntity(ProductEntity product) {
+    return ProductDetailEntity(
+      id: product.id,
+      productTypeId: product.productTypeId == null
+          ? 0
+          : product.productTypeId!.tr == null
+              ? 0
+              : int.parse(product.productTypeId!.tr!),
+      name: product.name,
+      slug: product.slug,
+      description: Description(tr: product.description?.tr),
+      sortOrder: product.sortOrder,
+      active: product.active,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+      images: DataImages(
+        cover: product.images == null ? " " : product.images!.cover,
+        thumb: product.images == null ? " " : product.images!.thumb,
+      ),
+      productTypeEntity: NameDataEntity(),
+      features: [],
+    );
   }
 }
 
@@ -165,14 +191,14 @@ class Feature {
     return Feature(
       id: json['id'] as int?,
       productId: json['product_id'] as int?,
-      faceSizeId: json['face_size_id']!=null ? FaceSizeId.fromJson(json['face_size_id']): null,
-      faceSurfaceId: json['face_surface_id']!=null ? NameDataEntity.fromJson(json['face_surface_id']): null,
-      faceColorId: json['face_color_id']!=null ? NameDataEntity.fromJson(json['face_color_id']): null,
-      faceThicknessId: json['face_thickness_id']!=null ? FaceId.fromJson(json['face_thickness_id']): null,
-      faceStructureId: json['face_structure_id']!=null ? FaceId.fromJson(json['face_structure_id']): null,
-      name: json['name']!=null ? Description.fromJson(json['name']): null,
-      slug: json['slug']!=null ? Description.fromJson(json['slug']): null,
-      description: json['description']!=null ? Description.fromJson(json['description']): null,
+      faceSizeId: json['face_size_id'] != null ? FaceSizeId.fromJson(json['face_size_id']) : null,
+      faceSurfaceId: json['face_surface_id'] != null ? NameDataEntity.fromJson(json['face_surface_id']) : null,
+      faceColorId: json['face_color_id'] != null ? NameDataEntity.fromJson(json['face_color_id']) : null,
+      faceThicknessId: json['face_thickness_id'] != null ? FaceId.fromJson(json['face_thickness_id']) : null,
+      faceStructureId: json['face_structure_id'] != null ? FaceId.fromJson(json['face_structure_id']) : null,
+      name: json['name'] != null ? Description.fromJson(json['name']) : null,
+      slug: json['slug'] != null ? Description.fromJson(json['slug']) : null,
+      description: json['description'] != null ? Description.fromJson(json['description']) : null,
       antiSlip: json['anti_slip'] as int?,
       rectification: json['rectification'] as int?,
       relief: json['relief'] as int?,
@@ -180,10 +206,10 @@ class Feature {
       sortOrder: json['sort_order'] as int?,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
-      ebatlar: json['ebatlar']!=null ? Ebatlar.fromJson(json['ebatlar']) : null,
-      images: json['images']!=null ? FeatureImages.fromJson(json['images']): null,
-      usageArea: json['usage_area']!=null ? (json['usage_area'] as List<dynamic>?)?.map((e) => NameDataEntity.fromJson(e as Map<String, dynamic>)).toList(): null,
-      faceGlosses:json['face_glosses']!=null ?  (json['face_glosses'] as List<dynamic>?)?.map((e) => NameDataEntity.fromJson(e as Map<String, dynamic>)).toList(): null,
+      ebatlar: json['ebatlar'] != null ? Ebatlar.fromJson(json['ebatlar']) : null,
+      images: json['images'] != null ? FeatureImages.fromJson(json['images']) : null,
+      usageArea: json['usage_area'] != null ? (json['usage_area'] as List<dynamic>?)?.map((e) => NameDataEntity.fromJson(e as Map<String, dynamic>)).toList() : null,
+      faceGlosses: json['face_glosses'] != null ? (json['face_glosses'] as List<dynamic>?)?.map((e) => NameDataEntity.fromJson(e as Map<String, dynamic>)).toList() : null,
     );
   }
 
