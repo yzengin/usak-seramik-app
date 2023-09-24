@@ -30,6 +30,7 @@ class _ProductsPageState extends State<ProductsPage> {
   void initState() {
     super.initState();
     productAttributesSearch = ProductAttributesSearch(
+      name: "",
       faceColorId: [],
       faceSizeId: [],
       faceSurfaceId: [],

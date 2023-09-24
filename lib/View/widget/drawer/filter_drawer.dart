@@ -250,34 +250,73 @@ class _FilterDrawerState extends State<FilterDrawer> {
                 ),
               ),
             ),
-            ElevatedButton(
-                    onPressed: () {
-                      List<int>? urunTuru = returnDataSelected(widget.model.chooseFilters![0].context.data, "Ürün Türü - Product Type");
-                      List<int>? kullanimAlani = returnDataSelected(widget.model.chooseFilters![1].context.data, "Kullanım Alanı - Usage Area");
-                      List<int>? sizes = returnDataSelected(widget.model.chooseFilters![2].context.data, "Ebatlar - Sizes");
-                      List<int>? colors = returnDataSelected(widget.model.chooseFilters![3].context.data, "Renkler- Colors");
-                      List<int>? brightness = returnDataSelected(widget.model.chooseFilters![4].context.data, "Parlaklık - Glosses");
-                      List<int>? texture = returnDataSelected(widget.model.chooseFilters![5].context.data, "Doku - Surfaces");
+            Row(
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: ElevatedButton(
+                          onPressed: () {
+                            print('GELENN METN --- ${widget.model.searchFilters![0].controller.text}');
+                            String nameStr = "${widget.model.searchFilters![0].controller.text}";
+                            List<int>? urunTuru = returnDataSelected(widget.model.chooseFilters![0].context.data, "Ürün Türü - Product Type");
+                            List<int>? kullanimAlani = returnDataSelected(widget.model.chooseFilters![1].context.data, "Kullanım Alanı - Usage Area");
+                            List<int>? sizes = returnDataSelected(widget.model.chooseFilters![2].context.data, "Ebatlar - Sizes");
+                            List<int>? colors = returnDataSelected(widget.model.chooseFilters![3].context.data, "Renkler- Colors");
+                            List<int>? brightness = returnDataSelected(widget.model.chooseFilters![4].context.data, "Parlaklık - Glosses");
+                            List<int>? texture = returnDataSelected(widget.model.chooseFilters![5].context.data, "Doku - Surfaces");
 
-                      ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
-                        productTypeId: urunTuru!,
-                        productUsagesId: kullanimAlani!,
-                        faceSizeId: sizes!,
-                        faceColorId: colors!,
-                        faceGlossId: brightness!,
-                        faceSurfaceId: texture!,
-                        faceThicknessId: [],
-                        faceStructureId: [],
-                      );
-                      Provider.of<ProductController>(context, listen: false).getProductSearchController(page: 0, productAttributesSearch);
-                      Navigator.pop(context);
-                      if (!widget.searchResultPage!) {
-                        Navigator.pushNamed(context, AppRoutes.search_result_page);
-                      }
-                    },
-                    child: Text(context.translete('search')))
-                .wrapPaddingRight(20)
-                .wrapPaddingVertical(20)
+                            ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+                              name: nameStr,
+                              productTypeId: urunTuru!,
+                              productUsagesId: kullanimAlani!,
+                              faceSizeId: sizes!,
+                              faceColorId: colors!,
+                              faceGlossId: brightness!,
+                              faceSurfaceId: texture!,
+                              faceThicknessId: [],
+                              faceStructureId: [],
+                            );
+                            Provider.of<ProductController>(context, listen: false).getProductSearchController(page: 0, productAttributesSearch);
+                            Navigator.pop(context);
+                            if (!widget.searchResultPage!) {
+                              Navigator.pushNamed(context, AppRoutes.search_result_page);
+                            }
+                          },
+                          child: Text(context.translete('search')))
+                      .wrapPaddingRight(20)
+                      .wrapPaddingVertical(20),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        widget.model.searchFilters![0].controller.clear();
+                        widget.model.chooseFilters![0].context.data.clear();
+                        widget.model.chooseFilters![1].context.data.clear();
+                        widget.model.chooseFilters![2].context.data.clear();
+                        widget.model.chooseFilters![3].context.data.clear();
+                        widget.model.chooseFilters![4].context.data.clear();
+                        widget.model.chooseFilters![5].context.data.clear();
+                        setState(() {
+
+                        });
+                        Provider.of<ProductController>(context, listen: false).getProductSearchController(page: 0, ProductAttributesSearch(
+                          name: "",
+                          faceColorId: [],
+                          faceSizeId: [],
+                          faceSurfaceId: [],
+                          faceGlossId: [],
+                          faceThicknessId: [],
+                          faceStructureId: [],
+                          productTypeId: [],
+                          productUsagesId: [],
+                        ));
+                        Navigator.pop(context);
+                      },
+                      child: Icon(Icons.cleaning_services_rounded)).wrapPaddingRight(10),
+                )
+              ],
+            )
           ],
         ),
       ),

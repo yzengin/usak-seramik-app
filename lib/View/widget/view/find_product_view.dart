@@ -118,6 +118,7 @@ class _FindProductViewState extends State<FindProductView> {
                         }
 
                         ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+                          name: "",
                           productTypeId: productTypeIds,
                           productUsagesId: productUsageAreaIds,
                           faceColorId: productColorIds,

@@ -104,6 +104,7 @@ class ProductController with ChangeNotifier {
 }
 
 class ProductAttributesSearch extends Persistent {
+  final String name;
   final List<int> faceColorId;
   final List<int> faceSizeId;
   final List<int> faceSurfaceId;
@@ -114,6 +115,7 @@ class ProductAttributesSearch extends Persistent {
   final List<int> productUsagesId;
 
   ProductAttributesSearch({
+    required this.name,
     required this.faceColorId,
     required this.faceSizeId,
     required this.faceSurfaceId,
@@ -126,6 +128,7 @@ class ProductAttributesSearch extends Persistent {
 
   factory ProductAttributesSearch.fromJson(Map<String, dynamic> json) {
     return ProductAttributesSearch(
+      name: (json['name']),
       faceColorId: (json['face_color_id'] as List<dynamic>? ?? []).map((e) => e as int).toList(),
       faceSizeId: (json['face_size_id'] as List<dynamic>? ?? []).map((e) => e as int).toList(),
       faceSurfaceId: (json['face_surface_id'] as List<dynamic>? ?? []).map((e) => e as int).toList(),
@@ -140,6 +143,7 @@ class ProductAttributesSearch extends Persistent {
   @override
   Map<String, dynamic> toJson() {
     return {
+      'name': name,
       'face_color_id': faceColorId,
       'face_size_id': faceSizeId,
       'face_surface_id': faceSurfaceId,

@@ -49,6 +49,7 @@ class _ProductTexturesViewState extends State<ProductTexturesView> {
                       onCenterItemSelected: (i) {
                         debugPrint('ID NO -->${textures[i].id}');
                         ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+                            name: "",
                             faceColorId: [],
                             faceSizeId: [],
                             faceSurfaceId: [textures[i].id],

@@ -24,6 +24,7 @@ class _SearchResultPageState extends State<SearchResultPage> {
   List<ProductEntity> dataList = [];
   int page = 0;
   ProductAttributesSearch productAttributesSearch = ProductAttributesSearch(
+    name: "",
     faceColorId: [],
     faceSizeId: [],
     faceSurfaceId: [],
