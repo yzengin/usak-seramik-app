@@ -12,7 +12,20 @@
           "package_name": "com.usakseramik.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "877642521684-khboi64noj8jvm9aebftfjl7t50nuqfc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.usakseramik.app",
+            "certificate_hash": "dff8146e6f81c24df1a0779f1480f8bdc7e4ffb6"
+          }
+        },
+        {
+          "client_id": "877642521684-ok8idrn092ncncd9ad4bf32k4pmq8fum.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCJV4-Gh8VSfBk8CVHJrKHKb6c2BQzIC0s"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877642521684-ok8idrn092ncncd9ad4bf32k4pmq8fum.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "877642521684-kjd7hn85ioo3pi5s82ai43r24opni4r5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.usakseramik.app"
+              }
+            }
+          ]
         }
       }
     }

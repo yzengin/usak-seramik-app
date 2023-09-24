@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usak_seramik_app/Controller/extension.dart';
 import '../../Controller/preferences.dart';
 import '/Rest/Entity/Auth/login_entity.dart';
 
@@ -68,7 +69,7 @@ class AppAuthHandler {
   }
 
   Future<bool> logoutHandler(BuildContext context) async {
-    appDialog(context, message: 'Çıkış yapmak üzeresin!').then((value) {
+    appDialog(context, message: context.translete('logoutText')).then((value) {
       if (value) {
         SharedPreferences.getInstance().then((prefs) {
           if (prefs.containsKey(AppPreferences.identity) || prefs.containsKey(AppPreferences.password)) {
@@ -79,7 +80,6 @@ class AppAuthHandler {
             if (value) {
               // notificationFCMCloseSubscribe();
               logedUserNotifier.value = UserEntity();
-              Navigator.pushNamedAndRemoveUntil(context, 'app_starter', (route) => false);
             }
           });
         });

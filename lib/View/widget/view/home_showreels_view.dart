@@ -152,7 +152,7 @@ class _ShowreelState extends State<Showreel> {
                                             },
                                             style: ButtonStyle(maximumSize: MaterialStateProperty.all(Size.fromWidth(context.width * 0.4))),
                                             // child: Text(context.translete('show')),
-                                            child: Text(translateData(data.linktext!).firstLetterUpperCase(), style: context.textStyle.copyWith(fontSize: 12), textAlign: TextAlign.center),
+                                            child: Text(translateData(data.linktext!).firstLetterUpperCase(), style: context.textStyle.copyWith(fontSize: 12, color: Colors.white), textAlign: TextAlign.center),
                                           ),
                                         ),
                                       ),

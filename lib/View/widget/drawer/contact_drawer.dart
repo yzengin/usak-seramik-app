@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/localization.dart';
@@ -10,6 +13,9 @@ import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
 import 'package:usak_seramik_app/View/widget/utility/theme_changer.dart';
 
 import '../../../Controller/notifiers.dart';
+import '../../../Controller/preferences.dart';
+import '../../../Rest/Entity/User/user_entity.dart';
+import '../dialog/dialog.dart';
 
 class ContactDrawer extends StatelessWidget {
   const ContactDrawer({
@@ -34,6 +40,33 @@ class ContactDrawer extends StatelessWidget {
                 ListTile(title: Text(context.translete('inventorRelations')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/yatirimci-iliskileri/degerleme-raporlari" : "https://www.usakseramik.com/en/investor-relations/valuation-reports", context.translete('inventorRelations'), false])),
                 ListTile(title: Text(context.translete('visionMission')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/kurumsal/misyon-vizyon" : "https://www.usakseramik.com/en/corporate/vision-mission",context.translete('visionMission'), false])),
                 ListTile(title: Text(context.translete('history')), onTap: () => Navigator.pushNamed(context, AppRoutes.webview_page, arguments: [localeNotifier.value?.languageCode == 'tr' ? "https://www.usakseramik.com/kurumsal/tarihce" : "https://www.usakseramik.com/en/corporate/history",context.translete('history'), false])),
+                ListTile(title: Text(context.translete('deleteAccount')),
+                    onTap: (){
+                      appDialog(context, message: context.translete('deleteAccountText'), dialogType: DialogType.warning).then((value){
+                        if (value!=null && value) {
+                          SharedPreferences.getInstance().then((prefs) async {
+                            if (prefs.containsKey(AppPreferences.identity) || prefs.containsKey(AppPreferences.password)) {
+                              prefs.remove(AppPreferences.identity);
+                              prefs.remove(AppPreferences.password);
+                            }
+                            prefs.remove(AppPreferences.userTokenEntity).then((value) async {
+                              if (value) {
+                                // notificationFCMCloseSubscribe();
+                                try{
+                                  await GoogleSignIn().disconnect();
+                                  await FirebaseAuth.instance.signOut();
+                                }catch(e){
+                                  print('ERROR SIGN OUT HANDLE -- $e');
+                                }
+                                logedUserNotifier.value = UserEntity();
+                              }
+                            });
+                          });
+                          Navigator.pushNamedAndRemoveUntil(context, 'app_starter', (route) => false);
+                        }
+                      });
+                    }
+                ),
               ],
             ),
             Padding(

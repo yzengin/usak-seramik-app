@@ -27,23 +27,31 @@ class UserData {
 class UserEntity extends Persistent {
   String? id;
   String? name;
+  String? lastName;
+  String? password;
   String? email;
 
   UserEntity({
     this.id,
-    this.email,
     this.name,
+    this.lastName,
+    this.password,
+    this.email,
   });
 
   factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
-        id: json["id"] == null ? null : json["id"],
-        email: json["email"] == null ? null : json["email"],
-        name: json["name"] == null ? null : json["name"],
-      );
+      id: json["id"] == null ? null : json["id"],
+      name: json["name"] == null ? null : json["name"],
+      lastName: json["lastName"] == null ? null : json["lastName"],
+      password: json["password"] == null ? null : json["password"],
+      email: json["email"] == null ? null : json["email"],
+  );
 
   Map<String, dynamic> toJson() => {
-        "id": id == null ? null : id,
-        "email": email == null ? null : email,
-        "name": name == null ? null : name,
-      };
+      "id": id == null ? null : id,
+      "name": name == null ? null : name,
+      "lastName": lastName == null ? null : lastName,
+      "password": password == null ? null : password,
+      "email": email == null ? null : email,
+  };
 }

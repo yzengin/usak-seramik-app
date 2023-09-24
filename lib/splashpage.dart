@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
+import 'package:usak_seramik_app/Rest/Entity/User/user_entity.dart';
 import 'Controller/Map_Controller/get_position.dart';
 import 'Controller/Map_Controller/marker_create.dart';
 import 'Controller/asset.dart';
@@ -42,8 +46,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
           if (showFirst == null || showFirst == true) {
             Navigator.pushNamedAndRemoveUntil(context, AppRoutes.onboarding_page, (route) => false);
           } else {
-            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
-            //   Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+            checkUser();
           }
         });
     Provider.of<ProductFeaturesController>(context, listen: false).getColorController();
@@ -58,6 +61,35 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
       timer.start();
     });
   }
+
+  Future<void> checkUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      if (prefs.containsKey(AppPreferences.userTokenEntity)) {
+        UserEntity? jwtEntity = UserEntity.fromJson(json.decode(prefs.getString(AppPreferences.userTokenEntity)!));
+        if(jwtEntity!=null && jwtEntity.id!=null){
+          print('GELEN TOKENNN ---${jwtEntity.id}');
+          logedUserNotifier.value = jwtEntity;
+          if (logedUserNotifier.value!.id!=null) {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.mainpageview, (route) => false);
+          } else {
+            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+            prefs.remove(AppPreferences.userTokenEntity);
+          }
+        }else{
+          prefs.remove("userTokenEntity");
+          Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+        }
+      }else{
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+      }
+    } catch (e) {
+      print('CATCHH LOGIN -- >$e');
+      prefs.remove("userTokenEntity");
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth_page, (route) => false);
+    }
+  }
+
 
   themeInitialize() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();

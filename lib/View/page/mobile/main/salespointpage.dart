@@ -87,54 +87,63 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
     dealerData = Provider.of<DealerController>(context, listen: true).dealerData;
     return (dealerData.data == null)
         ? SizedBox()
-        : Scaffold(
-            key: _key,
-            drawer: ContactDrawer(),
-            endDrawer: _filterDrawer(dealerData),
-            appBar: PreferredSize(
-              preferredSize: Size.fromHeight(kToolbarHeight),
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                  child: AppBar(
-                    backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
-                    centerTitle: true,
-                    title: Text(context.translete('stores')),
-                    bottom: PreferredSize(
-                      preferredSize: Size.fromHeight(kToolbarHeight * 0.5),
-                      child: DefaultTabController(
-                        length: 2,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: ['domestic', 'overseas']
-                              .map((e) => GestureDetector(
-                                  onTap: () {
-                                    if (e == 'overseas') {
-                                      Navigator.pushNamed(context, AppRoutes.overseas_page);
-                                    }
-                                  },
-                                  child: Text(
-                                    context.translete(e),
-                                    style: context.textStyle.copyWith(color: e == 'domestic' ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
-                                  ).wrapPaddingHorizontal(10)))
-                              .toList(),
+        : RefreshIndicator(
+            onRefresh: () async => Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity(city_id: selectedCity.value, name: salesNameController.text)).then((value) {
+              if (mounted) {
+                setMarkers(dealerData.data!, context).then((value) {
+                  setState(() {});
+                });
+              }
+            }),
+          child: Scaffold(
+              key: _key,
+              drawer: ContactDrawer(),
+              endDrawer: _filterDrawer(dealerData),
+              appBar: PreferredSize(
+                preferredSize: Size.fromHeight(kToolbarHeight),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: AppBar(
+                      backgroundColor: context.theme.scaffoldBackgroundColor.withOpacity(0.75),
+                      centerTitle: true,
+                      title: Text(context.translete('stores')),
+                      bottom: PreferredSize(
+                        preferredSize: Size.fromHeight(kToolbarHeight * 0.5),
+                        child: DefaultTabController(
+                          length: 2,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: ['domestic', 'overseas']
+                                .map((e) => GestureDetector(
+                                    onTap: () {
+                                      if (e == 'overseas') {
+                                        Navigator.pushNamed(context, AppRoutes.overseas_page);
+                                      }
+                                    },
+                                    child: Text(
+                                      context.translete(e),
+                                      style: context.textStyle.copyWith(color: e == 'domestic' ? context.textStyle.color : context.textStyle.color!.withOpacity(.5)),
+                                    ).wrapPaddingHorizontal(10)))
+                                .toList(),
+                          ),
                         ),
                       ),
+                      actions: [
+                        IconButton(
+                          onPressed: () {
+                            _key.currentState!.openEndDrawer();
+                          },
+                          icon: Icon(FontAwesomeIcons.filter),
+                        ),
+                      ],
                     ),
-                    actions: [
-                      IconButton(
-                        onPressed: () {
-                          _key.currentState!.openEndDrawer();
-                        },
-                        icon: Icon(FontAwesomeIcons.filter),
-                      ),
-                    ],
                   ),
                 ),
               ),
+              body: body(context, dealerData),
             ),
-            body: body(context, dealerData),
-          );
+        );
   }
 
   Widget body(BuildContext context, DealerData dealerData) {
@@ -187,7 +196,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                         },
                                       ),
                                       Align(
-                                        alignment: Alignment.topRight,
+                                        alignment: Alignment.topLeft,
                                         child: IconButton(
                                             onPressed: () {
                                               expand.value = !expand.value;
@@ -202,15 +211,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                   ),
                 ),
                 Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: () async => Provider.of<DealerController>(context, listen: false).getDealerController(dealerFilterEntity: DealerFilterEntity(city_id: selectedCity.value, name: salesNameController.text)).then((value) {
-                      if (mounted) {
-                        setMarkers(dealerData.data!, context).then((value) {
-                          setState(() {});
-                        });
-                      }
-                    }),
-                    child: ValueListenableBuilder(
+                  child: ValueListenableBuilder(
                         valueListenable: showMarkerDialog,
                         builder: (context, _, __) {
                           return ValueListenableBuilder(
@@ -255,14 +256,16 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                                       mainAxisAlignment: MainAxisAlignment.center,
                                                       children: [
                                                         IconButton(
-                                                          onPressed: () {},
+                                                          onPressed: () {
+                                                            print('AAA111');
+                                                          },
                                                           icon: Icon(FontAwesomeIcons.locationDot),
                                                         ),
                                                         Text(clickOnNearest.value ? context.translete("all") : context.translete("findNearSeller")),
                                                       ],
                                                     ),
                                                   )
-                                                : SizedBox(),
+                                                : SizedBox(height: 25,),
                                             addressCard(selectedSeller.value!),
                                           ],
                                         )
@@ -305,7 +308,9 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                                             mainAxisAlignment: MainAxisAlignment.center,
                                                             children: [
                                                               IconButton(
-                                                                onPressed: () {},
+                                                                onPressed: () {
+                                                                  print('AAA');
+                                                                    },
                                                                 icon: Icon(FontAwesomeIcons.locationDot),
                                                               ),
                                                               Text(clickOnNearest.value ? context.translete("all") : context.translete("findNearSeller")),
@@ -339,7 +344,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
                                         ),
                                 );
                               });
-                        }),
+                        },
                   ),
                 )
               ],
@@ -555,7 +560,7 @@ class _SalesPointsPageState extends State<SalesPointsPage> {
         if (nearestDealer != null) {
           print("En yakın bayi: ${nearestDealer.name} : ${nearestDealer.address}");
         } else {
-          appDialog(context, message: 'Bulunamadı', dialogType: DialogType.failed);
+          appDialog(context, message: context.translete('notFound'), dialogType: DialogType.failed);
         }
       } else {}
     }

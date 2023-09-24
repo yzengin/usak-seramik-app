@@ -33,6 +33,7 @@ class ProductController with ChangeNotifier {
     exceptedAction.value = true;
     if (page == 0) {
       productData = ProductData();
+      productList.clear();
     }
     try {
       BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page ?? 0, size: 20);
@@ -58,6 +59,7 @@ class ProductController with ChangeNotifier {
     exceptedAction.value = true;
     if (page == 0) {
       productSearchData = ProductData();
+      productSearchList.clear();
     }
     try {
       BaseResponse response = await ProductService.operations().getProductFilterService(productAttributesSearch, page: page??0, size: 24);

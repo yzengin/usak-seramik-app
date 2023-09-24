@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
@@ -10,6 +13,10 @@ import 'package:usak_seramik_app/Rest/Controller/User/contact_controller.dart';
 import 'package:usak_seramik_app/Rest/Entity/User/contact_entity.dart';
 import 'package:usak_seramik_app/View/widget/utility/copy_on_tap.dart';
 import '../../../../Controller/launcher.dart';
+import '../../../../Controller/preferences.dart';
+import '../../../../Rest/Entity/User/user_entity.dart';
+import '../../../../Rest/Handler/auth_handler.dart';
+import '../../../widget/dialog/dialog.dart';
 import '../../../widget/drawer/contact_drawer.dart';
 import '../../../widget/sheet/contactForm_bottomsheet.dart';
 
@@ -173,7 +180,7 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-        aspectRatio: 3,
+        aspectRatio: 2.6,
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -184,7 +191,7 @@ class ProfileCard extends StatelessWidget {
                     padding: const EdgeInsets.all(10.0),
                     child: CircleAvatar(
                       backgroundColor: context.theme.colorScheme.surfaceTint,
-                      child: Text(logedUserNotifier.value!.name!.head()).wrapTextStyle(context.theme.textTheme.bodySmall!.copyWith(fontSize: 20)),
+                      child: Text(displayNameGetControl(context, nameFirstCharacter: true)!).wrapTextStyle(context.theme.textTheme.bodySmall!.copyWith(fontSize: 20)),
                       radius: 200,
                     ),
                   ),
@@ -199,8 +206,7 @@ class ProfileCard extends StatelessWidget {
                       children: [
                         RichText(
                             text: TextSpan(children: [
-                          TextSpan(text: context.translete('welcome') + " ", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500)),
-                          TextSpan(text: logedUserNotifier.value!.name, style: context.theme.textTheme.bodyMedium),
+                          TextSpan(text: context.translete('welcome') + ", ${displayNameGetControl(context, nameFirstCharacter: false)}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500)),
                         ])),
                         CupertinoButton(
                           onPressed: () {
@@ -214,6 +220,40 @@ class ProfileCard extends StatelessWidget {
                             ],
                           ),
                         ),
+                        CupertinoButton(
+                          onPressed: () async {
+                            appDialog(context, message: context.translete('logoutText')).then((value) {
+                              if (value) {
+                                SharedPreferences.getInstance().then((prefs) async {
+                                  if (prefs.containsKey(AppPreferences.identity) || prefs.containsKey(AppPreferences.password)) {
+                                    prefs.remove(AppPreferences.identity);
+                                    prefs.remove(AppPreferences.password);
+                                  }
+                                  prefs.remove(AppPreferences.userTokenEntity).then((value) async {
+                                    if (value) {
+                                      // notificationFCMCloseSubscribe();
+                                      try{
+                                        await GoogleSignIn().disconnect();
+                                        await FirebaseAuth.instance.signOut();
+                                      }catch(e){
+                                        print('ERROR SIGN OUT HANDLE -- $e');
+                                      }
+                                      logedUserNotifier.value = UserEntity();
+                                    }
+                                  });
+                                });
+                                Navigator.pushNamedAndRemoveUntil(context, 'app_starter', (route) => false);
+                              }
+                            });
+                          },
+                          padding: EdgeInsets.zero,
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.doorClosed, color: context.theme.colorScheme.surfaceVariant, size: context.theme.iconTheme.size! * 0.7).wrapPaddingRight(4),
+                              Text(context.translete('logout')).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.surfaceVariant)),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -222,5 +262,31 @@ class ProfileCard extends StatelessWidget {
             ),
           ),
         ));
+  }
+
+  String? displayNameGetControl(BuildContext context, {required bool nameFirstCharacter}){
+    String displayName = context.translete('guest');
+    if(logedUserNotifier.value!=null && logedUserNotifier.value!.id!=null){
+      if(logedUserNotifier.value!.name!=null){
+        if(nameFirstCharacter){
+          displayName = logedUserNotifier.value!.name!.head();
+        }else{
+          displayName = logedUserNotifier.value!.name!;
+        }
+      }else{
+        if(nameFirstCharacter){
+          String comingData = displayName;
+          displayName = comingData.head().firstLetterUpperCase();
+        }
+      }
+    }else{
+      if(nameFirstCharacter){
+        String comingData = displayName;
+        displayName = comingData.head().firstLetterUpperCase();
+      }else{
+        return displayName;
+      }
+    }
+    return displayName;
   }
 }

@@ -1,13 +1,22 @@
 // ignore_for_file: library_private_types_in_public_api, unnecessary_new
+import 'dart:convert';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/View/widget/dialog/dialog.dart';
+import '../../../Controller/auth_error.dart';
+import '../../../Controller/controller.dart';
 import '../../../Controller/extension.dart';
 import '../../../Controller/formatter.dart';
 import '../../../Controller/localization.dart';
 import '../../../Controller/notifiers.dart';
+import '../../../Controller/preferences.dart';
+import '../../../Controller/routes.dart';
 import '../../../Model/languages.dart';
+import '../../../Rest/Entity/User/user_entity.dart';
 import '../../widget/utility/copy_on_tap.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -99,21 +108,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ).wrapPaddingBottom(20),
-                  TextFormField(
-                    controller: _phoneController,
-                    textInputAction: TextInputAction.next,
-                    inputFormatters: [AppFormatter.phone],
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(labelText: context.translete('phone')),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return context.translete('emptyMessage');
-                      } else if (value.replaceAll(' ', '').replaceAll('+90', '').toString().length < 10) {
-                        return context.translete('phoneGreaterThan');
-                      }
-                      return null;
-                    },
-                  ).wrapPaddingBottom(20),
                   Text(
                     context.translete('password'),
                     style: context.textStyle.copyWith(fontSize: 27),
@@ -137,7 +131,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ElevatedButton(
                           onPressed: () {
                             if (_formState.currentState!.validate()) {
-                              appDialog(context, message: 'success', dialogType: DialogType.success).then((value) => widget.switchCallback.call());
+                              registerFirebase(_emailController.text, _passwordController.text, _nameController.text);
                             }
                           },
                           child: Text(context.translete('register')))
@@ -156,5 +150,62 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
+  }
+
+  Future<void> registerFirebase(String emailAddress, String password, String fullName) async{
+    try {
+      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailAddress,
+        password: password,
+      );
+      if (userCredential!=null && userCredential.user != null) {
+        final FirebaseAuth _auth = FirebaseAuth.instance;
+        User? currentUser = await _auth.currentUser;
+        currentUser?.updateDisplayName("$fullName");
+        appDialog(context, message: context.translete('success'), dialogType: DialogType.success).then((value) => loginFirebaseEmailAndPassword(emailAddress, password));
+      }
+    } on FirebaseAuthException catch (e) {
+        firebaseDialogSwitch(e, context);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> loginFirebaseEmailAndPassword(String emailAddress, String password) async{
+    try {
+      UserCredential? userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailAddress,
+        password: password,
+      );
+
+      if (userCredential!=null && userCredential.user != null) {
+
+        UserEntity mobilUserEntity = new UserEntity();
+        if(userCredential.user!.displayName!=null){
+          mobilUserEntity.name = userCredential.user!.displayName!.contains(" ") ? userCredential.user!.displayName!.substring(0, userCredential.user!.displayName!.lastIndexOf(" ")) : userCredential.user!.displayName;
+          mobilUserEntity.lastName = userCredential.user!.displayName!.contains(" ") ? userCredential.user!.displayName!.substring(userCredential.user!.displayName!.lastIndexOf(" ")) : "";
+        }
+        mobilUserEntity.email = userCredential.user!.email;
+        mobilUserEntity.password = password;
+        mobilUserEntity.id = userCredential.user!.uid;
+
+        print('GELENN -- >>> ${mobilUserEntity.toJson()}');
+        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        sharedPreferences.setString(AppPreferences.userTokenEntity, json.encode(mobilUserEntity.toJson()));
+        sharedPreferences.setString(AppPreferences.identity, emailAddress);
+        sharedPreferences.setString(AppPreferences.password, password);
+
+        logedUserNotifier.value = mobilUserEntity;
+        Navigator.pushNamed(context, AppRoutes.mainpageview);
+      }else{
+        appDialog(context, message: context.translete('userNotFoundText'), dialogType: DialogType.failed);
+      }
+
+    } on FirebaseAuthException catch (e) {
+      firebaseDialogSwitch(e, context);
+    } catch (e) {
+      print("ERRRORR --- ${e}");
+      appDialog(context, message: context.translete('userNotFoundText'), dialogType: DialogType.failed);
+    }
   }
 }
