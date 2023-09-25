@@ -203,6 +203,7 @@
   "showCaseFilterMessage": "Please select any filter",
   "pleaseFillAllFields": "Please fill in all fields",
   "alreadyEmailAccount": "The email address is already in use by another account.",
+  "emailAlreadyInUse": "The email address is already in use by another account.",
   "weakPassword": "Weak password. Please choose a stronger password.",
   "unkownError": "An unknown error has occurred.",
   "operationNotAllowed": "This operation is not allowed.",

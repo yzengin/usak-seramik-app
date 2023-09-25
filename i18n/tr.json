@@ -204,6 +204,7 @@
   "pleaseFillAllFields": "Lütfen tüm alanları doldurun",
   "weakPassword": "Zayıf şifre. Lütfen daha güçlü bir şifre seçin.",
   "alreadyEmailAccount": "Bu e-postaya ait hesap zaten mevcut.",
+  "emailAlreadyInUse": "Bu e-postaya ait hesap zaten mevcut.",
   "unkownError": "Bilinmeyen bir hata oluştu.",
   "operationNotAllowed": "Bu işlem izin verilmiyor.",
   "invalidCredential": "Geçersiz kimlik bilgisi.",
