@@ -34,17 +34,18 @@ Future run() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = MyHttpOverrides();
   await Firebase.initializeApp();
-
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await LocalizationController().load();
   stopwatch.start(); // for a process timing analyz. use with stopwatchTick() method.
   try {
     if (GetPlatform.isMobile) {
       // ignore: unused_local_variable
+      String? token = await FirebaseMessaging.instance.getAPNSToken();
+      print('TOKENNN ####-- $token');
       final RemoteMessage? remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
-
       await NotificationHelper.initialize(flutterLocalNotificationsPlugin);
       FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
+
     }
   } catch (e) {
     debugPrint('Error Main Data --- $e');

@@ -57,7 +57,7 @@ class NotificationHelper {
 
   static Future<void> showTextNotification(String title, String body, String orderID, FlutterLocalNotificationsPlugin fln) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'indirippartner', 'indirippartner', playSound: true,
+      'usakseramikapp', 'usakseramikapp', playSound: true,
       importance: Importance.max, priority: Priority.max,
     );
     const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
@@ -70,7 +70,7 @@ class NotificationHelper {
       contentTitle: title, htmlFormatContentTitle: true,
     );
     AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'indirippartner', 'indirippartner', importance: Importance.max,
+      'usakseramikapp', 'usakseramikapp', importance: Importance.max,
       styleInformation: bigTextStyleInformation, priority: Priority.max, playSound: true,
     );
     NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);

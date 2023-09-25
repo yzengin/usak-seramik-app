@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_carousel_widget/flutter_carousel_widget.dart';
@@ -37,7 +38,7 @@ class _ShowreelState extends State<Showreel> {
   void initState() {
     super.initState();
     try {
-      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
         Provider.of<ShowreelController>(context, listen: false).getShowreelController().then((value) {
           setState(() {});
         });
