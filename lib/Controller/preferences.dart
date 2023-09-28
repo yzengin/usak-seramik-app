@@ -9,6 +9,7 @@ class AppPreferences {
   static String themeIsDark = "themeIsDark";
   static String onboarding = "onboarding";
   static String favorites = "favorites";
+  static String cart = "cart";
 }
 
 class AppPreferencesHandler {

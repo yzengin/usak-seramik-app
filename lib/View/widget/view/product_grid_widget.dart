@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 
@@ -7,10 +8,11 @@ import '../../../Controller/asset.dart';
 import '../../../Rest/Entity/Product/product_entity.dart';
 
 class ProductGridCard extends StatelessWidget {
-  const ProductGridCard({super.key, required this.data, required this.index, this.showInfo = true});
+  const ProductGridCard({super.key, required this.data, required this.index, this.showInfo = true, this.forCart = false});
   final ProductEntity data;
   final int index;
   final bool showInfo;
+  final bool forCart;
 
   @override
   Widget build(BuildContext context) {
@@ -26,33 +28,42 @@ class ProductGridCard extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(imagePathControl(imageEntity: data.images, cover: false)!, fit: BoxFit.cover),
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.bottomLeft,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(.5)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data.name ?? "".toUpperCase(),
-                          style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
-                        ),
-                        Divider(thickness: 0.2, color: Colors.white, height: 3),
-                        (showInfo) ? Text(
-                          '${data.faceCount} ${context.translete('face').toUpperCase()} ${data.colorCount} ${context.translete('color').toUpperCase()} ${data.sizeCount} ${context.translete('dimension').toUpperCase()}',
-                          style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
-                        ) : SizedBox(),
-                      ],
+              Image.network(
+                imagePathControl(imageEntity: data.images, cover: false)!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(FontAwesomeIcons.linkSlash);
+                },
+              ),
+              (!forCart) ?
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.bottomLeft,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(color: Colors.black.withOpacity(.5)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data.name ?? "".toUpperCase(),
+                            style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald),
+                          ),
+                          Divider(thickness: 0.2, color: Colors.white, height: 3),
+                          (showInfo)
+                              ? Text(
+                                  '${data.faceCount} ${context.translete('face').toUpperCase()} ${data.colorCount} ${context.translete('color').toUpperCase()} ${data.sizeCount} ${context.translete('dimension').toUpperCase()}',
+                                  style: context.theme.textTheme.bodyMedium!.copyWith(color: Colors.white, fontFamily: AppFont.oswald, fontSize: 12),
+                                )
+                              : SizedBox(),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )
+                ) : SizedBox()
             ],
           )),
     );

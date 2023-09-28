@@ -208,50 +208,54 @@ class ProfileCard extends StatelessWidget {
                             text: TextSpan(children: [
                           TextSpan(text: context.translete('welcome') + ", ${displayNameGetControl(context, nameFirstCharacter: false)}", style: context.theme.textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w500)),
                         ])),
-                        CupertinoButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, AppRoutes.favourites_page);
-                          },
-                          padding: EdgeInsets.zero,
-                          child: Row(
-                            children: [
-                              Icon(FontAwesomeIcons.heart, color: context.theme.colorScheme.surfaceVariant, size: context.theme.iconTheme.size! * 0.7).wrapPaddingRight(4),
-                              Text(context.translete('favorites')).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.surfaceVariant)),
-                            ],
+                        Expanded(
+                          child: CupertinoButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, AppRoutes.favourites_page);
+                            },
+                            padding: EdgeInsets.zero,
+                            child: Row(
+                              children: [
+                                Icon(FontAwesomeIcons.heart, color: context.theme.colorScheme.surfaceVariant, size: context.theme.iconTheme.size! * 0.7).wrapPaddingRight(4),
+                                Text(context.translete('favorites')).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.surfaceVariant)),
+                              ],
+                            ),
                           ),
                         ),
-                        CupertinoButton(
-                          onPressed: () async {
-                            appDialog(context, message: context.translete('logoutText')).then((value) {
-                              if (value) {
-                                SharedPreferences.getInstance().then((prefs) async {
-                                  if (prefs.containsKey(AppPreferences.identity) || prefs.containsKey(AppPreferences.password)) {
-                                    prefs.remove(AppPreferences.identity);
-                                    prefs.remove(AppPreferences.password);
-                                  }
-                                  prefs.remove(AppPreferences.userTokenEntity).then((value) async {
-                                    if (value) {
-                                      // notificationFCMCloseSubscribe();
-                                      try{
-                                        await GoogleSignIn().disconnect();
-                                        await FirebaseAuth.instance.signOut();
-                                      }catch(e){
-                                        print('ERROR SIGN OUT HANDLE -- $e');
-                                      }
-                                      logedUserNotifier.value = UserEntity();
+                        Expanded(
+                          child: CupertinoButton(
+                            onPressed: () async {
+                              appDialog(context, message: context.translete('logoutText')).then((value) {
+                                if (value) {
+                                  SharedPreferences.getInstance().then((prefs) async {
+                                    if (prefs.containsKey(AppPreferences.identity) || prefs.containsKey(AppPreferences.password)) {
+                                      prefs.remove(AppPreferences.identity);
+                                      prefs.remove(AppPreferences.password);
                                     }
+                                    prefs.remove(AppPreferences.userTokenEntity).then((value) async {
+                                      if (value) {
+                                        // notificationFCMCloseSubscribe();
+                                        try{
+                                          await GoogleSignIn().disconnect();
+                                          await FirebaseAuth.instance.signOut();
+                                        }catch(e){
+                                          print('ERROR SIGN OUT HANDLE -- $e');
+                                        }
+                                        logedUserNotifier.value = UserEntity();
+                                      }
+                                    });
                                   });
-                                });
-                                Navigator.pushNamedAndRemoveUntil(context, 'app_starter', (route) => false);
-                              }
-                            });
-                          },
-                          padding: EdgeInsets.zero,
-                          child: Row(
-                            children: [
-                              Icon(FontAwesomeIcons.doorClosed, color: context.theme.colorScheme.surfaceVariant, size: context.theme.iconTheme.size! * 0.7).wrapPaddingRight(4),
-                              Text(context.translete('logout')).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.surfaceVariant)),
-                            ],
+                                  Navigator.pushNamedAndRemoveUntil(context, 'app_starter', (route) => false);
+                                }
+                              });
+                            },
+                            padding: EdgeInsets.zero,
+                            child: Row(
+                              children: [
+                                Icon(FontAwesomeIcons.doorClosed, color: context.theme.colorScheme.surfaceVariant, size: context.theme.iconTheme.size! * 0.7).wrapPaddingRight(4),
+                                Text(context.translete('logout')).wrapTextStyle(context.theme.textTheme.bodyMedium!.copyWith(color: context.theme.colorScheme.surfaceVariant)),
+                              ],
+                            ),
                           ),
                         ),
                       ],

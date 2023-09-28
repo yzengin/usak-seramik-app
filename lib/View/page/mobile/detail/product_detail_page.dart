@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usak_seramik_app/Controller/asset.dart';
+import 'package:usak_seramik_app/Controller/controller.dart';
 import 'package:usak_seramik_app/Controller/extension.dart';
 import 'package:usak_seramik_app/Controller/like_helper.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
@@ -35,6 +36,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Set<String> uniqueUsageArea = Set<String>();
   Set<String> uniqueFaceGlosses = Set<String>();
   ValueNotifier<bool> hasLike = ValueNotifier<bool>(false);
+  ValueNotifier<bool> hasAddedCart = ValueNotifier<bool>(false);
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           debugPrint('${context.routeArguments![1]}');
         }
         AppLikeHelper.itWasLiked(data).then((value) => hasLike.value = value);
+        AppCartHelper.itWasAddedCart(data).then((value) => hasAddedCart.value = value);
         Provider.of<ProductController>(context, listen: false).getProductByIdController(dataId).then((value) {});
       });
     } catch (e) {
@@ -58,6 +61,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   void dispose() {
     hasLike.dispose();
+    hasAddedCart.dispose();
     super.dispose();
   }
 
@@ -141,6 +145,41 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return (productDetailData.data != null)
         ? Scaffold(
             extendBodyBehindAppBar: true,
+            extendBody: true,
+            bottomNavigationBar: (basketMode())
+                ? ValueListenableBuilder(
+                    valueListenable: hasAddedCart,
+                    builder: (context, _, __) {
+                      return ElevatedButton(
+                        onPressed: () async {
+                          AppCartHelper.cartToggle(data).then((value) {
+                            hasAddedCart.value = value;
+                          });
+                        },
+                        child: (hasAddedCart.value)
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.cartShopping,
+                                    color: AppColors.orangeS6,
+                                  ),
+                                  Text(context.translete('addedToCart'), style: context.textStyle.copyWith(color: AppColors.orangeS6)).wrapPaddingLeft(10)
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    FontAwesomeIcons.cartShopping,
+                                    color: Colors.white,
+                                  ),
+                                  Text(context.translete('addToCart'), style: context.textStyle.copyWith(color: Colors.white)).wrapPaddingLeft(10)
+                                ],
+                              ),
+                      ).wrapPaddingAll(20);
+                    })
+                : SizedBox(),
             appBar: AppBar(
               title: Text(
                 productDetailData.data!.name ?? "".toUpperCase(),

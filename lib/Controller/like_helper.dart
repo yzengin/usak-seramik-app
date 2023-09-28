@@ -54,3 +54,70 @@ class AppLikeHelper {
     }
   }
 }
+
+class AppCartHelper {
+  static Future<bool> itWasAddedCart(ProductEntity data) async {
+    bool cart = false;
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      if (preferences.getStringList(AppPreferences.cart) == null) {
+        await preferences.setStringList(AppPreferences.cart, []).then((value) {});
+      }
+      List<String>? cartList = preferences.getStringList(AppPreferences.cart);
+      cartList!.forEach((element) {
+        ProductEntity product = ProductEntity.fromJson(json.decode(element));
+        debugPrint('${product.name}');
+        if (product.id == data.id) {
+          cart = true;
+        }
+      });
+    } on Exception catch (e) {
+      debugPrint('AppLikeHelper.itWasAddedCart() $e');
+    }
+    return cart;
+  }
+
+  static Future<bool> cartToggle(ProductEntity data, {bool remove = false}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      List<String>? cartList = preferences.getStringList(AppPreferences.cart) ?? [];
+
+      bool isAddedCart = false;
+
+      final existingProductIndex = cartList.indexWhere((element) {
+        ProductEntity product = ProductEntity.fromJson(json.decode(element));
+        return product.id == data.id;
+      });
+
+      if (remove) {
+        cartList.removeAt(existingProductIndex);
+      } else {
+        if (existingProductIndex != -1) {
+          cartList.removeAt(existingProductIndex);
+        } else {
+          cartList.add(json.encode(data.toJson()));
+          isAddedCart = true;
+        }
+      }
+
+      await preferences.setStringList(AppPreferences.cart, cartList);
+      return isAddedCart;
+    } catch (e) {
+      debugPrint('AppLikeHelper.cartPreferences() $e');
+      return false;
+    }
+  }
+
+  static Future<bool> cartClean() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      List<String>? cartList = [];
+
+      await preferences.setStringList(AppPreferences.cart, cartList);
+      return true;
+    } catch (e) {
+      debugPrint('AppLikeHelper.cartPreferences() $e');
+      return false;
+    }
+  }
+}
