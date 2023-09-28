@@ -42,7 +42,7 @@ class MainPageViewState extends State<MainPageView> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: (basketMode())
+      floatingActionButton: (basketMode)
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.push(context, CupertinoPageRoute(builder: (context) => CartPage()));

@@ -47,7 +47,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         debugPrint('${context.routeArguments![0]}');
         if (context.routeArguments?[1] != null) {
           data = context.routeArguments![1];
-          debugPrint('${context.routeArguments![1]}');
         }
         AppLikeHelper.itWasLiked(data).then((value) => hasLike.value = value);
         AppCartHelper.itWasAddedCart(data).then((value) => hasAddedCart.value = value);
@@ -146,7 +145,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ? Scaffold(
             extendBodyBehindAppBar: true,
             extendBody: true,
-            bottomNavigationBar: (basketMode())
+            bottomNavigationBar: (basketMode)
                 ? ValueListenableBuilder(
                     valueListenable: hasAddedCart,
                     builder: (context, _, __) {

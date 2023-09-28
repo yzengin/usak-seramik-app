@@ -10,7 +10,7 @@ import '../View/widget/dialog/dialog.dart';
 import 'auth_error.dart';
 
 bool developerMode() => false;
-bool basketMode() => true;
+bool basketMode = true;
 
 Future<Uint8List> getBytesFromAsset(String path, int width) async {
   ByteData data = await rootBundle.load(path);

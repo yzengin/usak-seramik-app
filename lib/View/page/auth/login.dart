@@ -42,11 +42,17 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _handleGoogleAppleSignOut();
+
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
+
+
+  controllerReviewDate(){
+
   }
 
   void _toggleLogin() {
@@ -118,38 +124,42 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     child: Text(context.translete('login'))).wrapPaddingTop(20),
-                GestureDetector(
-                    onTap: (){
-                      logedUserNotifier.value = UserEntity();
-                      logedUserNotifier.value!.email = "misafir";
-                      logedUserNotifier.value!.password = "misafir";
-                      Navigator.pushNamed(context, AppRoutes.mainpageview);
-                    },
-                    child: Text(context.translete('guestLoginText')).wrapPaddingTop(40)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                (!basketMode) ? Column(
                   children: [
-                    Platform.isIOS ?
                     GestureDetector(
-                      onTap: (){
-                        signInWithApple();
-                      },
-                      child: AppleAuthButton(
-                        style: AuthButtonStyle(buttonType: AuthButtonType.icon, iconColor: context.theme.iconTheme.color, buttonColor: Colors.transparent),
-                        darkMode: Provider.of<ThemeController>(context, listen: true).isDark,
-                      ),
-                    ): SizedBox(),
-                    GestureDetector(
-                      onTap: (){
-                        signInWithGoogle();
-                      },
-                      child: GoogleAuthButton(
-                        style: AuthButtonStyle(buttonType: AuthButtonType.icon, iconColor: context.theme.iconTheme.color, buttonColor: Colors.transparent),
-                        darkMode: !Provider.of<ThemeController>(context, listen: true).isDark,
-                      ),
-                    ),
+                        onTap: (){
+                          logedUserNotifier.value = UserEntity();
+                          logedUserNotifier.value!.email = "misafir";
+                          logedUserNotifier.value!.password = "misafir";
+                          Navigator.pushNamed(context, AppRoutes.mainpageview);
+                        },
+                        child: Text(context.translete('guestLoginText')).wrapPaddingTop(40)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Platform.isIOS ?
+                        GestureDetector(
+                          onTap: (){
+                            signInWithApple();
+                          },
+                          child: AppleAuthButton(
+                            style: AuthButtonStyle(buttonType: AuthButtonType.icon, iconColor: context.theme.iconTheme.color, buttonColor: Colors.transparent),
+                            darkMode: Provider.of<ThemeController>(context, listen: true).isDark,
+                          ),
+                        ): SizedBox(),
+                        GestureDetector(
+                          onTap: (){
+                            signInWithGoogle();
+                          },
+                          child: GoogleAuthButton(
+                            style: AuthButtonStyle(buttonType: AuthButtonType.icon, iconColor: context.theme.iconTheme.color, buttonColor: Colors.transparent),
+                            darkMode: !Provider.of<ThemeController>(context, listen: true).isDark,
+                          ),
+                        ),
+                      ],
+                    ).wrapPaddingTop(20),
                   ],
-                ).wrapPaddingTop(20),
+                ): SizedBox(),
                 Text(context.translete('notRegister')).wrapPaddingTop(40),
                 ElevatedButton(
                   onPressed: () {

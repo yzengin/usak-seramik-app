@@ -198,7 +198,6 @@
   "contact": "İletişim",
   "searchResult": "Arama Sonuçları",
   "emptyFavourite": "Favoriye eklenmiş ürün yok",
-  "emptyCart": "Sepete eklenmiş ürün yok",
   "emptyProducts": "Ürün listesi yok",
   "findNearSeller": "En yakın satış noktasını bul",
   "showCaseFilterMessage": "Lütfen herhangi bir filtre seçin",
@@ -223,5 +222,6 @@
   "yourOrder": "Siparişlerin",
   "orderDescription": "Sipariş bilgileriniz email adresinize gönderilecektir.",
   "orderSuccess" : "Sipariş Başarıyla Oluşturuldu.\nSize en kısa sürede ulaşacağız",
+  "cartIsEmpty" : "Sepete eklenmiş ürün bulunamadı!",
   "end": "son"
 }

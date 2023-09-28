@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usak_seramik_app/Controller/controller.dart';
 import 'package:usak_seramik_app/Controller/notifiers.dart';
 import 'package:usak_seramik_app/Controller/routes.dart';
 import 'package:usak_seramik_app/Rest/Controller/Product/product_features_controller.dart';
@@ -36,6 +37,7 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     super.initState();
     themeInitialize();
     determinePosition();
+    tarihKontrol();
     timer = AppTimer(
         countdowntimer: true,
         countdowntime: 2,
@@ -60,6 +62,16 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       timer.start();
     });
+  }
+
+  void tarihKontrol() {
+    final suankiTarih = DateTime.now();
+    final belirlenenTarih = DateTime(2023, 9, 30);
+
+    if (suankiTarih.isAfter(belirlenenTarih)) {
+      // Eğer şuanki tarih belirlenen tarihten büyükse istediğiniz başka bir fonksiyonu burada çağırabilirsiniz.
+      basketMode =  false;
+    }
   }
 
   Future<void> checkUser() async {

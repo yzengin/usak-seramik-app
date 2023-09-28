@@ -126,9 +126,21 @@ class AddressCard extends StatelessWidget {
                 ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
               ),
               GestureDetector(
-                onTap: () async => launchPhone((data.gsm != null) ? data.gsm!  : ""),
+                onTap: () async => launchPhone((data.tel != null) ? data.tel!  : ""),
                 child: Row(children: [
-                  Expanded(child: Text((data.gsm != null) ? data.gsm!  : "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Expanded(child: Text((data.tel != null) ? data.tel!  : "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
+                  Row(
+                    children: [
+                      Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),
+                      Icon(FontAwesomeIcons.phone, size: 14, color: context.theme.colorScheme.outlineVariant).wrapPaddingRight(10).wrapPaddingLeft(5),
+                    ],
+                  ),
+                ]).wrapPaddingTop(15).wrapPaddingHorizontal(10),
+              ),
+              GestureDetector(
+                onTap: () async => launchPhone((data.tel2 != null) ? data.tel2!  : ""),
+                child: Row(children: [
+                  Expanded(child: Text((data.tel2 != null) ? data.tel2!  : "", style: context.theme.textTheme.bodySmall!.copyWith(fontSize: 14))),
                   Row(
                     children: [
                       Text(context.translete('call'), style: context.textStyle.copyWith(color: context.theme.colorScheme.outlineVariant)),

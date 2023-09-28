@@ -222,5 +222,6 @@
   "yourOrder": "Your Orders",
   "orderDescription": "Your order information will be sent to your email address.",
   "orderSuccess": "The order was created successfully.\nWe will reach you as soon as possible",
+  "cartIsEmpty" : "Cart is empty",
   "end": "end"
 }

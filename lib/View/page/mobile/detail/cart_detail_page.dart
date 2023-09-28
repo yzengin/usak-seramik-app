@@ -114,10 +114,10 @@ class _CartPageState extends State<CartPage> {
                 ),
               )
             : Center(
-                child: Text(context.translete('emptyCart')),
+                child: Text(context.translete('cartIsEmpty')),
               )
         : Center(
-            child: Text(context.translete('emptyCart')),
+            child: Text(context.translete('cartIsEmpty')),
           );
   }
 

@@ -65,34 +65,38 @@ class _FindProductViewState extends State<FindProductView> {
                   Expanded(child: Text(context.translete('showreelButton')).wrapPaddingLeft(20)),
                 ]),
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 20),
-                child: Column(children: [
-                  buildDropdown(
-                    FontAwesomeIcons.personShelter,
-                    'kullanimAlani',
-                    productUsageAreaData.data,  // Özel bir dataList
-                    selectedProductUsageAreaId,
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: SingleChildScrollView(
+                    child: Column(children: [
+                      buildDropdown(
+                        FontAwesomeIcons.personShelter,
+                        'kullanimAlani',
+                        productUsageAreaData.data,  // Özel bir dataList
+                        selectedProductUsageAreaId,
+                      ),
+                      buildDropdown(
+                        FontAwesomeIcons.layerGroup,
+                        'urunTuru',
+                        productTypesData.data,  // Özel bir dataList
+                        selectedProductTypesId,
+                      ),
+                      buildDropdown(
+                        FontAwesomeIcons.swatchbook,
+                        'urunDokusu',
+                        productSurfaceData.data,  // Özel bir dataList
+                        selectedProductSurfaceId,
+                      ),
+                      buildDropdown(
+                        FontAwesomeIcons.palette,
+                        'urunRengi',
+                        productColorData.data,  // Özel bir dataList
+                        selectedProductColorId,
+                      ),
+                    ],),
                   ),
-                  buildDropdown(
-                    FontAwesomeIcons.layerGroup,
-                    'urunTuru',
-                    productTypesData.data,  // Özel bir dataList
-                    selectedProductTypesId,
-                  ),
-                  buildDropdown(
-                    FontAwesomeIcons.swatchbook,
-                    'urunDokusu',
-                    productSurfaceData.data,  // Özel bir dataList
-                    selectedProductSurfaceId,
-                  ),
-                  buildDropdown(
-                    FontAwesomeIcons.palette,
-                    'urunRengi',
-                    productColorData.data,  // Özel bir dataList
-                    selectedProductColorId,
-                  ),
-                ],),
+                ),
               ),
               ElevatedButton(
                       onPressed: () {
